@@ -35,7 +35,12 @@ public class WaxedCopperBlock extends Block {
                     level.setBlock(pos, unwaxedBlock.defaultBlockState(), 3);
                     level.playSound(null, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
                     if (level instanceof ServerLevel serverLevel) {
-                        serverLevel.sendParticles(ParticleTypes.WAX_OFF, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 10, 0.2, 0.2, 0.2, 0.01);
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.WAX_OFF, x, y, z, 1, 0.0, 0.0, 0.0, 0.05);
+                        }
                     }
                     // Poškodenie nástroja
                     itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));

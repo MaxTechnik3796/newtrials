@@ -51,7 +51,12 @@ public class CustomCopperBlock extends Block implements WeatheringCopper {
                     level.setBlock(pos, waxedBlock.defaultBlockState(), 3);
                     level.playSound(null, pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
                     if (level instanceof ServerLevel serverLevel) {
-                        serverLevel.sendParticles(ParticleTypes.WAX_ON, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 10, 0.2, 0.2, 0.2, 0.01);
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.WAX_ON, x, y, z, 1, 0.0, 0.0, 0.0, 0.05);
+                        }
                     }
                     if (!player.isCreative()) {
                         itemInHand.shrink(1);
