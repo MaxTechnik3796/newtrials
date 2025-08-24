@@ -25,15 +25,15 @@ public class NTrialsModItems{
 
 
 
-    public static final RegistryObject<Item>CUSTOM_COPPER=block(NTrialsModBlocks.CUSTOM_COPPER);
-    public static final RegistryObject<Item>EXPOSED_CUSTOM_COPPER=block(NTrialsModBlocks.EXPOSED_CUSTOM_COPPER);
-    public static final RegistryObject<Item>WEATHERED_CUSTOM_COPPER=block(NTrialsModBlocks.WEATHERED_CUSTOM_COPPER);
-    public static final RegistryObject<Item>OXIDIZED_CUSTOM_COPPER=block(NTrialsModBlocks.OXIDIZED_CUSTOM_COPPER);
+    public static final RegistryObject<Item>CHISELED_COPPER=block(NTrialsModBlocks.CHISELED_COPPER);
+    public static final RegistryObject<Item>EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.EXPOSED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WEATHERED_CHISELED_COPPER);
+    public static final RegistryObject<Item>OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER);
 
-    public static final RegistryObject<Item>WAXED_CUSTOM_COPPER=block(NTrialsModBlocks.WAXED_CUSTOM_COPPER);
-    public static final RegistryObject<Item>WAXED_EXPOSED_CUSTOM_COPPER=block(NTrialsModBlocks.WAXED_EXPOSED_CUSTOM_COPPER);
-    public static final RegistryObject<Item>WAXED_WEATHERED_CUSTOM_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CUSTOM_COPPER);
-    public static final RegistryObject<Item>WAXED_OXIDIZED_CUSTOM_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CUSTOM_COPPER);
+    public static final RegistryObject<Item>WAXED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER);
 
 
 
