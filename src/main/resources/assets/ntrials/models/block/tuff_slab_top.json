@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "ntrials:block/tuff",
+    "side": "ntrials:block/tuff",
+    "top": "ntrials:block/tuff"
+  }
+}

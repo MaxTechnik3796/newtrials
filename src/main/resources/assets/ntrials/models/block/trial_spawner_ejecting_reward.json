@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top_inner_faces",
+  "textures": {
+    "bottom": "ntrials:block/trial_spawner_bottom",
+    "side": "ntrials:block/trial_spawner_side_active",
+    "top": "ntrials:block/trial_spawner_top_ejecting_reward"
+  }
+}
