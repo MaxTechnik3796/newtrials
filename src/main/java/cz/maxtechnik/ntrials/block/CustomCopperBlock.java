@@ -73,6 +73,14 @@ public class CustomCopperBlock extends Block implements WeatheringCopper {
                 if (!level.isClientSide) {
                     level.setBlock(pos, scrapedBlock.defaultBlockState(), 3);
                     level.playSound(null, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    if (level instanceof ServerLevel serverLevel) {
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.SCRAPE, x, y, z, 1, 0.0, 0.0, 0.0, 0.05);
+                        }
+                    }
                     // Poškodenie nástroja
                     itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
                 }
