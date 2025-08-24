@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import cz.maxtechnik.ntrials.NTrialsModEvents;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class CustomCopperBlock extends Block implements WeatheringCopper {
     private final WeatherState level;
@@ -49,6 +50,9 @@ public class CustomCopperBlock extends Block implements WeatheringCopper {
                 if (!level.isClientSide) {
                     level.setBlock(pos, waxedBlock.defaultBlockState(), 3);
                     level.playSound(null, pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    if (level instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.WAX_ON, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 10, 0.2, 0.2, 0.2, 0.01);
+                    }
                     if (!player.isCreative()) {
                         itemInHand.shrink(1);
                     }

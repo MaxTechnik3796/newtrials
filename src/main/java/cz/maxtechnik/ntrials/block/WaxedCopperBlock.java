@@ -1,6 +1,7 @@
 package cz.maxtechnik.ntrials.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -32,6 +33,9 @@ public class WaxedCopperBlock extends Block {
                 if (!level.isClientSide) {
                     level.setBlock(pos, unwaxedBlock.defaultBlockState(), 3);
                     level.playSound(null, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    if (level instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.WAX_OFF, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 10, 0.2, 0.2, 0.2, 0.01);
+                    }
                     // Poškodenie nástroja
                     itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
                 }
