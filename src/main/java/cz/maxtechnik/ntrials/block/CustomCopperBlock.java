@@ -2,12 +2,23 @@ package cz.maxtechnik.ntrials.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import cz.maxtechnik.ntrials.NTrialsModEvents;
+import net.minecraft.core.particles.ParticleTypes;
 
 public class CustomCopperBlock extends Block implements WeatheringCopper {
     private final WeatherState level;
@@ -29,6 +40,60 @@ public class CustomCopperBlock extends Block implements WeatheringCopper {
     }
 
     @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack itemInHand = player.getItemInHand(hand);
+
+        // Honeycomb interakcia - waxovanie (výmena za waxed verziu)
+        if (itemInHand.is(Items.HONEYCOMB)) {
+            Block waxedBlock = NTrialsModEvents.WAXING_MAP.get(this);
+            if (waxedBlock != null) {
+                if (!level.isClientSide) {
+                    level.setBlock(pos, waxedBlock.defaultBlockState(), 3);
+                    level.playSound(null, pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    if (level instanceof ServerLevel serverLevel) {
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.WAX_ON, x, y, z, 1, 0.0, 0.0, 0.0, 0.05);
+                        }
+                    }
+                    if (!player.isCreative()) {
+                        itemInHand.shrink(1);
+                    }
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+
+        // Sekera interakcia - scraping (čištění oxidace o jeden stupeň zpět)
+        if (itemInHand.getItem() instanceof AxeItem) {
+            Block scrapedBlock = NTrialsModEvents.SCRAPING_MAP.get(this);
+            if (scrapedBlock != null) { // Null znamená že je to první fáze (nelze čistit dál)
+                if (!level.isClientSide) {
+                    level.setBlock(pos, scrapedBlock.defaultBlockState(), 3);
+                    level.playSound(null, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    if (level instanceof ServerLevel serverLevel) {
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.SCRAPE, x, y, z, 1, 0.0, 0.0, 0.0, 0.05);
+                        }
+                    }
+                    // Poškodenie nástroja
+                    itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+
+
+
+        return super.use(state, level, pos, player, hand, hit);
+    }
+
+    @Override
     public void randomTick(BlockState state, ServerLevel serverLevel, BlockPos pos, RandomSource random) {
         // Používame vanilla Minecraft logiku pro oxidáciu
         this.changeOverTime(state, serverLevel, pos, random);
@@ -36,8 +101,8 @@ public class CustomCopperBlock extends Block implements WeatheringCopper {
 
     // Implementujeme vlastní changeOverTime metódu s vanilla logikou
     private void changeOverTime(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        // Vanilla oxidácia má 1/16 šancu na každý random tick
-        if (random.nextFloat() < 0.05688889f) { // 1/17.6 približne ako vanilla
+        // Vanilla oxidácia má pravděpodobnosť približne 1/17.6 na každý random tick
+        if (random.nextFloat() < 0.05688889f) {
             this.tryOxidize(state, level, pos, random);
         }
     }

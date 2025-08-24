@@ -32,10 +32,10 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>OXIDIZED_CHISELED_COPPER=REGISTRY.register("oxidized_chiseled_copper",()->new CustomCopperBlock(WeatheringCopper.WeatherState.OXIDIZED,props()));
 
     // ---- Voskované varianty ----
-    public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new Block(props()));
-    public static final RegistryObject<Block>WAXED_EXPOSED_CHISELED_COPPER=REGISTRY.register("waxed_exposed_chiseled_copper",()->new Block(props()));
-    public static final RegistryObject<Block>WAXED_WEATHERED_CHISELED_COPPER=REGISTRY.register("waxed_weathered_chiseled_copper",()->new Block(props()));
-    public static final RegistryObject<Block>WAXED_OXIDIZED_CHISELED_COPPER=REGISTRY.register("waxed_oxidized_chiseled_copper",()->new Block(props()));
+    public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new WaxedCopperBlock(props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_CHISELED_COPPER=REGISTRY.register("waxed_exposed_chiseled_copper",()->new WaxedCopperBlock(props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_CHISELED_COPPER=REGISTRY.register("waxed_weathered_chiseled_copper",()->new WaxedCopperBlock(props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_CHISELED_COPPER=REGISTRY.register("waxed_oxidized_chiseled_copper",()->new WaxedCopperBlock(props()));
 
     private static BlockBehaviour.Properties props(){
         return BlockBehaviour.Properties.of()
