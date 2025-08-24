@@ -4,6 +4,19 @@
   "block.ntrials.chiseled_tuff_bricks": "Chiseled Tuff Bricks",
   "block.ntrials.polished_tuff": "Polished Tuff",
 
+  "block.ntrials.tuff_stairs": "Tuff Stairs",
+  "block.ntrials.tuff_brick_stairs": "Tuff Brick Stairs",
+  "block.ntrials.polished_tuff_stairs": "Polished Tuff Stairs",
+
+  "block.ntrials.tuff_slab": "Tuff Slab",
+  "block.ntrials.tuff_brick_slab": "Tuff Brick Slab",
+  "block.ntrials.polished_tuff_slab": "Polished Tuff Slab",
+
+  "block.ntrials.tuff_wall": "Tuff Wall",
+  "block.ntrials.tuff_brick_wall": "Tuff Brick Wall",
+  "block.ntrials.polished_tuff_wall": "Polished Tuff Wall",
+
+
   "block.ntrials.chiseled_copper": "Chiseled Copper",
   "block.ntrials.exposed_chiseled_copper": "Exposed Chiseled Copper",
   "block.ntrials.weathered_chiseled_copper": "Weathered Chiseled Copper",

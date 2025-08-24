@@ -2,6 +2,9 @@ package cz.maxtechnik.ntrials.init;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.block.CustomCopperBlock;
+import cz.maxtechnik.ntrials.block.TuffSlabBlock;
+import cz.maxtechnik.ntrials.block.TuffStairBlock;
+import cz.maxtechnik.ntrials.block.TuffWallBlock;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
@@ -19,9 +22,17 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>CHISELED_TUFF_BRICKS=block(NTrialsModBlocks.CHISELED_TUFF_BRICKS);
     public static final RegistryObject<Item>POLISHED_TUFF=block(NTrialsModBlocks.POLISHED_TUFF);
 
-    public static final RegistryObject<Item> EXAMPLE_ITEM=REGISTRY.register("example_item", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().nutrition(1).saturationMod(2f).build())));
-    public static final RegistryObject<Item>EXAMPLE_BLOCK=block(NTrialsModBlocks.EXAMPLE_BLOCK);
+    public static final RegistryObject<Item>TUFF_STAIRS=block(NTrialsModBlocks.TUFF_STAIRS);
+    public static final RegistryObject<Item>TUFF_BRICK_STAIRS=block(NTrialsModBlocks.TUFF_BRICK_STAIRS);
+    public static final RegistryObject<Item>POLISHED_TUFF_STAIRS=block(NTrialsModBlocks.POLISHED_TUFF_STAIRS);
 
+    public static final RegistryObject<Item>TUFF_SLAB=block(NTrialsModBlocks.TUFF_SLAB);
+    public static final RegistryObject<Item>TUFF_BRICK_SLAB=block(NTrialsModBlocks.TUFF_BRICK_SLAB);
+    public static final RegistryObject<Item>POLISHED_TUFF_SLAB=block(NTrialsModBlocks.POLISHED_TUFF_SLAB);
+
+    public static final RegistryObject<Item>TUFF_WALL=block(NTrialsModBlocks.TUFF_WALL);
+    public static final RegistryObject<Item>TUFF_BRICK_WALL=block(NTrialsModBlocks.TUFF_BRICK_WALL);
+    public static final RegistryObject<Item>POLISHED_TUFF_WALL=block(NTrialsModBlocks.POLISHED_TUFF_WALL);
 
 
 
