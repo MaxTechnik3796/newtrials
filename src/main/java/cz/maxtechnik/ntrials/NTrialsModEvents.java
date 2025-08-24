@@ -1,47 +1,24 @@
 package cz.maxtechnik.ntrials;
 
-/*import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.common.Mod;
 import cz.maxtechnik.ntrials.init.NTrialsModBlocks;
-
-import java.util.function.Supplier;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 @Mod.EventBusSubscriber(modid = NTrialsMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class NTrialsModEvents {
 
-    public static void setupWaxables() {
-        registerWaxable(NTrialsModBlocks.CUSTOM_COPPER, NTrialsModBlocks.WAXED_CUSTOM_COPPER);
-        registerWaxable(NTrialsModBlocks.EXPOSED_CUSTOM_COPPER, NTrialsModBlocks.WAXED_EXPOSED_CUSTOM_COPPER);
-        registerWaxable(NTrialsModBlocks.WEATHERED_CUSTOM_COPPER, NTrialsModBlocks.WAXED_WEATHERED_CUSTOM_COPPER);
-        registerWaxable(NTrialsModBlocks.OXIDIZED_CUSTOM_COPPER, NTrialsModBlocks.WAXED_OXIDIZED_CUSTOM_COPPER);
+    // Mapa pro oxidační vztahy - inicializuje se až po registraci bloků
+    public static BiMap<Block, Block> OXIDATION_LEVEL_INCREASES = HashBiMap.create();
+
+    public static void setupOxidation() {
+        // Nyní bezpečně inicializujeme mapu po registraci bloků
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.CUSTOM_COPPER.get(), NTrialsModBlocks.EXPOSED_CUSTOM_COPPER.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_CUSTOM_COPPER.get(), NTrialsModBlocks.WEATHERED_CUSTOM_COPPER.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_CUSTOM_COPPER.get(), NTrialsModBlocks.OXIDIZED_CUSTOM_COPPER.get());
     }
 
-    public static void setupUnwaxables() {
-        registerUnwaxable(NTrialsModBlocks.WAXED_CUSTOM_COPPER, NTrialsModBlocks.CUSTOM_COPPER);
-        registerUnwaxable(NTrialsModBlocks.WAXED_EXPOSED_CUSTOM_COPPER, NTrialsModBlocks.EXPOSED_CUSTOM_COPPER);
-        registerUnwaxable(NTrialsModBlocks.WAXED_WEATHERED_CUSTOM_COPPER, NTrialsModBlocks.WEATHERED_CUSTOM_COPPER);
-        registerUnwaxable(NTrialsModBlocks.WAXED_OXIDIZED_CUSTOM_COPPER, NTrialsModBlocks.OXIDIZED_CUSTOM_COPPER);
-    }
-
-    public static void setupScrapables() {
-        registerScrapable(NTrialsModBlocks.EXPOSED_CUSTOM_COPPER, NTrialsModBlocks.CUSTOM_COPPER);
-        registerScrapable(NTrialsModBlocks.WEATHERED_CUSTOM_COPPER, NTrialsModBlocks.EXPOSED_CUSTOM_COPPER);
-        registerScrapable(NTrialsModBlocks.OXIDIZED_CUSTOM_COPPER, NTrialsModBlocks.WEATHERED_CUSTOM_COPPER);
-    }
-
-    // ---- Helpers ----
-    private static void registerWaxable(Supplier<? extends Block> from, Supplier<? extends Block> to) {
-        HoneycombItem.WAXABLES.put(from.get(), to.get());
-        HoneycombItem.WAXABLES.
-    }
-
-    private static void registerUnwaxable(Supplier<? extends Block> from, Supplier<? extends Block> to) {
-        HoneycombItem.WAX_OFF_BY_BLOCK.put(from.get(), to.get());
-    }
-
-    private static void registerScrapable(Supplier<? extends Block> from, Supplier<? extends Block> to) {
-        AxeItem.OXIDATION_REMOVAL.put(from.get(), to.get());
-    }
-}*/
+    // Pro Minecraft 1.20.1 Forge zatím odstraníme waxování - bude třeba implementovat jinak
+    // V této verzi Forge nemůžeme přímo modifikovat HoneycombItem mapy
+}

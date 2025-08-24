@@ -45,16 +45,9 @@ public class NTrialsMod {
         LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
 
-
-        /*event.enqueueWork(() -> {
-            NTrialsModEvents.setupWaxables();
-            NTrialsModEvents.setupUnwaxables();
-            NTrialsModEvents.setupScrapables();
-        });*/
-
-
-
-
+        event.enqueueWork(() -> {
+            NTrialsModEvents.setupOxidation();
+        });
     }
 
     // Add the example block item to the building blocks tab
