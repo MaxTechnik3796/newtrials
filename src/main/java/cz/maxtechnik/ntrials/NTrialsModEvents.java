@@ -16,6 +16,9 @@ public class NTrialsModEvents{
     public static BiMap<Block, Block> WAXING_MAP = HashBiMap.create();
     public static BiMap<Block, Block> UNWAXING_MAP = HashBiMap.create();
 
+    // Mapa pro scraping (opak oxidace) - posun o stupeň zpět
+    public static BiMap<Block, Block> SCRAPING_MAP = HashBiMap.create();
+
     public static void setupOxidation(){
         // Nyní bezpečně inicializujeme mapu po registraci bloků - používame správné názvy
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.CHISELED_COPPER.get(),NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
@@ -33,6 +36,12 @@ public class NTrialsModEvents{
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
+
+        // Scraping mapu - opak oxidace (posun o stupeň zpět)
+        SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.CHISELED_COPPER.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
+        // Poznámka: CHISELED_COPPER (první fáze) nemá předchozí stupeň, takže se v mapě nenachází
     }
     // Pro Minecraft 1.20.1 Forge zatím odstraníme waxování - bude třeba implementovat jinak
     // V této verzi Forge nemůžeme přímo modifikovat HoneycombItem mapy

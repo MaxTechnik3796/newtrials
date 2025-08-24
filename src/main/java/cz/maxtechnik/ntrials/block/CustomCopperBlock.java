@@ -57,6 +57,22 @@ public class CustomCopperBlock extends Block implements WeatheringCopper {
             }
         }
 
+        // Sekera interakcia - scraping (čištění oxidace o jeden stupeň zpět)
+        if (itemInHand.getItem() instanceof AxeItem) {
+            Block scrapedBlock = NTrialsModEvents.SCRAPING_MAP.get(this);
+            if (scrapedBlock != null) { // Null znamená že je to první fáze (nelze čistit dál)
+                if (!level.isClientSide) {
+                    level.setBlock(pos, scrapedBlock.defaultBlockState(), 3);
+                    level.playSound(null, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    // Poškodenie nástroja
+                    itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+
+
+
         return super.use(state, level, pos, player, hand, hit);
     }
 
