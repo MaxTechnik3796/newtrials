@@ -50,7 +50,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
         ItemStack itemInHand=player.getItemInHand(hand);
 
         // Honeycomb interakcia - waxovanie (výmena za waxed verziu) - POUZE když držíme shift
-        if(itemInHand.is(Items.HONEYCOMB) && player.isShiftKeyDown()){
+        if(itemInHand.is(Items.HONEYCOMB)){
             Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
             if(waxedBlock!=null){
                 if(!level.isClientSide){
@@ -113,7 +113,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
         }
 
         // Axe scraping - POUZE když držíme shift
-        if (itemInHand.getItem()instanceof AxeItem && player.isShiftKeyDown()){
+        if (itemInHand.getItem()instanceof AxeItem){
             Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
             if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
                 if(!level.isClientSide){

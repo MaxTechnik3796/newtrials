@@ -39,7 +39,7 @@ public class WaxedCopperDoorBlock extends DoorBlock {
         ItemStack itemInHand=player.getItemInHand(hand);
 
         // Axe unwaxing - POUZE když držíme shift
-        if(itemInHand.getItem() instanceof AxeItem && player.isShiftKeyDown()){
+        if(itemInHand.getItem() instanceof AxeItem){
             Block unwaxedBlock=NTrialsModEvents.UNWAXING_MAP.get(this);
             if(unwaxedBlock!=null){
                 if(!level.isClientSide){
