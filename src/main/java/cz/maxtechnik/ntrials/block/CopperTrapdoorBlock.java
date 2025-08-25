@@ -2,15 +2,25 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsModEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -36,6 +46,46 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
         // Blok môže oxidovať iba ak nie je na najvyššom stupni oxidácie (OXIDIZED)
         return this.getAge()!= WeatherState.OXIDIZED;
     }
+
+
+    @Override
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        ItemStack itemInHand = player.getItemInHand(hand);
+        // Honeycomb interakcia - waxovanie (výmena za waxed verziu)
+        if (itemInHand.is(Items.HONEYCOMB)) {
+            Block waxedBlock = NTrialsModEvents.WAXING_MAP.get(this);
+            if (waxedBlock != null) {
+                if (!level.isClientSide) {
+                    BlockState stateAtPos = level.getBlockState(pos);
+                    // Zachováváme orientáciu a stav trapdoor
+                    BlockState nextState= waxedBlock.defaultBlockState()
+                            .setValue(FACING, stateAtPos.getValue(FACING))
+                            .setValue(OPEN, stateAtPos.getValue(OPEN))
+                            .setValue(HALF, stateAtPos.getValue(HALF))
+                            .setValue(POWERED, stateAtPos.getValue(POWERED))
+                            .setValue(WATERLOGGED, stateAtPos.getValue(WATERLOGGED));
+
+                    level.setBlock(pos,nextState, 3);
+
+                    level.playSound(null, pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS, 1f, 1f);
+                    if (level instanceof ServerLevel serverLevel) {
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.WAX_ON, x, y, z, 1, 0, 0, 0, 0.05);
+                        }
+                    }
+                    if (!player.isCreative()) {
+                        itemInHand.shrink(1);
+                    }
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+        return super.use(state,level,pos,player,hand,hit);
+    }
+
 
     @Override
     public void randomTick(@NotNull BlockState state,@NotNull ServerLevel serverLevel,@NotNull BlockPos pos,@NotNull RandomSource random){

@@ -40,6 +40,12 @@ public class NTrialsModEvents{
         WAXING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get());
         WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get());
 
+        //waxování mapy pro copper trapdoor
+        WAXING_MAP.put(NTrialsModBlocks.COPPER_TRAPDOOR.get(), NTrialsModBlocks.WAXED_COPPER_TRAPDOOR.get());
+        WAXING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.WAXED_EXPOSED_COPPER_TRAPDOOR.get());
+        WAXING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.WAXED_WEATHERED_COPPER_TRAPDOOR.get());
+        WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.WAXED_OXIDIZED_COPPER_TRAPDOOR.get());
+
         // Waxování mapy pro COPPER DOORS
         WAXING_MAP.put(NTrialsModBlocks.COPPER_DOOR.get(), NTrialsModBlocks.WAXED_COPPER_DOOR.get());
         WAXING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get(), NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR.get());
@@ -51,6 +57,12 @@ public class NTrialsModEvents{
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
+
+        // Unwaxování pro copper trapdoor
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.COPPER_TRAPDOOR.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR.get());
 
         // Unwaxování mapy pro COPPER DOORS
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_DOOR.get(), NTrialsModBlocks.COPPER_DOOR.get());
