@@ -37,8 +37,9 @@ public class WaxedCopperDoorBlock extends DoorBlock {
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
         ItemStack itemInHand=player.getItemInHand(hand);
-        // Honeycomb interakcia - waxovanie (výmena za waxed verziu)
-        if(itemInHand.getItem() instanceof AxeItem){
+
+        // Axe unwaxing - POUZE když držíme shift
+        if(itemInHand.getItem() instanceof AxeItem && player.isShiftKeyDown()){
             Block unwaxedBlock=NTrialsModEvents.UNWAXING_MAP.get(this);
             if(unwaxedBlock!=null){
                 if(!level.isClientSide){
@@ -82,7 +83,7 @@ public class WaxedCopperDoorBlock extends DoorBlock {
                         level.sendBlockUpdated(pos, state, newState1, 3);
                         level.sendBlockUpdated(otherPos, otherState, newState2, 3);
 
-                        level.playSound(null,pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS,1f,1f);
+                        level.playSound(null,pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS,1.0f,1.0f);
                         if(level instanceof ServerLevel serverLevel){
                             for(int i=0;i<20;i++){
                                 double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
@@ -91,15 +92,15 @@ public class WaxedCopperDoorBlock extends DoorBlock {
                                 serverLevel.sendParticles(ParticleTypes.WAX_OFF,x,y,z,1,0,0,0,0.05);
                             }
                         }
-                        if(!player.isCreative()){
-                            itemInHand.shrink(1);
-                        }
+                        // Poškození nástroje místo konzumace
+                        itemInHand.hurtAndBreak(1,player,(p)->p.broadcastBreakEvent(hand));
                     }
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
 
+        // Pokud není shift stisknut NEBO není to axe, použij normální chování dveří
         return super.use(state, level, pos, player, hand, hit);
     }
 

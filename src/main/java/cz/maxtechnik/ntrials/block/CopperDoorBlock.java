@@ -29,7 +29,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
     private final WeatherState level;
 
     public CopperDoorBlock(WeatherState level, BlockBehaviour.Properties props){
-        super(props,BlockSetType.OAK);
+        super(props, BlockSetType.OAK);
         this.level = level;
     }
 
@@ -48,8 +48,9 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
         ItemStack itemInHand=player.getItemInHand(hand);
-        // Honeycomb interakcia - waxovanie (výmena za waxed verziu)
-        if(itemInHand.is(Items.HONEYCOMB)){
+
+        // Honeycomb interakcia - waxovanie (výmena za waxed verziu) - POUZE když držíme shift
+        if(itemInHand.is(Items.HONEYCOMB) && player.isShiftKeyDown()){
             Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
             if(waxedBlock!=null){
                 if(!level.isClientSide){
@@ -111,7 +112,8 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
             }
         }
 
-        if (itemInHand.getItem()instanceof AxeItem){
+        // Axe scraping - POUZE když držíme shift
+        if (itemInHand.getItem()instanceof AxeItem && player.isShiftKeyDown()){
             Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
             if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
                 if(!level.isClientSide){
@@ -172,6 +174,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
             }
         }
 
+        // Pokud není shift stisknut NEBO není to honeycomb/axe, použij normální chování dveří
         return super.use(state, level, pos, player, hand, hit);
     }
 
