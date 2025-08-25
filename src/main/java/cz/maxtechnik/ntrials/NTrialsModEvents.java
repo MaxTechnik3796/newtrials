@@ -75,6 +75,12 @@ public class NTrialsModEvents{
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
 
+
+        // Scraping mapy pro COPPER TRAPDOOR
+        SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.COPPER_TRAPDOOR.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get());
+
         // Scraping mapy pro COPPER DOORS
         SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get(), NTrialsModBlocks.COPPER_DOOR.get());
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_DOOR.get());
