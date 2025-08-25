@@ -18,6 +18,6 @@ public class TuffBlock extends Block{
     }
     @Override
     public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
-        return 0;
+        return 15;
     }
 }
