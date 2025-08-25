@@ -30,43 +30,5 @@ public class WaxedCopperDoorBlock extends DoorBlock {
     public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
         return 0;
     }
-
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
-        ItemStack itemInHand = player.getItemInHand(hand);
-
-        // Sekera interakce - un-waxing (odstranění vosku a návrat k oxidující verzi)
-        if (itemInHand.getItem() instanceof AxeItem){
-            Block unwaxedBlock = NTrialsModEvents.UNWAXING_MAP.get(this);
-            if(unwaxedBlock != null){
-                if(!level.isClientSide){
-                    // Zachováme stav dveří
-                    BlockState newState = unwaxedBlock.defaultBlockState()
-                            .setValue(FACING, state.getValue(FACING))
-                            .setValue(OPEN, state.getValue(OPEN))
-                            .setValue(HINGE, state.getValue(HINGE))
-                            .setValue(POWERED, state.getValue(POWERED))
-                            .setValue(HALF, state.getValue(HALF));
-
-                    level.setBlock(pos, newState, 3);
-                    level.playSound(null, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0f, 1.0f);
-
-                    if(level instanceof ServerLevel serverLevel){
-                        for(int i = 0; i < 20; i++){
-                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
-                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
-                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
-                            serverLevel.sendParticles(ParticleTypes.WAX_OFF, x, y, z, 1, 0, 0, 0, 0.05);
-                        }
-                    }
-                    // Poškození nástroje
-                    itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
-                }
-                return InteractionResult.sidedSuccess(level.isClientSide);
-            }
-        }
-
-        // Pokud nebyla použita sekera, pokračuj s normální funkcí dveří
-        return super.use(state, level, pos, player, hand, hit);
-    }
+    
 }
