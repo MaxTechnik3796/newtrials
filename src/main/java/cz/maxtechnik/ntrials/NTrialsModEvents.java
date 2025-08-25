@@ -25,11 +25,22 @@ public class NTrialsModEvents{
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(),NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(),NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
 
+        // Oxidační mapy pro COPPER DOORS
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.COPPER_DOOR.get(),NTrialsModBlocks.EXPOSED_COPPER_DOOR.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get(),NTrialsModBlocks.WEATHERED_COPPER_DOOR.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get(),NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get());
+
         // Inicializujeme waxování mapy
         WAXING_MAP.put(NTrialsModBlocks.CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_CHISELED_COPPER.get());
         WAXING_MAP.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER.get());
         WAXING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get());
         WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get());
+
+        // Waxování mapy pro COPPER DOORS
+        WAXING_MAP.put(NTrialsModBlocks.COPPER_DOOR.get(), NTrialsModBlocks.WAXED_COPPER_DOOR.get());
+        WAXING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get(), NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR.get());
+        WAXING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get(), NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR.get());
+        WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get(), NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR.get());
 
         // Unwaxování je opačná operace
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_CHISELED_COPPER.get(), NTrialsModBlocks.CHISELED_COPPER.get());
@@ -37,11 +48,22 @@ public class NTrialsModEvents{
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
 
+        // Unwaxování mapy pro COPPER DOORS
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_DOOR.get(), NTrialsModBlocks.COPPER_DOOR.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_DOOR.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR.get(), NTrialsModBlocks.WEATHERED_COPPER_DOOR.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR.get(), NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get());
+
         // Scraping mapu - opak oxidace (posun o stupeň zpět)
         SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.CHISELED_COPPER.get());
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
-        // Poznámka: CHISELED_COPPER (první fáze) nemá předchozí stupeň, takže se v mapě nenachází
+
+        // Scraping mapy pro COPPER DOORS
+        SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get(), NTrialsModBlocks.COPPER_DOOR.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_DOOR.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get(), NTrialsModBlocks.WEATHERED_COPPER_DOOR.get());
+        // Poznámka: CHISELED_COPPER a COPPER_DOOR (první fáze) nemají předchozí stupeň, takže se v mapě nenacházejí
     }
     // Pro Minecraft 1.20.1 Forge zatím odstraníme waxování - bude třeba implementovat jinak
     // V této verzi Forge nemůžeme přímo modifikovat HoneycombItem mapy
