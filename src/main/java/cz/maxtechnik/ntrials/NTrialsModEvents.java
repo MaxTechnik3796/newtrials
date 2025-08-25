@@ -24,6 +24,12 @@ public class NTrialsModEvents{
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.CHISELED_COPPER.get(),NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(),NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(),NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
+
+        //oxidace pro copper grate
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.COPPER_GRATE.get(),NTrialsModBlocks.EXPOSED_COPPER_GRATE.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_COPPER_GRATE.get(),NTrialsModBlocks.WEATHERED_COPPER_GRATE.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_COPPER_GRATE.get(),NTrialsModBlocks.OXIDIZED_COPPER_GRATE.get());
+
         //oxidace pro copper trapdoor
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.COPPER_TRAPDOOR.get(),NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get());
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get(),NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get());
@@ -39,6 +45,12 @@ public class NTrialsModEvents{
         WAXING_MAP.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER.get());
         WAXING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get());
         WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get());
+
+        //waxing map for copper grate
+        WAXING_MAP.put(NTrialsModBlocks.COPPER_GRATE.get(), NTrialsModBlocks.WAXED_COPPER_GRATE.get());
+        WAXING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_GRATE.get(), NTrialsModBlocks.WAXED_EXPOSED_COPPER_GRATE.get());
+        WAXING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_GRATE.get(), NTrialsModBlocks.WAXED_WEATHERED_COPPER_GRATE.get());
+        WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_GRATE.get(), NTrialsModBlocks.WAXED_OXIDIZED_COPPER_GRATE.get());
 
         //waxování mapy pro copper trapdoor
         WAXING_MAP.put(NTrialsModBlocks.COPPER_TRAPDOOR.get(), NTrialsModBlocks.WAXED_COPPER_TRAPDOOR.get());
@@ -58,6 +70,11 @@ public class NTrialsModEvents{
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
 
+        //unwaxing for copper grate
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_GRATE.get(), NTrialsModBlocks.COPPER_GRATE.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_COPPER_GRATE.get(), NTrialsModBlocks.EXPOSED_COPPER_GRATE.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_COPPER_GRATE.get(), NTrialsModBlocks.WEATHERED_COPPER_GRATE.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_GRATE.get(), NTrialsModBlocks.OXIDIZED_COPPER_GRATE.get());
         // Unwaxování pro copper trapdoor
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.COPPER_TRAPDOOR.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get());
@@ -75,7 +92,10 @@ public class NTrialsModEvents{
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
 
-
+        // Scraping mapy pro COPPER GRATE
+        SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_GRATE.get(), NTrialsModBlocks.COPPER_GRATE.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_GRATE.get(), NTrialsModBlocks.EXPOSED_COPPER_GRATE.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_GRATE.get(), NTrialsModBlocks.WEATHERED_COPPER_GRATE.get());
         // Scraping mapy pro COPPER TRAPDOOR
         SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.COPPER_TRAPDOOR.get());
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get());
