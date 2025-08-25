@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class CopperBulbBlock extends Block implements WeatheringCopper {
     private final WeatherState level;
@@ -25,6 +26,16 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
         super(props);
         this.registerDefaultState(this.stateDefinition.any().setValue(LIT,false).setValue(POWERED,false));
         this.level=level;
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return state.getValue(LIT) ? 15 : 0;
     }
 
     @Override
