@@ -8,6 +8,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
@@ -47,10 +49,10 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
-        ItemStack itemInHand=player.getItemInHand(hand);
+        ItemStack stack = player.getItemInHand(hand);
 
-        // Honeycomb interakcia - waxovanie (výmena za waxed verziu) - POUZE když držíme shift
-        if(itemInHand.is(Items.HONEYCOMB)){
+        // Honeycomb waxing - POUZE když držíme shift
+        if(stack.is(Items.HONEYCOMB)){
             Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
             if(waxedBlock!=null){
                 if(!level.isClientSide){
@@ -90,7 +92,6 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                         level.setBlock(pos, newState1, 2 | 16);
                         level.setBlock(otherPos, newState2, 2 | 16);
 
-                        // Pošleme update klientům pro oba bloky
                         level.sendBlockUpdated(pos, state, newState1, 3);
                         level.sendBlockUpdated(otherPos, otherState, newState2, 3);
 
@@ -104,7 +105,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                             }
                         }
                         if(!player.isCreative()){
-                            itemInHand.shrink(1);
+                            stack.shrink(1);
                         }
                     }
                 }
@@ -113,9 +114,9 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
         }
 
         // Axe scraping - POUZE když držíme shift
-        if (itemInHand.getItem()instanceof AxeItem){
+        if(stack.getItem() instanceof AxeItem){
             Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
-            if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
+            if(scrapedBlock!=null){
                 if(!level.isClientSide){
                     // Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně
                     BlockPos otherPos;
@@ -153,7 +154,6 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                         level.setBlock(pos, newState1, 2 | 16);
                         level.setBlock(otherPos, newState2, 2 | 16);
 
-                        // Pošleme update klientům pro oba bloky
                         level.sendBlockUpdated(pos, state, newState1, 3);
                         level.sendBlockUpdated(otherPos, otherState, newState2, 3);
 
@@ -167,14 +167,14 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                             }
                         }
                         // Poškození nástroje
-                        itemInHand.hurtAndBreak(1,player,(p)->p.broadcastBreakEvent(hand));
+                        stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
                     }
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
 
-        // Pokud není shift stisknut NEBO není to honeycomb/axe, použij normální chování dveří
+        // Pokud není shift+honeycomb ani shift+axe, použij normální chování dveří
         return super.use(state, level, pos, player, hand, hit);
     }
 
@@ -240,7 +240,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                             .setValue(HALF, DoubleBlockHalf.LOWER);
 
                     BlockState newUpperState = nextBlock.defaultBlockState()
-                            .setValue(FACING, state.getValue(FACING)) // Horní díl má stejný FACING jako dolní
+                            .setValue(FACING, state.getValue(FACING)) // Horn�� díl má stejný FACING jako dolní
                             .setValue(OPEN, state.getValue(OPEN))
                             .setValue(HINGE, state.getValue(HINGE))
                             .setValue(POWERED, false) // Horní díl nikdy nemá power
