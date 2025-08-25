@@ -1,16 +1,11 @@
 package cz.maxtechnik.ntrials.init;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.block.CustomCopperBlock;
-import cz.maxtechnik.ntrials.block.TuffSlabBlock;
-import cz.maxtechnik.ntrials.block.TuffStairBlock;
-import cz.maxtechnik.ntrials.block.TuffWallBlock;
-import net.minecraft.world.food.FoodProperties;
+import cz.maxtechnik.ntrials.block.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -40,14 +35,19 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.EXPOSED_CHISELED_COPPER);
     public static final RegistryObject<Item>WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WEATHERED_CHISELED_COPPER);
     public static final RegistryObject<Item>OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER);
-
     public static final RegistryObject<Item>WAXED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER);
 
-
-
+    public static final RegistryObject<Item>COPPER_DOOR=block(NTrialsModBlocks.COPPER_DOOR);
+    public static final RegistryObject<Item>EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.EXPOSED_COPPER_DOOR);
+    public static final RegistryObject<Item>WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WEATHERED_COPPER_DOOR);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR);
 
 
 

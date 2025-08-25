@@ -13,7 +13,7 @@
           "type": "minecraft:item",
           "conditions": [
             {
-              "block": "minecraft:copper_door",
+              "block": "ntrials:copper_door",
               "condition": "minecraft:block_state_property",
               "properties": {
                 "half": "lower"
