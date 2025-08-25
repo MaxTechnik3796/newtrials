@@ -28,9 +28,10 @@ import java.util.Objects;
 public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, WeatheringCopper {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private final WeatherState level;
-    public CopperGrateBlock(BlockBehaviour.Properties props){
+
+    public CopperGrateBlock(WeatherState level, BlockBehaviour.Properties props){
         super(props);
-        this.level = WeatherState.UNAFFECTED;
+        this.level = level;
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED,false));
     }
     @Override
