@@ -1,4 +1,15 @@
 {
+  "creative_tab.ntrials.main": "NewTrials",
+
+  "effect.ntrials.infested": "Infested",
+  "effect.ntrials.oozing": "Oozing",
+  "effect.ntrials.weaving": "Weaving",
+
+
+  "block.ntrials.heavy_core": "§dHeavy Core§r",
+  "item.ntrials.trial_key": "Trial Key",
+  "item.ntrials.ominous_trial_key": "Ominous Trial Key",
+
   "block.ntrials.tuff_bricks": "Tuff Bricks",
   "block.ntrials.chiseled_tuff": "Chiseled Tuff",
   "block.ntrials.chiseled_tuff_bricks": "Chiseled Tuff Bricks",
@@ -72,9 +83,7 @@
   "block.ntrials.waxed_copper_bulb": "Waxed Copper Bulb",
   "block.ntrials.waxed_exposed_copper_bulb": "Waxed Exposed Copper Bulb",
   "block.ntrials.waxed_weathered_copper_bulb": "Waxed Weathered Copper Bulb",
-  "block.ntrials.waxed_oxidized_copper_bulb": "Waxed Oxidized Copper Bulb",
+  "block.ntrials.waxed_oxidized_copper_bulb": "Waxed Oxidized Copper Bulb"
 
 
-
-  "creative_tab.ntrials.main": "NewTrials"
 }

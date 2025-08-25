@@ -14,6 +14,9 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class NTrialsModBlocks{
     public static final DeferredRegister<Block>REGISTRY=DeferredRegister.create(ForgeRegistries.BLOCKS,NTrialsMod.MODID);
+
+    public static final RegistryObject<Block>HEAVY_CORE=REGISTRY.register("heavy_core",HeavyCoreBlock::new);
+
     // ---- Tuff stuff ----
     public static final RegistryObject<Block>TUFF_BRICKS=REGISTRY.register("tuff_bricks",TuffBlock::new);
     public static final RegistryObject<Block>CHISELED_TUFF=REGISTRY.register("chiseled_tuff",TuffBlock::new);
