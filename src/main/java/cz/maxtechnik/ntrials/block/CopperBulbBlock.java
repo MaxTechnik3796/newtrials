@@ -34,7 +34,22 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getValue(LIT) ? 15 : 0;
+        if (state.getValue(LIT)) {
+            if (this.level == WeatherState.UNAFFECTED) {
+                return 15;
+            } else if (this.level == WeatherState.EXPOSED) {
+                return 12;
+            } else if (this.level == WeatherState.WEATHERED) {
+                return 8;
+            } else if (this.level == WeatherState.OXIDIZED) {
+                return 4;
+            } else {
+                return 0;
+            }
+        }
+        else {
+            return 0;
+        }
     }
 
     @Override
