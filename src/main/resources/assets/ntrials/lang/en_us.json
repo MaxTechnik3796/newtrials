@@ -53,6 +53,19 @@
 
 
 
+  "block.ntrials.copper_grate": "Copper Grate",
+  "block.ntrials.exposed_copper_grate": "Exposed Copper Grate",
+  "block.ntrials.weathered_copper_grate": "Weathered Copper Grate",
+  "block.ntrials.oxidized_copper_grate": "Oxidized Copper Grate",
+
+  "block.ntrials.waxed_copper_grate": "Waxed Copper Grate",
+  "block.ntrials.waxed_exposed_copper_grate": "Waxed Exposed Copper Grate",
+  "block.ntrials.waxed_weathered_copper_grate": "Waxed Weathered Copper Grate",
+  "block.ntrials.waxed_oxidized_copper_grate": "Waxed Oxidized Copper Grate",
+
+
+
+
 
   "creative_tab.ntrials.main": "NewTrials"
 }

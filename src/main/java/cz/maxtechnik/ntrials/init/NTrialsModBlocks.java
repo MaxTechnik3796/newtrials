@@ -53,6 +53,12 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("weathered_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
     public static final RegistryObject<Block>OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
 
+    public static final RegistryObject<Block>COPPER_GRATE=REGISTRY.register("copper_grate",()->new CopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_GRATE=REGISTRY.register("exposed_copper_grate",()->new CopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_GRATE=REGISTRY.register("weathered_copper_grate",()->new CopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_GRATE=REGISTRY.register("oxidized_copper_grate",()->new CopperGrateBlock(copper_grate_props()));
+
+
 
     // ---- Waxed variant ----
     public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new WaxedCopperBlock(chiseled_copper_props()));
@@ -70,6 +76,11 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("waxed_weathered_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
     public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("waxed_oxidized_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
 
+    public static final RegistryObject<Block>WAXED_COPPER_GRATE=REGISTRY.register("waxed_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_GRATE=REGISTRY.register("waxed_exposed_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_GRATE=REGISTRY.register("waxed_weathered_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_GRATE=REGISTRY.register("waxed_oxidized_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
+
     private static BlockBehaviour.Properties chiseled_copper_props(){
         return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE);
     }
@@ -77,6 +88,9 @@ public class NTrialsModBlocks{
         return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false).pushReaction(PushReaction.DESTROY);
     }
     private static BlockBehaviour.Properties copper_trapdoor_props(){
+        return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false);
+    }
+    private static BlockBehaviour.Properties copper_grate_props(){
         return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false);
     }
 }
