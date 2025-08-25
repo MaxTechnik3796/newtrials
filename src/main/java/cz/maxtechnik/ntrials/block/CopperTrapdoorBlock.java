@@ -32,10 +32,10 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
         super(props,BlockSetType.OAK);
         this.level=level;
     }
-    //@Override
-    //public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
-    //    return 0;
-    //}
+    @Override
+    public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
+        return 0;
+    }
 
     @Override
     public @NotNull WeatherState getAge(){
