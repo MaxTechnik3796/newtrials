@@ -85,6 +85,10 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
         return super.updateShape(state,facing,facingState,world,currentPos,facingPos);
     }
 
+    //click functions
+
+
+
     @Override
     public void randomTick(@NotNull BlockState state, @NotNull ServerLevel serverLevel, @NotNull BlockPos pos, @NotNull RandomSource random){
         // Používame vanilla Minecraft logiku pro oxidáciu
