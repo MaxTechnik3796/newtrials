@@ -59,6 +59,12 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>OXIDIZED_COPPER_GRATE=REGISTRY.register("oxidized_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_grate_props()));
 
 
+    public static final RegistryObject<Block>COPPER_BULB=REGISTRY.register("copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_bulb_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_BULB=REGISTRY.register("exposed_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_bulb_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_BULB=REGISTRY.register("weathered_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_bulb_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_BULB=REGISTRY.register("oxidized_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_bulb_props()));
+
+
 
     // ---- Waxed variant ----
     public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new WaxedCopperBlock(chiseled_copper_props()));
@@ -92,5 +98,8 @@ public class NTrialsModBlocks{
     }
     private static BlockBehaviour.Properties copper_grate_props(){
         return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false);
+    }
+    public static BlockBehaviour.Properties copper_bulb_props(){
+        return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().lightLevel((bs)->15).mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false);
     }
 }
