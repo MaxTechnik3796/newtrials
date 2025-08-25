@@ -119,7 +119,11 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
         if(random.nextFloat()<oxidationChance){
             Block nextBlock= NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
             if(nextBlock!=null){
-                level.setBlockAndUpdate(pos,nextBlock.defaultBlockState());
+                BlockState nextState = nextBlock.defaultBlockState();
+                // Zachováme stav WATERLOGGED pri výmene bloku
+                nextState = nextState.setValue(WATERLOGGED, state.getValue(WATERLOGGED));
+
+                level.setBlockAndUpdate(pos,nextState);
             }
         }
     }
