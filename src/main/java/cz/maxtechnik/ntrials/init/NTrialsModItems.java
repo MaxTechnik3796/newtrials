@@ -49,6 +49,15 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR);
     public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR);
 
+    public static final RegistryObject<Item>COPPER_TRAPDOOR=block(NTrialsModBlocks.COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>EXPOSED_COPPER_TRAPDOOR=block(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WEATHERED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_TRAPDOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_TRAPDOOR);
+
 
 
 

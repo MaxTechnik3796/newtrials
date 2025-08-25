@@ -38,15 +38,20 @@ public class NTrialsModBlocks{
 
 
     // ---- Oxidizing variants ----
-    public static final RegistryObject<Block>CHISELED_COPPER=REGISTRY.register("chiseled_copper",()->new CustomCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED, chiseled_copper_props()));
-    public static final RegistryObject<Block>EXPOSED_CHISELED_COPPER=REGISTRY.register("exposed_chiseled_copper",()->new CustomCopperBlock(WeatheringCopper.WeatherState.EXPOSED, chiseled_copper_props()));
-    public static final RegistryObject<Block>WEATHERED_CHISELED_COPPER=REGISTRY.register("weathered_chiseled_copper",()->new CustomCopperBlock(WeatheringCopper.WeatherState.WEATHERED, chiseled_copper_props()));
-    public static final RegistryObject<Block>OXIDIZED_CHISELED_COPPER=REGISTRY.register("oxidized_chiseled_copper",()->new CustomCopperBlock(WeatheringCopper.WeatherState.OXIDIZED, chiseled_copper_props()));
+    public static final RegistryObject<Block>CHISELED_COPPER=REGISTRY.register("chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED, chiseled_copper_props()));
+    public static final RegistryObject<Block>EXPOSED_CHISELED_COPPER=REGISTRY.register("exposed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.EXPOSED, chiseled_copper_props()));
+    public static final RegistryObject<Block>WEATHERED_CHISELED_COPPER=REGISTRY.register("weathered_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.WEATHERED, chiseled_copper_props()));
+    public static final RegistryObject<Block>OXIDIZED_CHISELED_COPPER=REGISTRY.register("oxidized_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.OXIDIZED, chiseled_copper_props()));
 
     public static final RegistryObject<Block>COPPER_DOOR=REGISTRY.register("copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_door_props()));
     public static final RegistryObject<Block>EXPOSED_COPPER_DOOR=REGISTRY.register("exposed_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.EXPOSED, copper_door_props()));
     public static final RegistryObject<Block>WEATHERED_COPPER_DOOR=REGISTRY.register("weathered_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.WEATHERED, copper_door_props()));
     public static final RegistryObject<Block>OXIDIZED_COPPER_DOOR=REGISTRY.register("oxidized_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_door_props()));
+
+    public static final RegistryObject<Block>COPPER_TRAPDOOR=REGISTRY.register("copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("exposed_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("weathered_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
 
 
     // ---- Waxed variant ----
@@ -60,11 +65,18 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_DOOR=REGISTRY.register("waxed_weathered_copper_door",()->new WaxedCopperDoorBlock(copper_door_props()));
     public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_DOOR=REGISTRY.register("waxed_oxidized_copper_door",()->new WaxedCopperDoorBlock(copper_door_props()));
 
+    public static final RegistryObject<Block>WAXED_COPPER_TRAPDOOR=REGISTRY.register("waxed_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("waxed_exposed_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("waxed_weathered_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("waxed_oxidized_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
 
     private static BlockBehaviour.Properties chiseled_copper_props(){
-        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(3f,6f).sound(SoundType.COPPER).requiresCorrectToolForDrops();
+        return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE);
     }
     private static BlockBehaviour.Properties copper_door_props(){
-        return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().pushReaction(PushReaction.DESTROY).isRedstoneConductor((bs,br,bp)->false);
+        return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false).pushReaction(PushReaction.DESTROY);
+    }
+    private static BlockBehaviour.Properties copper_trapdoor_props(){
+        return BlockBehaviour.Properties.of().sound(SoundType.COPPER).strength(3f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_ORANGE).noOcclusion().isRedstoneConductor((bs,br,bp)->false);
     }
 }
