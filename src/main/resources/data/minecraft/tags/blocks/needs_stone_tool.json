@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "ntrials:chiseled_copper",
+    "ntrials:exposed_chiseled_copper",
+    "ntrials:weathered_chiseled_copper",
+    "ntrials:oxidized_chiseled_copper",
+    "ntrials:waxed_chiseled_copper",
+    "ntrials:waxed_exposed_chiseled_copper",
+    "ntrials:waxed_weathered_chiseled_copper",
+    "ntrials:waxed_oxidized_chiseled_copper",
+    "ntrials:copper_door",
+    "ntrials:exposed_copper_door",
+    "ntrials:weathered_copper_door",
+    "ntrials:oxidized_copper_door",
+    "ntrials:waxed_copper_door",
+    "ntrials:waxed_exposed_copper_door",
+    "ntrials:waxed_weathered_copper_door",
+    "ntrials:waxed_oxidized_copper_door"
+  ]
+}

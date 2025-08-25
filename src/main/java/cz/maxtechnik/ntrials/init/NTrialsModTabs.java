@@ -16,6 +16,18 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.CHISELED_TUFF_BRICKS.get().asItem());
         tabData.accept(NTrialsModBlocks.POLISHED_TUFF.get().asItem());
 
+        tabData.accept(NTrialsModBlocks.TUFF_STAIRS.get().asItem());
+        tabData.accept(NTrialsModBlocks.TUFF_BRICK_STAIRS.get().asItem());
+        tabData.accept(NTrialsModBlocks.POLISHED_TUFF_STAIRS.get().asItem());
+
+        tabData.accept(NTrialsModBlocks.TUFF_SLAB.get().asItem());
+        tabData.accept(NTrialsModBlocks.TUFF_BRICK_SLAB.get().asItem());
+        tabData.accept(NTrialsModBlocks.POLISHED_TUFF_SLAB.get().asItem());
+
+        tabData.accept(NTrialsModBlocks.TUFF_WALL.get().asItem());
+        tabData.accept(NTrialsModBlocks.TUFF_BRICK_WALL.get().asItem());
+        tabData.accept(NTrialsModBlocks.POLISHED_TUFF_WALL.get().asItem());
+
         tabData.accept(NTrialsModBlocks.CHISELED_COPPER.get().asItem());
         tabData.accept(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get().asItem());
         tabData.accept(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get().asItem());
@@ -24,5 +36,15 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER.get().asItem());
         tabData.accept(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get().asItem());
         tabData.accept(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get().asItem());
+
+        tabData.accept(NTrialsModBlocks.COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR.get().asItem());
+
     })).build());
 }

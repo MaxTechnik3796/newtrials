@@ -1,13 +1,11 @@
 package cz.maxtechnik.ntrials.init;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.block.CustomCopperBlock;
-import net.minecraft.world.food.FoodProperties;
+import cz.maxtechnik.ntrials.block.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -19,9 +17,17 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>CHISELED_TUFF_BRICKS=block(NTrialsModBlocks.CHISELED_TUFF_BRICKS);
     public static final RegistryObject<Item>POLISHED_TUFF=block(NTrialsModBlocks.POLISHED_TUFF);
 
-    public static final RegistryObject<Item> EXAMPLE_ITEM=REGISTRY.register("example_item", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().alwaysEat().nutrition(1).saturationMod(2f).build())));
-    public static final RegistryObject<Item>EXAMPLE_BLOCK=block(NTrialsModBlocks.EXAMPLE_BLOCK);
+    public static final RegistryObject<Item>TUFF_STAIRS=block(NTrialsModBlocks.TUFF_STAIRS);
+    public static final RegistryObject<Item>TUFF_BRICK_STAIRS=block(NTrialsModBlocks.TUFF_BRICK_STAIRS);
+    public static final RegistryObject<Item>POLISHED_TUFF_STAIRS=block(NTrialsModBlocks.POLISHED_TUFF_STAIRS);
 
+    public static final RegistryObject<Item>TUFF_SLAB=block(NTrialsModBlocks.TUFF_SLAB);
+    public static final RegistryObject<Item>TUFF_BRICK_SLAB=block(NTrialsModBlocks.TUFF_BRICK_SLAB);
+    public static final RegistryObject<Item>POLISHED_TUFF_SLAB=block(NTrialsModBlocks.POLISHED_TUFF_SLAB);
+
+    public static final RegistryObject<Item>TUFF_WALL=block(NTrialsModBlocks.TUFF_WALL);
+    public static final RegistryObject<Item>TUFF_BRICK_WALL=block(NTrialsModBlocks.TUFF_BRICK_WALL);
+    public static final RegistryObject<Item>POLISHED_TUFF_WALL=block(NTrialsModBlocks.POLISHED_TUFF_WALL);
 
 
 
@@ -29,14 +35,19 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.EXPOSED_CHISELED_COPPER);
     public static final RegistryObject<Item>WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WEATHERED_CHISELED_COPPER);
     public static final RegistryObject<Item>OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER);
-
     public static final RegistryObject<Item>WAXED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER);
 
-
-
+    public static final RegistryObject<Item>COPPER_DOOR=block(NTrialsModBlocks.COPPER_DOOR);
+    public static final RegistryObject<Item>EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.EXPOSED_COPPER_DOOR);
+    public static final RegistryObject<Item>WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WEATHERED_COPPER_DOOR);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR);
 
 
 

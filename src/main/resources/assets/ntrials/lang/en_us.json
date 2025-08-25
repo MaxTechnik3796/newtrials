@@ -4,6 +4,19 @@
   "block.ntrials.chiseled_tuff_bricks": "Chiseled Tuff Bricks",
   "block.ntrials.polished_tuff": "Polished Tuff",
 
+  "block.ntrials.tuff_stairs": "Tuff Stairs",
+  "block.ntrials.tuff_brick_stairs": "Tuff Brick Stairs",
+  "block.ntrials.polished_tuff_stairs": "Polished Tuff Stairs",
+
+  "block.ntrials.tuff_slab": "Tuff Slab",
+  "block.ntrials.tuff_brick_slab": "Tuff Brick Slab",
+  "block.ntrials.polished_tuff_slab": "Polished Tuff Slab",
+
+  "block.ntrials.tuff_wall": "Tuff Wall",
+  "block.ntrials.tuff_brick_wall": "Tuff Brick Wall",
+  "block.ntrials.polished_tuff_wall": "Polished Tuff Wall",
+
+
   "block.ntrials.chiseled_copper": "Chiseled Copper",
   "block.ntrials.exposed_chiseled_copper": "Exposed Chiseled Copper",
   "block.ntrials.weathered_chiseled_copper": "Weathered Chiseled Copper",
@@ -13,6 +26,20 @@
   "block.ntrials.waxed_exposed_chiseled_copper": "Waxed Exposed Chiseled Copper",
   "block.ntrials.waxed_weathered_chiseled_copper": "Waxed Weathered Chiseled Copper",
   "block.ntrials.waxed_oxidized_chiseled_copper": "Waxed Oxidized Chiseled Copper",
+
+
+  "block.ntrials.copper_door": "Copper Door",
+  "block.ntrials.exposed_copper_door": "Exposed Copper Door",
+  "block.ntrials.weathered_copper_door": "Weathered Copper Door",
+  "block.ntrials.oxidized_copper_door": "Oxidized Copper Door",
+
+  "block.ntrials.waxed_copper_door": "Waxed Copper Door",
+  "block.ntrials.waxed_exposed_copper_door": "Waxed Exposed Copper Door",
+  "block.ntrials.waxed_weathered_copper_door": "Waxed Weathered Copper Door",
+  "block.ntrials.waxed_oxidized_copper_door": "Waxed Oxidized Copper Door",
+
+
+
 
 
 

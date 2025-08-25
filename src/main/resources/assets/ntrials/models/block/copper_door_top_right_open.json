@@ -3,5 +3,6 @@
   "textures": {
     "bottom": "ntrials:block/copper_door_bottom",
     "top": "ntrials:block/copper_door_top"
-  }
+  },
+  "render_type": "cutout"
 }
