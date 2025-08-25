@@ -48,10 +48,10 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>WEATHERED_COPPER_DOOR=REGISTRY.register("weathered_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.WEATHERED, copper_door_props()));
     public static final RegistryObject<Block>OXIDIZED_COPPER_DOOR=REGISTRY.register("oxidized_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_door_props()));
 
-    public static final RegistryObject<Block>COPPER_TRAPDOOR=REGISTRY.register("copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
-    public static final RegistryObject<Block>EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("exposed_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
-    public static final RegistryObject<Block>WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("weathered_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
-    public static final RegistryObject<Block>OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>COPPER_TRAPDOOR=REGISTRY.register("copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_trapdoor_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("exposed_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.EXPOSED, copper_trapdoor_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("weathered_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.WEATHERED, copper_trapdoor_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_trapdoor_props()));
 
 
     // ---- Waxed variant ----

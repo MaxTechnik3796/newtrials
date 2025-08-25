@@ -24,6 +24,10 @@ public class NTrialsModEvents{
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.CHISELED_COPPER.get(),NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get(),NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get(),NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
+        //oxidace pro copper trapdoor
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.COPPER_TRAPDOOR.get(),NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR.get(),NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get());
+        OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR.get(),NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR.get());
 
         // Oxidační mapy pro COPPER DOORS
         OXIDATION_LEVEL_INCREASES.put(NTrialsModBlocks.COPPER_DOOR.get(),NTrialsModBlocks.EXPOSED_COPPER_DOOR.get());
