@@ -58,7 +58,16 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);
             if (state.getValue(POWERED) != powered) {
-                level.setBlock(pos, state.setValue(POWERED, powered).setValue(LIT, powered), 3);
+                BlockState new_state = state;
+                new_state = new_state.setValue(POWERED, powered);
+                if (powered) {
+                    if (state.getValue(LIT)) {
+                        new_state = new_state.setValue(LIT, false);
+                    } else {
+                        new_state = new_state.setValue(LIT, true);
+                    }
+                }
+                level.setBlock(pos, new_state, 3);
             }
         }
     }
