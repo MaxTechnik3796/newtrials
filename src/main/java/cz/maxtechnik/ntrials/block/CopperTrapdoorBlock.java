@@ -10,6 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -81,6 +82,37 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
                     }
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+            //axe scraping
+            if (itemInHand.getItem()instanceof AxeItem){
+                Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
+                if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
+                    if(!level.isClientSide){
+                        BlockState stateAtPos = level.getBlockState(pos);
+                        // Zachováváme orientáciu a stav trapdoor
+                        BlockState nextState= waxedBlock.defaultBlockState()
+                                .setValue(FACING, stateAtPos.getValue(FACING))
+                                .setValue(OPEN, stateAtPos.getValue(OPEN))
+                                .setValue(HALF, stateAtPos.getValue(HALF))
+                                .setValue(POWERED, stateAtPos.getValue(POWERED))
+                                .setValue(WATERLOGGED, stateAtPos.getValue(WATERLOGGED));
+
+                        level.setBlock(pos,nextState,3);
+
+                        level.playSound(null,pos,SoundEvents.AXE_SCRAPE,SoundSource.BLOCKS,1.0f,1.0f);
+                        if(level instanceof ServerLevel serverLevel){
+                            for(int i=0;i<20;i++){
+                                double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
+                                double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
+                                double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
+                                serverLevel.sendParticles(ParticleTypes.SCRAPE,x,y,z,1,0,0,0,0.05);
+                            }
+                        }
+                        // Poškodenie nástroja
+                        itemInHand.hurtAndBreak(1,player,(p)->p.broadcastBreakEvent(hand));
+                    }
+                    return InteractionResult.sidedSuccess(level.isClientSide);
+                }
             }
         }
         return super.use(state,level,pos,player,hand,hit);
