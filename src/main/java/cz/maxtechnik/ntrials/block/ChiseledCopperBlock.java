@@ -21,10 +21,10 @@ import cz.maxtechnik.ntrials.NTrialsModEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class CustomCopperBlock extends Block implements WeatheringCopper{
+public class ChiseledCopperBlock extends Block implements WeatheringCopper{
     private final WeatherState level;
 
-    public CustomCopperBlock(WeatherState level, BlockBehaviour.Properties props){
+    public ChiseledCopperBlock(WeatherState level, BlockBehaviour.Properties props){
         super(props);
         this.level=level;
     }
