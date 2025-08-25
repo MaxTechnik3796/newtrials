@@ -30,5 +30,5 @@ public class WaxedCopperDoorBlock extends DoorBlock {
     public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
         return 0;
     }
-    
+
 }
