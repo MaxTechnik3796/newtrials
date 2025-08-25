@@ -55,5 +55,14 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.WAXED_WEATHERED_COPPER_TRAPDOOR.get().asItem());
         tabData.accept(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_TRAPDOOR.get().asItem());
 
+        tabData.accept(NTrialsModBlocks.COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.EXPOSED_COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.WEATHERED_COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.OXIDIZED_COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_EXPOSED_COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_WEATHERED_COPPER_GRATE.get().asItem());
+        tabData.accept(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_GRATE.get().asItem());
+
     })).build());
 }

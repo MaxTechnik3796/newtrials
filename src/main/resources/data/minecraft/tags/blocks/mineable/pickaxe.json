@@ -38,6 +38,14 @@
     "ntrials:waxed_copper_trapdoor",
     "ntrials:waxed_exposed_copper_trapdoor",
     "ntrials:waxed_weathered_copper_trapdoor",
-    "ntrials:waxed_oxidized_copper_trapdoor"
+    "ntrials:waxed_oxidized_copper_trapdoor",
+    "ntrials:copper_grate",
+    "ntrials:exposed_copper_grate",
+    "ntrials:weathered_copper_grate",
+    "ntrials:oxidized_copper_grate",
+    "ntrials:waxed_copper_grate",
+    "ntrials:waxed_exposed_copper_grate",
+    "ntrials:waxed_weathered_copper_grate",
+    "ntrials:waxed_oxidized_copper_grate"
   ]
 }
