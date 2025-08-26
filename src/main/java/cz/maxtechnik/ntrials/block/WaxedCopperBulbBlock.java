@@ -19,11 +19,12 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 //main class
 
 public class WaxedCopperBulbBlock extends Block{
+    private final WeatheringCopper.WeatherState weatheringLevel;
     public static final BooleanProperty LIT=BooleanProperty.create("lit");
     public static final BooleanProperty POWERED=BooleanProperty.create("powered");
-    public WaxedCopperBulbBlock(Properties props){
+    public WaxedCopperBulbBlock(WeatheringCopper.WeatherState weatheringLevel, Properties props){
         super(props);
-
+        this.weatheringLevel = weatheringLevel;
         this.registerDefaultState(this.stateDefinition.any().setValue(LIT,false).setValue(POWERED,false));
     }
     @Override
@@ -46,7 +47,18 @@ public class WaxedCopperBulbBlock extends Block{
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         if (state.getValue(LIT)) {
-            return 15;
+            switch (this.weatheringLevel) {
+                case UNAFFECTED:
+                    return 15;
+                case EXPOSED:
+                    return 12;
+                case WEATHERED:
+                    return 8;
+                case OXIDIZED:
+                    return 4;
+                default:
+                    return 0;
+            }
         }
         else {
             return 0;
