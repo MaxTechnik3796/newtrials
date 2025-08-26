@@ -128,7 +128,11 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
             Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
             if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
                 if(!level.isClientSide){
-                    level.setBlock(pos,scrapedBlock.defaultBlockState(),3);
+                    BlockState new_state = scrapedBlock.defaultBlockState();
+                    new_state=new_state.setValue(LIT,state.getValue(LIT));
+                    new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+
+                    level.setBlock(pos,new_state,3);
                     level.playSound(null,pos,SoundEvents.AXE_SCRAPE,SoundSource.BLOCKS,1.0f,1.0f);
                     if(level instanceof ServerLevel serverLevel){
                         for(int i=0;i<20;i++){
