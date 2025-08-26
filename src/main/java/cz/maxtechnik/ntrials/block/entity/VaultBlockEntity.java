@@ -31,15 +31,7 @@ public class VaultBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    public boolean shouldShowMessage(UUID playerUuid, long currentTime) {
-        // Zobrazí zprávu pouze jednou za 5 sekund (5000ms)
-        Long lastTime = lastMessageTime.get(playerUuid);
-        if (lastTime == null || currentTime - lastTime > 5000) {
-            lastMessageTime.put(playerUuid, currentTime);
-            return true;
-        }
-        return false;
-    }
+    
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
