@@ -225,7 +225,7 @@ public class VaultBlock extends BaseEntityBlock {
 
         for (Player nearbyPlayer : players) {
             // Pokud hráč ještě neotevřel vault a měla by se zobrazit zpráva
-            if (!vaultEntity.hasPlayerOpened(nearbyPlayer.getUUID()) {
+            if (!vaultEntity.hasPlayerOpened(nearbyPlayer.getUUID())) {
                 BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
                 level.setBlock(pos, newState, Block.UPDATE_ALL);
 

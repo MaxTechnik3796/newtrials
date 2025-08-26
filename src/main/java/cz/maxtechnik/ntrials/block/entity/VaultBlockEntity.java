@@ -31,7 +31,7 @@ public class VaultBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    
+
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
