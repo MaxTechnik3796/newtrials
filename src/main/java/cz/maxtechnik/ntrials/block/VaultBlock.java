@@ -92,7 +92,7 @@ public class VaultBlock extends BaseEntityBlock {
             if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                 if (vaultEntity.hasPlayerOpened(player.getUUID())) {
                     // Hráč již otevřel tento vault
-                    player.displayClientMessage(Component.literal("Tento vault už jsi otevřel!"), true);
+                    player.displayClientMessage(Component.literal("You Alerdy Opened This Vault."), true);
                     return InteractionResult.FAIL;
                 }
             }
@@ -219,10 +219,12 @@ public class VaultBlock extends BaseEntityBlock {
                 ItemEntity drop = new ItemEntity(
                     level,
                     pos.getX() + 0.5,
-                    pos.getY() + 1,
+                    pos.getY() + 1.0,
                     pos.getZ() + 0.5,
                     stack.copy()
                 );
+                drop.setDeltaMovement(0.0, 0.15, 0.0); // X, Y, Z rychlost
+                drop.setPickUpDelay(10);
                 level.addFreshEntity(drop);
                 vaultEntity.incrementLootDropIndex();
             }
