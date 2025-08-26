@@ -1,19 +1,43 @@
 package cz.maxtechnik.ntrials.block;
 
+import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
+import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class VaultBlock extends Block{
+import java.util.List;
+
+public class VaultBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING=HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
     public static final EnumProperty<VaultState>STATE=EnumProperty.create("vault_state",VaultState.class);
@@ -52,5 +76,126 @@ public class VaultBlock extends Block{
     @Override
     public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
         return 0;
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos,
+                                 Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack heldItem = player.getItemInHand(hand);
+
+        // Zkontroluje, zda má blok block entity a zda hráč již otevřel tento vault
+        if (!level.isClientSide) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                if (vaultEntity.hasPlayerOpened(player.getUUID())) {
+                    // Hráč již otevřel tento vault
+                    player.displayClientMessage(Component.literal("Tento vault už jsi otevřel!"), true);
+                    return InteractionResult.FAIL;
+                }
+            }
+        }
+
+        if (!state.getValue(OMINOUS)) {
+            if (heldItem.getItem() == NTrialsModItems.TRIAL_KEY.get()) {
+                if (!level.isClientSide) {
+                    // Označí hráče jako toho, kdo otevřel vault
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                        vaultEntity.addPlayerWhoOpened(player.getUUID());
+                    }
+
+                    // Získání LootTable (např. desert pyramid chest)
+                    ResourceLocation lootTableId = BuiltInLootTables.DESERT_PYRAMID;
+                    LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
+
+                    // Kontext – kdo otevřel, kde, atd.
+                    LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
+                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                            .withParameter(LootContextParams.THIS_ENTITY, player)
+                            .withLuck(player.getLuck());
+
+                    // Vygenerování dropů
+                    List<ItemStack> loot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
+
+                    BlockState newState = state.setValue(STATE, VaultState.EJECTING);
+                    level.setBlock(pos, newState, Block.UPDATE_ALL);
+
+                    // Vyhození itemů do světa
+                    if (!player.getAbilities().instabuild) {
+                        heldItem.shrink(1);
+                    }
+
+                    for (ItemStack stack : loot) {
+                        ItemEntity drop = new ItemEntity(
+                                level,
+                                pos.getX() + 0.5,
+                                pos.getY() + 1,
+                                pos.getZ() + 0.5,
+                                stack
+                        );
+                        level.addFreshEntity(drop);
+                    }
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+        } else {
+            if (heldItem.getItem() == NTrialsModItems.OMINOUS_TRIAL_KEY.get()) {
+                if (!level.isClientSide) {
+                    // Označí hráče jako toho, kdo otevřel vault
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                        vaultEntity.addPlayerWhoOpened(player.getUUID());
+                    }
+
+                    // Získání LootTable (např. desert pyramid chest)
+                    ResourceLocation lootTableId = BuiltInLootTables.DESERT_PYRAMID;
+                    LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
+
+                    // Kontext – kdo otevřel, kde, atd.
+                    LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
+                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                            .withParameter(LootContextParams.THIS_ENTITY, player)
+                            .withLuck(player.getLuck());
+
+                    // Vygenerování dropů
+                    List<ItemStack> loot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
+
+                    // Vyhození itemů do světa
+                    BlockState newState = state.setValue(STATE, VaultState.EJECTING);
+                    level.setBlock(pos, newState, Block.UPDATE_ALL);
+
+                    if (!player.getAbilities().instabuild) {
+                        heldItem.shrink(1);
+                    }
+
+                    for (ItemStack stack : loot) {
+                        ItemEntity drop = new ItemEntity(
+                                level,
+                                pos.getX() + 0.5,
+                                pos.getY() + 1,
+                                pos.getZ() + 0.5,
+                                stack
+                        );
+                        level.addFreshEntity(drop);
+                    }
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        return InteractionResult.PASS;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new VaultBlockEntity(pos, state);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 }
