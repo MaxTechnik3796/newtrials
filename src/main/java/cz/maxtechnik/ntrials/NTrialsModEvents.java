@@ -64,11 +64,23 @@ public class NTrialsModEvents{
         WAXING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get(), NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR.get());
         WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get(), NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR.get());
 
+        // Waxování mapy pro COPPER bulb
+        WAXING_MAP.put(NTrialsModBlocks.COPPER_BULB.get(), NTrialsModBlocks.WAXED_COPPER_BULB.get());
+        WAXING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_BULB.get(), NTrialsModBlocks.WAXED_EXPOSED_COPPER_BULB.get());
+        WAXING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_BULB.get(), NTrialsModBlocks.WAXED_WEATHERED_COPPER_BULB.get());
+        WAXING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_BULB.get(), NTrialsModBlocks.WAXED_OXIDIZED_COPPER_BULB.get());
+
         // Unwaxování je opačná operace
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_CHISELED_COPPER.get(), NTrialsModBlocks.CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER.get(), NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER.get(), NTrialsModBlocks.WEATHERED_CHISELED_COPPER.get());
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER.get(), NTrialsModBlocks.OXIDIZED_CHISELED_COPPER.get());
+
+        //unwaxing map for bulb
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_BULB.get(), NTrialsModBlocks.COPPER_BULB.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_EXPOSED_COPPER_BULB.get(), NTrialsModBlocks.EXPOSED_COPPER_BULB.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_WEATHERED_COPPER_BULB.get(), NTrialsModBlocks.WEATHERED_COPPER_BULB.get());
+        UNWAXING_MAP.put(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_BULB.get(), NTrialsModBlocks.OXIDIZED_COPPER_BULB.get());
 
         //unwaxing for copper grate
         UNWAXING_MAP.put(NTrialsModBlocks.WAXED_COPPER_GRATE.get(), NTrialsModBlocks.COPPER_GRATE.get());

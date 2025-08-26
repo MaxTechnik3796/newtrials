@@ -1,6 +1,7 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsModEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -10,10 +11,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WeatheringCopper;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -25,21 +26,23 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-public class CopperBulbBlock extends Block implements WeatheringCopper {
-    private final WeatherState level;
+
+//main class
+
+public class WaxedCopperBulbBlock extends Block{
+    private final WeatheringCopper.WeatherState weatheringLevel;
     public static final BooleanProperty LIT=BooleanProperty.create("lit");
     public static final BooleanProperty POWERED=BooleanProperty.create("powered");
+    public WaxedCopperBulbBlock(WeatheringCopper.WeatherState weatheringLevel, Properties props){
+        super(props);
+        this.weatheringLevel = weatheringLevel;
+        this.registerDefaultState(this.stateDefinition.any().setValue(LIT,false).setValue(POWERED,false));
+    }
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState>builder){
         builder.add(LIT);
         builder.add(POWERED);
     }
-    public CopperBulbBlock(WeatherState level, BlockBehaviour.Properties props){
-        super(props);
-        this.registerDefaultState(this.stateDefinition.any().setValue(LIT,false).setValue(POWERED,false));
-        this.level=level;
-    }
-
     @Override
     public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
@@ -50,24 +53,22 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
         return state.getValue(LIT) ? 15 : 0;
     }
 
-    @Override
-    public @NotNull WeatherState getAge(){
-        return this.level;
-    }
+
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         if (state.getValue(LIT)) {
-            if (this.level == WeatherState.UNAFFECTED) {
-                return 15;
-            } else if (this.level == WeatherState.EXPOSED) {
-                return 12;
-            } else if (this.level == WeatherState.WEATHERED) {
-                return 8;
-            } else if (this.level == WeatherState.OXIDIZED) {
-                return 4;
-            } else {
-                return 0;
+            switch (this.weatheringLevel) {
+                case UNAFFECTED:
+                    return 15;
+                case EXPOSED:
+                    return 12;
+                case WEATHERED:
+                    return 8;
+                case OXIDIZED:
+                    return 4;
+                default:
+                    return 0;
             }
         }
         else {
@@ -96,35 +97,37 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
-        ItemStack itemInHand=player.getItemInHand(hand);
-        // Honeycomb interakcia - waxovanie (výmena za waxed verziu)
-        if(itemInHand.is(Items.HONEYCOMB)){
-            Block waxedBlock= NTrialsModEvents.WAXING_MAP.get(this);
-            if(waxedBlock!=null){
-                if(!level.isClientSide){
-                    BlockState new_state=waxedBlock.defaultBlockState();
-                    new_state=new_state.setValue(LIT,state.getValue(LIT));
-                    new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack itemInHand = player.getItemInHand(hand);
 
-                    level.setBlock(pos,new_state,3);
-                    level.playSound(null,pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS,1f,1f);
-                    if(level instanceof ServerLevel serverLevel){
-                        for(int i=0;i<20;i++){
-                            double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
-                            double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
-                            double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
-                            serverLevel.sendParticles(ParticleTypes.WAX_ON,x,y,z,1,0,0,0,0.05);
+        // Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)
+        if (itemInHand.getItem() instanceof AxeItem) {
+            Block unwaxedBlock = NTrialsModEvents.UNWAXING_MAP.get(this);
+            if (unwaxedBlock != null) {
+                if (!level.isClientSide) {
+
+                    BlockState new_state = unwaxedBlock.defaultBlockState();
+                    new_state = new_state.setValue(LIT, state.getValue(LIT));
+                    new_state = new_state.setValue(POWERED, state.getValue(POWERED));
+
+                    level.setBlock(pos, new_state, 3);
+                    level.playSound(null, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    if (level instanceof ServerLevel serverLevel) {
+                        for (int i = 0; i < 20; i++) {
+                            double x = pos.getX() - 0.2 + level.random.nextDouble() * 1.4;
+                            double y = pos.getY() - 0.2 + level.random.nextDouble() * 1.4;
+                            double z = pos.getZ() - 0.2 + level.random.nextDouble() * 1.4;
+                            serverLevel.sendParticles(ParticleTypes.WAX_OFF, x, y, z, 1, 0.0, 0.0, 0.0, 0.05);
                         }
                     }
-                    if(!player.isCreative()){
-                        itemInHand.shrink(1);
-                    }
+                    // Poškodenie nástroja
+                    itemInHand.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
 
-        return super.use(state,level,pos,player,hand,hit);
+        return super.use(state, level, pos, player, hand, hit);
     }
+
 }

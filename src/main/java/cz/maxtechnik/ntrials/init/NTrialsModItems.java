@@ -40,12 +40,6 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>WAXED_WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER);
     public static final RegistryObject<Item>WAXED_OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER);
 
-    public static final RegistryObject<Item>COPPER_BULB=block(NTrialsModBlocks.COPPER_BULB);
-    public static final RegistryObject<Item>EXPOSED_COPPER_BULB=block(NTrialsModBlocks.EXPOSED_COPPER_BULB);
-    public static final RegistryObject<Item>WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WEATHERED_COPPER_BULB);
-    public static final RegistryObject<Item>OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.OXIDIZED_COPPER_BULB);
-
-
     public static final RegistryObject<Item>COPPER_DOOR=block(NTrialsModBlocks.COPPER_DOOR);
     public static final RegistryObject<Item>EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.EXPOSED_COPPER_DOOR);
     public static final RegistryObject<Item>WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WEATHERED_COPPER_DOOR);
@@ -73,8 +67,14 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_GRATE);
     public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_GRATE);
 
-
-
+    public static final RegistryObject<Item>COPPER_BULB=block(NTrialsModBlocks.COPPER_BULB);
+    public static final RegistryObject<Item>EXPOSED_COPPER_BULB=block(NTrialsModBlocks.EXPOSED_COPPER_BULB);
+    public static final RegistryObject<Item>WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WEATHERED_COPPER_BULB);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.OXIDIZED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_COPPER_BULB=block(NTrialsModBlocks.WAXED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_BULB=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_BULB);
 
     private static RegistryObject<Item>block(RegistryObject<Block>block){
         assert block.getId()!=null;
