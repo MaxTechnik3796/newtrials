@@ -124,6 +124,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
+        // Axe interakcia - čistenie (výmena za menej zoxidovanú verziu)
         if (itemInHand.getItem()instanceof AxeItem){
             Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
             if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
