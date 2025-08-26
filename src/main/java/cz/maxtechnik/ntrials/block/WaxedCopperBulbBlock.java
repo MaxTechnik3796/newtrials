@@ -67,7 +67,7 @@ public class WaxedCopperBulbBlock extends Block{
             }
         }
     }
-
+    // WeatheringCopper interface method
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         if (state.getValue(LIT)) {
