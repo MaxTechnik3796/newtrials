@@ -200,10 +200,9 @@ public class VaultBlock extends BaseEntityBlock {
     }
 
     private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
-        // Kontroluje každých 20 ticků (1 sekunda)
-        if (level.getGameTime() % 20 == 0) {
-            checkNearbyPlayers(level, pos, vaultEntity,state);
-        }
+
+        checkNearbyPlayers(level, pos, vaultEntity,state);
+
     }
 
     private static void checkNearbyPlayers(Level level, BlockPos pos, VaultBlockEntity vaultEntity, BlockState state) {
@@ -230,7 +229,7 @@ public class VaultBlock extends BaseEntityBlock {
                 vaultEntity.shouldShowMessage(nearbyPlayer.getUUID(), currentTime)) {
                 BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
                 level.setBlock(pos, newState, Block.UPDATE_ALL);
-                nearbyPlayer.displayClientMessage(Component.literal("Vault je připraven"), true);
+
             }
         }
     }
