@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "ntrials:heavy_core",
     "ntrials:chiseled_copper",
     "ntrials:exposed_chiseled_copper",
     "ntrials:weathered_chiseled_copper",

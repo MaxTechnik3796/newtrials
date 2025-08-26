@@ -26,6 +26,7 @@ public class NTrialsMod{
         NTrialsModBlocks.REGISTRY.register(modEventBus);
         NTrialsModItems.REGISTRY.register(modEventBus);
         NTrialsModTabs.REGISTER.register(modEventBus);
+        NTrialsModMobEffects.REGISTER.register(modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,Config.SPEC);
     }
     private void commonSetup(final FMLCommonSetupEvent event){

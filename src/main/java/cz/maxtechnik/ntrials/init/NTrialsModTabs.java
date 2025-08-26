@@ -11,6 +11,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class NTrialsModTabs{
     public static final DeferredRegister<CreativeModeTab>REGISTER=DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NTrialsMod.MODID);
     public static final RegistryObject<CreativeModeTab>MAIN=REGISTER.register("main",()-> CreativeModeTab.builder().title(Component.translatable("creative_tab.ntrials.main")).icon(()->new ItemStack(NTrialsModBlocks.TUFF_BRICKS.get().asItem())).displayItems(((parameters,tabData)->{
+        tabData.accept(NTrialsModBlocks.HEAVY_CORE.get().asItem());
+
         tabData.accept(NTrialsModBlocks.TUFF_BRICKS.get().asItem());
         tabData.accept(NTrialsModBlocks.CHISELED_TUFF.get().asItem());
         tabData.accept(NTrialsModBlocks.CHISELED_TUFF_BRICKS.get().asItem());
