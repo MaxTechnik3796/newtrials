@@ -124,6 +124,30 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
+        if (itemInHand.getItem()instanceof AxeItem){
+            Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
+            if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
+                if(!level.isClientSide){
+                    BlockState new_state = scrapedBlock.defaultBlockState();
+                    new_state=new_state.setValue(LIT,state.getValue(LIT));
+                    new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+
+                    level.setBlock(pos,new_state,3);
+                    level.playSound(null,pos,SoundEvents.AXE_SCRAPE,SoundSource.BLOCKS,1.0f,1.0f);
+                    if(level instanceof ServerLevel serverLevel){
+                        for(int i=0;i<20;i++){
+                            double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
+                            double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
+                            double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
+                            serverLevel.sendParticles(ParticleTypes.SCRAPE,x,y,z,1,0,0,0,0.05);
+                        }
+                    }
+                    // Poškodenie nástroja
+                    itemInHand.hurtAndBreak(1,player,(p)->p.broadcastBreakEvent(hand));
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
 
         return super.use(state,level,pos,player,hand,hit);
     }
