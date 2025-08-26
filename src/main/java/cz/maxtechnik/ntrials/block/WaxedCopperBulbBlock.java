@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 
-
+//main class
 
 public class WaxedCopperBulbBlock extends Block{
     private final WeatheringCopper.WeatherState weatheringLevel;
