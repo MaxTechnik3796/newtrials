@@ -46,7 +46,20 @@ public class WaxedCopperBulbBlock extends Block{
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         if (state.getValue(LIT)) {
-            return 15;
+            if (this instanceof WeatheringCopper weatheringCopper) {
+                WeatheringCopper.WeatherState weatherState = weatheringCopper.getAge();
+                switch (weatherState) {
+                    case UNAFFECTED:
+                        return 15;
+                    case EXPOSED:
+                        return 12;
+                    case WEATHERED:
+                        return 8;
+                    case OXIDIZED:
+                        return 4;
+                }
+            }
+            return 0;
         }
         else {
             return 0;
