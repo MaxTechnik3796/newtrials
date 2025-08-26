@@ -5,6 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -95,6 +96,13 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
         }
     }
 
+
+    @Override
+    public boolean isRandomlyTicking(@NotNull BlockState state){
+        // Blok môže oxidovať iba ak nie je na najvyššom stupni oxidácie (OXIDIZED)
+        return this.getAge()!=WeatherState.OXIDIZED;
+    }
+
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
         ItemStack itemInHand=player.getItemInHand(hand);
@@ -124,6 +132,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
+        // Axe interakcia - čistenie (výmena za menej zoxidovanú verziu)
         if (itemInHand.getItem()instanceof AxeItem){
             Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
             if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
@@ -151,4 +160,48 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
 
         return super.use(state,level,pos,player,hand,hit);
     }
+
+
+    @Override
+    public void randomTick(@NotNull BlockState state,@NotNull ServerLevel serverLevel,@NotNull BlockPos pos,@NotNull RandomSource random){
+        // Používame vanilla Minecraft logiku pro oxidáciu
+        this.changeOverTime(state,serverLevel,pos,random);
+    }
+    // Implementujeme vlastní changeOverTime metódu s vanilla logikou
+    private void changeOverTime(BlockState state,ServerLevel level,BlockPos pos,RandomSource random){
+        // Vanilla oxidácia má pravděpodobnosť približne 1/17.6 na každý random tick
+        if(random.nextFloat()< 0.05688889f){
+            this.tryOxidize(state,level,pos,random);
+        }
+    }
+    // Vanilla logika oxidácie
+    private void tryOxidize(BlockState state, ServerLevel level, BlockPos pos, RandomSource random){
+        int nearbyOxidizedBlocks=0;
+        // Kontrolujeme 4x4x4 oblasť okolo bloku (vanilla logika)
+        for(BlockPos nearbyPos:BlockPos.betweenClosed(pos.offset(-2,-2,-2),pos.offset(2,2,2))){
+            if(nearbyPos.distManhattan(pos)<=4){
+                BlockState nearbyState=level.getBlockState(nearbyPos);
+                Block nearbyBlock=nearbyState.getBlock();
+                // Počítame oxidované bloky v okolí
+                if(nearbyBlock instanceof WeatheringCopper copper){
+                    WeatherState nearbyAge=copper.getAge();
+                    if(nearbyAge==WeatherState.OXIDIZED){
+                        nearbyOxidizedBlocks++;
+                    }
+                }
+            }
+        }
+        // Výpočet šance na oxidáciu na základe okolia (vanilla logika)
+        float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
+        if(random.nextFloat()<oxidationChance){
+            Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+            if(nextBlock!=null){
+                BlockState new_state=nextBlock.defaultBlockState();
+                new_state=new_state.setValue(LIT,state.getValue(LIT));
+                new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+                level.setBlockAndUpdate(pos,new_state);
+            }
+        }
+    }
+
 }
