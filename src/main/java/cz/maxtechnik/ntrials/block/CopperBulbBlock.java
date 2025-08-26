@@ -103,7 +103,11 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
             Block waxedBlock= NTrialsModEvents.WAXING_MAP.get(this);
             if(waxedBlock!=null){
                 if(!level.isClientSide){
-                    level.setBlock(pos,waxedBlock.defaultBlockState(),3);
+                    BlockState new_state=waxedBlock.defaultBlockState();
+                    new_state=new_state.setValue(LIT,state.getValue(LIT));
+                    new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+
+                    level.setBlock(pos,new_state,3);
                     level.playSound(null,pos, SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS,1f,1f);
                     if(level instanceof ServerLevel serverLevel){
                         for(int i=0;i<20;i++){
