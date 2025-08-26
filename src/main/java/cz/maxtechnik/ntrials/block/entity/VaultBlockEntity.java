@@ -4,12 +4,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -17,6 +20,12 @@ import java.util.UUID;
 public class VaultBlockEntity extends BlockEntity {
     private final Set<UUID> playersWhoOpened = new HashSet<>();
     private final Map<UUID, Long> lastMessageTime = new HashMap<>();
+
+    // Animace vault bloku
+    private int animationTick = 0;
+    private boolean isAnimating = false;
+    private List<ItemStack> pendingLoot = new ArrayList<>();
+    private int lootDropIndex = 0;
 
     public VaultBlockEntity(BlockPos pos, BlockState blockState) {
         super(cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), pos, blockState);
@@ -31,7 +40,59 @@ public class VaultBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public boolean shouldShowMessage(UUID playerUuid, long currentTime) {
+        // Zobrazí zprávu pouze jednou za 5 sekund (5000ms)
+        Long lastTime = lastMessageTime.get(playerUuid);
+        if (lastTime == null || currentTime - lastTime > 5000) {
+            lastMessageTime.put(playerUuid, currentTime);
+            return true;
+        }
+        return false;
+    }
 
+    // Animace metody
+    public void startAnimation(List<ItemStack> loot) {
+        this.isAnimating = true;
+        this.animationTick = 0;
+        this.pendingLoot = new ArrayList<>(loot);
+        this.lootDropIndex = 0;
+        setChanged();
+    }
+
+    public void tickAnimation() {
+        if (isAnimating) {
+            animationTick++;
+        }
+    }
+
+    public int getAnimationTick() {
+        return animationTick;
+    }
+
+    public boolean isAnimating() {
+        return isAnimating;
+    }
+
+    public List<ItemStack> getPendingLoot() {
+        return pendingLoot;
+    }
+
+    public int getLootDropIndex() {
+        return lootDropIndex;
+    }
+
+    public void incrementLootDropIndex() {
+        lootDropIndex++;
+        setChanged();
+    }
+
+    public void stopAnimation() {
+        this.isAnimating = false;
+        this.animationTick = 0;
+        this.pendingLoot.clear();
+        this.lootDropIndex = 0;
+        setChanged();
+    }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
@@ -41,6 +102,11 @@ public class VaultBlockEntity extends BlockEntity {
             playersTag.add(StringTag.valueOf(uuid.toString()));
         }
         tag.put("PlayersWhoOpened", playersTag);
+
+        // Uložení animace
+        tag.putBoolean("IsAnimating", isAnimating);
+        tag.putInt("AnimationTick", animationTick);
+        tag.putInt("LootDropIndex", lootDropIndex);
     }
 
     @Override
@@ -56,5 +122,10 @@ public class VaultBlockEntity extends BlockEntity {
                 // Invalid UUID, skip
             }
         }
+
+        // Načtení animace
+        this.isAnimating = tag.getBoolean("IsAnimating");
+        this.animationTick = tag.getInt("AnimationTick");
+        this.lootDropIndex = tag.getInt("LootDropIndex");
     }
 }

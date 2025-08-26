@@ -105,38 +105,30 @@ public class VaultBlock extends BaseEntityBlock {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
+
+                        // Získání LootTable
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                        LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
+
+                        // Kontext – kdo otevřel, kde, atd.
+                        LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                                .withParameter(LootContextParams.THIS_ENTITY, player)
+                                .withLuck(player.getLuck());
+
+                        // Vygenerování dropů
+                        List<ItemStack> loot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
+
+                        // Začne animaci - nastaví na UNLOCKING a uloží loot
+                        BlockState newState = state.setValue(STATE, VaultState.UNLOCKING);
+                        level.setBlock(pos, newState, Block.UPDATE_ALL);
+
+                        vaultEntity.startAnimation(loot);
                     }
 
-                    // Získání LootTable (např. desert pyramid chest)
-                    ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
-                    LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
-
-                    // Kontext – kdo otevřel, kde, atd.
-                    LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
-                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                            .withParameter(LootContextParams.THIS_ENTITY, player)
-                            .withLuck(player.getLuck());
-
-                    // Vygenerování dropů
-                    List<ItemStack> loot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
-
-                    BlockState newState = state.setValue(STATE, VaultState.EJECTING);
-                    level.setBlock(pos, newState, Block.UPDATE_ALL);
-
-                    // Vyhození itemů do světa
+                    // Spotřebuje klíč
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
-                    }
-
-                    for (ItemStack stack : loot) {
-                        ItemEntity drop = new ItemEntity(
-                                level,
-                                pos.getX() + 0.5,
-                                pos.getY() + 1,
-                                pos.getZ() + 0.5,
-                                stack
-                        );
-                        level.addFreshEntity(drop);
                     }
                 }
 
@@ -151,38 +143,30 @@ public class VaultBlock extends BaseEntityBlock {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
+
+                        // Získání LootTable
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                        LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
+
+                        // Kontext – kdo otevřel, kde, atd.
+                        LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                                .withParameter(LootContextParams.THIS_ENTITY, player)
+                                .withLuck(player.getLuck());
+
+                        // Vygenerování dropů
+                        List<ItemStack> loot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
+
+                        // Začne animaci - nastaví na UNLOCKING a uloží loot
+                        BlockState newState = state.setValue(STATE, VaultState.UNLOCKING);
+                        level.setBlock(pos, newState, Block.UPDATE_ALL);
+
+                        vaultEntity.startAnimation(loot);
                     }
 
-                    // Získání LootTable (např. desert pyramid chest)
-                    ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/onimous");
-                    LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
-
-                    // Kontext – kdo otevřel, kde, atd.
-                    LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
-                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                            .withParameter(LootContextParams.THIS_ENTITY, player)
-                            .withLuck(player.getLuck());
-
-                    // Vygenerování dropů
-                    List<ItemStack> loot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
-
-                    // Vyhození itemů do světa
-                    BlockState newState = state.setValue(STATE, VaultState.EJECTING);
-                    level.setBlock(pos, newState, Block.UPDATE_ALL);
-
+                    // Spotřebuje klíč
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
-                    }
-
-                    for (ItemStack stack : loot) {
-                        ItemEntity drop = new ItemEntity(
-                                level,
-                                pos.getX() + 0.5,
-                                pos.getY() + 1,
-                                pos.getZ() + 0.5,
-                                stack
-                        );
-                        level.addFreshEntity(drop);
                     }
                 }
 
@@ -200,13 +184,65 @@ public class VaultBlock extends BaseEntityBlock {
     }
 
     private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
-
-        checkNearbyPlayers(level, pos, vaultEntity,state);
-
+        // Pokud je vault v animaci, zpracovává animaci
+        if (vaultEntity.isAnimating()) {
+            handleVaultAnimation(level, pos, state, vaultEntity);
+        } else {
+            // Běžná kontrola hráčů v okolí
+            checkNearbyPlayers(level, pos, vaultEntity, state);
+        }
     }
 
+    private static void handleVaultAnimation(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+        vaultEntity.tickAnimation();
+        int tick = vaultEntity.getAnimationTick();
+        VaultState currentState = state.getValue(STATE);
+
+        // Fáze 1: UNLOCKING (0-10 ticků)
+        if (tick == 10 && currentState == VaultState.UNLOCKING) {
+            // Po 10 tickách přejde na EJECTING
+            BlockState newState = state.setValue(STATE, VaultState.EJECTING);
+            level.setBlock(pos, newState, Block.UPDATE_ALL);
+            return;
+        }
+
+        // Fáze 2: EJECTING - postupné dropování každých 20 ticků
+        if (currentState == VaultState.EJECTING && tick > 10) {
+            // Počítá kolik itemů už bylo vyhozeno
+            int dropPhase = (tick - 10) / 20; // První drop na tick 30, pak každých 20 ticků
+            List<ItemStack> loot = vaultEntity.getPendingLoot();
+            int currentDropIndex = vaultEntity.getLootDropIndex();
+
+            if (dropPhase > currentDropIndex && currentDropIndex < loot.size()) {
+                // Vyhodí další item
+                ItemStack stack = loot.get(currentDropIndex);
+                ItemEntity drop = new ItemEntity(
+                    level,
+                    pos.getX() + 0.5,
+                    pos.getY() + 1,
+                    pos.getZ() + 0.5,
+                    stack.copy()
+                );
+                level.addFreshEntity(drop);
+                vaultEntity.incrementLootDropIndex();
+            }
+
+            // Pokud byly všechny itemy vyhozeny, ukončí animaci a nastaví na INACTIVE
+            if (currentDropIndex >= loot.size()) {
+                vaultEntity.stopAnimation();
+                BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
+                level.setBlock(pos, newState, Block.UPDATE_ALL);
+            }
+        }
+    }
+
+
     private static void checkNearbyPlayers(Level level, BlockPos pos, VaultBlockEntity vaultEntity, BlockState state) {
-        // Zkontroluje všechny hráče v okolí 5 bloků
+        // Zkontroluje všechny hráče v okolí 5 bloků pouze pokud vault není v animaci
+        if (vaultEntity.isAnimating()) {
+            return; // Během animace nespouští kontrolu hráčů
+        }
+
         double range = 5.0;
         net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
             pos.getX() - range, pos.getY() - range, pos.getZ() - range,
@@ -216,19 +252,25 @@ public class VaultBlock extends BaseEntityBlock {
         List<Player> players = level.getEntitiesOfClass(Player.class, searchArea);
         long currentTime = System.currentTimeMillis();
         int playerCount = players.size();
+
         if (playerCount == 0) {
             // Žádní hráči v okolí, nastaví vault na INACTIVE
-            BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
-            level.setBlock(pos, newState, Block.UPDATE_ALL);
+            if (state.getValue(STATE) != VaultState.INACTIVE) {
+                BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
+                level.setBlock(pos, newState, Block.UPDATE_ALL);
+            }
             return;
         }
 
         for (Player nearbyPlayer : players) {
-            // Pokud hráč ještě neotevřel vault a měla by se zobrazit zpráva
+            // Pokud hráč ještě neotevřel vault, zobrazí zprávu a nastaví vault na ACTIVE
             if (!vaultEntity.hasPlayerOpened(nearbyPlayer.getUUID())) {
-                BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
-                level.setBlock(pos, newState, Block.UPDATE_ALL);
 
+                if (state.getValue(STATE) != VaultState.ACTIVE) {
+                    BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
+                    level.setBlock(pos, newState, Block.UPDATE_ALL);
+                }
+                return; // Našli jsme nepřipraveného hráče, nemusíme pokračovat
             }
         }
     }
