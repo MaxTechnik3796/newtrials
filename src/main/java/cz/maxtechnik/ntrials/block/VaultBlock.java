@@ -216,7 +216,13 @@ public class VaultBlock extends BaseEntityBlock {
 
         List<Player> players = level.getEntitiesOfClass(Player.class, searchArea);
         long currentTime = System.currentTimeMillis();
-
+        int playerCount = players.size();
+        if (playerCount == 0) {
+            // Žádní hráči v okolí, nastaví vault na INACTIVE
+            BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
+            level.setBlock(pos, newState, Block.UPDATE_ALL);
+            return;
+        }
         for (Player nearbyPlayer : players) {
             // Pokud hráč ještě neotevřel vault a měla by se zobrazit zpráva
             if (!vaultEntity.hasPlayerOpened(nearbyPlayer.getUUID()) &&
