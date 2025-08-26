@@ -261,9 +261,9 @@ public class VaultBlock extends BaseEntityBlock {
         if (playerCount == 0) {
             // Žádní hráči v okolí, nastaví vault na INACTIVE
             if (state.getValue(STATE) != VaultState.INACTIVE) {
-
                 BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
                 level.setBlock(pos, newState, Block.UPDATE_ALL);
+                if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_DEACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             }
             return;
         }
@@ -275,9 +275,8 @@ public class VaultBlock extends BaseEntityBlock {
                 if (state.getValue(STATE) != VaultState.ACTIVE) {
                     BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
                     level.setBlock(pos, newState, Block.UPDATE_ALL);
-                    if (!level.isClientSide()) {
-                        level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_ACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-                    }
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_ACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+
                 }
                 return; // Našli jsme nepřipraveného hráče, nemusíme pokračovat
             }
