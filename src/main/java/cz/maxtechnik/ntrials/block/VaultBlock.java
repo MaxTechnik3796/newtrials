@@ -145,7 +145,7 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
                         LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
