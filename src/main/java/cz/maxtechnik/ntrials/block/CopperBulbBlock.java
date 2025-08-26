@@ -196,7 +196,10 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
         if(random.nextFloat()<oxidationChance){
             Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
             if(nextBlock!=null){
-                level.setBlockAndUpdate(pos,nextBlock.defaultBlockState());
+                BlockState new_state=nextBlock.defaultBlockState();
+                new_state=new_state.setValue(LIT,state.getValue(LIT));
+                new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+                level.setBlockAndUpdate(pos,new_state);
             }
         }
     }
