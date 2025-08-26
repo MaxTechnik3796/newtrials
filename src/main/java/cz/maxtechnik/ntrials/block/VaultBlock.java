@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -19,6 +20,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -186,6 +189,39 @@ public class VaultBlock extends BaseEntityBlock {
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), VaultBlock::serverTick);
+    }
+
+    private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+        // Kontroluje každých 20 ticků (1 sekunda)
+        if (level.getGameTime() % 20 == 0) {
+            checkNearbyPlayers(level, pos, vaultEntity);
+        }
+    }
+
+    private static void checkNearbyPlayers(Level level, BlockPos pos, VaultBlockEntity vaultEntity) {
+        // Zkontroluje všechny hráče v okolí 5 bloků
+        double range = 5.0;
+        net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
+            pos.getX() - range, pos.getY() - range, pos.getZ() - range,
+            pos.getX() + range, pos.getY() + range, pos.getZ() + range
+        );
+
+        List<Player> players = level.getEntitiesOfClass(Player.class, searchArea);
+        long currentTime = System.currentTimeMillis();
+
+        for (Player nearbyPlayer : players) {
+            // Pokud hráč ještě neotevřel vault a měla by se zobrazit zpráva
+            if (!vaultEntity.hasPlayerOpened(nearbyPlayer.getUUID()) &&
+                vaultEntity.shouldShowMessage(nearbyPlayer.getUUID(), currentTime)) {
+                nearbyPlayer.displayClientMessage(Component.literal("Vault je připraven"), true);
+            }
+        }
     }
 
     @Nullable

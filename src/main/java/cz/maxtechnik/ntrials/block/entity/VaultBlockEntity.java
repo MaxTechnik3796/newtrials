@@ -8,12 +8,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class VaultBlockEntity extends BlockEntity {
     private final Set<UUID> playersWhoOpened = new HashSet<>();
+    private final Map<UUID, Long> lastMessageTime = new HashMap<>();
 
     public VaultBlockEntity(BlockPos pos, BlockState blockState) {
         super(cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), pos, blockState);
@@ -26,6 +29,16 @@ public class VaultBlockEntity extends BlockEntity {
     public void addPlayerWhoOpened(UUID playerUuid) {
         playersWhoOpened.add(playerUuid);
         setChanged();
+    }
+
+    public boolean shouldShowMessage(UUID playerUuid, long currentTime) {
+        // Zobrazí zprávu pouze jednou za 5 sekund (5000ms)
+        Long lastTime = lastMessageTime.get(playerUuid);
+        if (lastTime == null || currentTime - lastTime > 5000) {
+            lastMessageTime.put(playerUuid, currentTime);
+            return true;
+        }
+        return false;
     }
 
     @Override
