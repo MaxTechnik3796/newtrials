@@ -5,13 +5,22 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 public class NTrialsModTabs{
     public static final DeferredRegister<CreativeModeTab>REGISTER=DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NTrialsMod.MODID);
-    public static final RegistryObject<CreativeModeTab>MAIN=REGISTER.register("main",()-> CreativeModeTab.builder().title(Component.translatable("creative_tab.ntrials.main")).icon(()->new ItemStack(NTrialsModBlocks.TUFF_BRICKS.get().asItem())).displayItems(((parameters,tabData)->{
+    public static final RegistryObject<CreativeModeTab>MAIN=REGISTER.register("main",()->CreativeModeTab.builder().title(Component.translatable("creative_tab.ntrials.main")).icon(()->new ItemStack(NTrialsModBlocks.TUFF_BRICKS.get().asItem())).displayItems(((parameters,tabData)->{
+
+        tabData.accept(NTrialsModItems.TRIAL_KEY.get());
+        tabData.accept(NTrialsModItems.OMINOUS_TRIAL_KEY.get());
+
+        tabData.accept(NTrialsModBlocks.TRIAL_SPAWNER.get().asItem());
+        tabData.accept(NTrialsModBlocks.VAULT.get().asItem());
+
         tabData.accept(NTrialsModBlocks.HEAVY_CORE.get().asItem());
+
 
         tabData.accept(NTrialsModBlocks.TUFF_BRICKS.get().asItem());
         tabData.accept(NTrialsModBlocks.CHISELED_TUFF.get().asItem());
@@ -29,6 +38,9 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.TUFF_WALL.get().asItem());
         tabData.accept(NTrialsModBlocks.TUFF_BRICK_WALL.get().asItem());
         tabData.accept(NTrialsModBlocks.POLISHED_TUFF_WALL.get().asItem());
+
+    })).build());
+    public static final RegistryObject<CreativeModeTab>COPPER=REGISTER.register("copper",()-> CreativeModeTab.builder().title(Component.translatable("creative_tab.ntrials.copper")).icon(()->new ItemStack(Blocks.COPPER_BLOCK.asItem())).displayItems(((parameters, tabData)->{
 
         tabData.accept(NTrialsModBlocks.CHISELED_COPPER.get().asItem());
         tabData.accept(NTrialsModBlocks.EXPOSED_CHISELED_COPPER.get().asItem());
@@ -76,4 +88,5 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_BULB.get().asItem());
 
     })).build());
+
 }

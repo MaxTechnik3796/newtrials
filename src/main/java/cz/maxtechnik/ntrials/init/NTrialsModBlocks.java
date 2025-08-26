@@ -17,6 +17,11 @@ public class NTrialsModBlocks{
 
     public static final RegistryObject<Block>HEAVY_CORE=REGISTRY.register("heavy_core",HeavyCoreBlock::new);
 
+    public static final RegistryObject<Block>TRIAL_SPAWNER=REGISTRY.register("trial_spawner",TrialSpawnerBlock::new);
+    public static final RegistryObject<Block>VAULT=REGISTRY.register("vault",VaultBlock::new);
+
+
+
     // ---- Tuff stuff ----
     public static final RegistryObject<Block>TUFF_BRICKS=REGISTRY.register("tuff_bricks",TuffBlock::new);
     public static final RegistryObject<Block>CHISELED_TUFF=REGISTRY.register("chiseled_tuff",TuffBlock::new);

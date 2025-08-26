@@ -1,5 +1,6 @@
 {
-  "creative_tab.ntrials.main": "NewTrials",
+  "creative_tab.ntrials.main": "NewTrials: Main",
+  "creative_tab.ntrials.copper": "NewTrials: Copper",
 
   "effect.ntrials.infested": "Infested",
   "effect.ntrials.oozing": "Oozing",
@@ -9,6 +10,9 @@
   "block.ntrials.heavy_core": "§dHeavy Core§r",
   "item.ntrials.trial_key": "Trial Key",
   "item.ntrials.ominous_trial_key": "Ominous Trial Key",
+
+  "block.ntrials.trial_spawner": "Trial Spawner",
+  "block.ntrials.vault": "Vault",
 
   "block.ntrials.tuff_bricks": "Tuff Bricks",
   "block.ntrials.chiseled_tuff": "Chiseled Tuff",
