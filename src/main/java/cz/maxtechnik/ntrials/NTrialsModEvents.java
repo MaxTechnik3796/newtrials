@@ -117,7 +117,12 @@ public class NTrialsModEvents{
         SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_DOOR.get(), NTrialsModBlocks.COPPER_DOOR.get());
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_DOOR.get(), NTrialsModBlocks.EXPOSED_COPPER_DOOR.get());
         SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_DOOR.get(), NTrialsModBlocks.WEATHERED_COPPER_DOOR.get());
-        // Poznámka: CHISELED_COPPER a COPPER_DOOR (první fáze) nemají předchozí stupeň, takže se v mapě nenacházejí
+        // Poznámka: CHISELED_COPPER a COPPER_DOOR (první fáze) nemají předchozí stupeň, takže se v mapě nenacházej
+        //
+        // // Scraping mapy pro COPPER DOORS
+        SCRAPING_MAP.put(NTrialsModBlocks.EXPOSED_COPPER_BULB.get(), NTrialsModBlocks.COPPER_BULB.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_BULB.get(), NTrialsModBlocks.EXPOSED_COPPER_BULB.get());
+        SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_BULB.get(), NTrialsModBlocks.WEATHERED_COPPER_BULB.get());
     }
     // Pro Minecraft 1.20.1 Forge zatím odstraníme waxování - bude třeba implementovat jinak
     // V této verzi Forge nemůžeme přímo modifikovat HoneycombItem mapy
