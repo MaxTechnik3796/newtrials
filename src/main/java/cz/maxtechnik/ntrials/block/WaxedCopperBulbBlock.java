@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 
-
+//main class
 
 public class WaxedCopperBulbBlock extends Block{
     public static final BooleanProperty LIT=BooleanProperty.create("lit");
