@@ -97,7 +97,7 @@ public class VaultBlock extends BaseEntityBlock {
                 }
             }
         }
-
+        //normal
         if (!state.getValue(OMINOUS)) {
             if (heldItem.getItem() == NTrialsModItems.TRIAL_KEY.get()) {
                 if (!level.isClientSide) {
@@ -108,7 +108,7 @@ public class VaultBlock extends BaseEntityBlock {
                     }
 
                     // Získání LootTable (např. desert pyramid chest)
-                    ResourceLocation lootTableId = BuiltInLootTables.DESERT_PYRAMID;
+                    ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
                     LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                     // Kontext – kdo otevřel, kde, atd.
@@ -142,6 +142,8 @@ public class VaultBlock extends BaseEntityBlock {
 
                 return InteractionResult.SUCCESS;
             }
+
+        //ominous
         } else {
             if (heldItem.getItem() == NTrialsModItems.OMINOUS_TRIAL_KEY.get()) {
                 if (!level.isClientSide) {
@@ -152,7 +154,7 @@ public class VaultBlock extends BaseEntityBlock {
                     }
 
                     // Získání LootTable (např. desert pyramid chest)
-                    ResourceLocation lootTableId = BuiltInLootTables.DESERT_PYRAMID;
+                    ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/onimous");
                     LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                     // Kontext – kdo otevřel, kde, atd.
