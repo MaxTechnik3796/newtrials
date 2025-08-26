@@ -2,6 +2,7 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 import java.util.List;
 
@@ -258,6 +261,7 @@ public class VaultBlock extends BaseEntityBlock {
         if (playerCount == 0) {
             // Žádní hráči v okolí, nastaví vault na INACTIVE
             if (state.getValue(STATE) != VaultState.INACTIVE) {
+
                 BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
                 level.setBlock(pos, newState, Block.UPDATE_ALL);
             }
@@ -271,6 +275,9 @@ public class VaultBlock extends BaseEntityBlock {
                 if (state.getValue(STATE) != VaultState.ACTIVE) {
                     BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
                     level.setBlock(pos, newState, Block.UPDATE_ALL);
+                    if (!level.isClientSide()) {
+                        level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_ACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                    }
                 }
                 return; // Našli jsme nepřipraveného hráče, nemusíme pokračovat
             }
