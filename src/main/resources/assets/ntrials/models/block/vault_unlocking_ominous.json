@@ -1,5 +1,6 @@
 {
   "parent": "ntrials:block/template_vault",
+  "render_type": "cutout",
   "textures": {
     "bottom": "ntrials:block/vault_bottom_ominous",
     "front": "ntrials:block/vault_front_ejecting_ominous",

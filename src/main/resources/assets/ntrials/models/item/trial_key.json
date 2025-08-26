@@ -1,3 +1,6 @@
 {
-  "parent": "ntrials:item/trial_key"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "ntrials:item/trial_key"
+  }
 }
