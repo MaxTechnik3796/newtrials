@@ -175,6 +175,25 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
         }
     }
     // Vanilla logika oxidácie
+
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        if (!level.isClientSide) {
+            boolean powered = level.hasNeighborSignal(pos);
+            if (state.getValue(POWERED) != powered) {
+                BlockState newState = state.setValue(POWERED, powered);
+                if (powered) {
+                    newState = newState.setValue(LIT, !state.getValue(LIT));
+                }
+                level.setBlock(pos, newState, 3);
+            }
+        }
+    }
+
+
+
+
     private void tryOxidize(BlockState state, ServerLevel level, BlockPos pos, RandomSource random){
         int nearbyOxidizedBlocks=0;
         // Kontrolujeme 4x4x4 oblasť okolo bloku (vanilla logika)

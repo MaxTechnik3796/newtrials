@@ -53,7 +53,20 @@ public class WaxedCopperBulbBlock extends Block{
         return state.getValue(LIT) ? 15 : 0;
     }
 
-
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        if (!level.isClientSide) {
+            boolean powered = level.hasNeighborSignal(pos);
+            if (state.getValue(POWERED) != powered) {
+                BlockState newState = state.setValue(POWERED, powered);
+                if (powered) {
+                    newState = newState.setValue(LIT, !state.getValue(LIT));
+                }
+                level.setBlock(pos, newState, 3);
+            }
+        }
+    }
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
