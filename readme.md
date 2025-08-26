@@ -6,8 +6,7 @@ This mod brings **new items and blocks from the latest Minecraft versions** into
 
 ## ✨ Features
 - Added new blocks and items:
-  - **Mud**
-  - **Copper Doors & Copper Trapdoors**
+  - **Copper Doors, Copper Bulbs & Copper Trapdoors**
   - **Other blocks and items from the latest versions**
 - Preserves original mechanics and behavior, just like in vanilla Minecraft.
 - Fully compatible with Minecraft **1.20.1**.
@@ -16,7 +15,7 @@ This mod brings **new items and blocks from the latest Minecraft versions** into
 
 ## 🛠 Requirements
 - Minecraft **1.20.1**
-- **Forge Mod Loader**
+- Forge **47.4.0**
 
 ---
 
