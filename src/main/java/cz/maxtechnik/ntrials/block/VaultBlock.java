@@ -187,6 +187,18 @@ public class VaultBlock extends BaseEntityBlock {
         return level.isClientSide ? null : createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), VaultBlock::serverTick);
     }
 
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        VaultState vaultState = state.getValue(STATE);
+        if (vaultState == VaultState.INACTIVE) {
+            return 6;
+        } else {
+            return 12;
+        }
+    }
+
+
+
     private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
 
         if (!level.isClientSide && level.getGameTime() % 5 == 0) {
@@ -282,7 +294,7 @@ public class VaultBlock extends BaseEntityBlock {
             return; // Během animace nespouští kontrolu hráčů
         }
 
-        double range = 5.0;
+        double range = 4.0;
         net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
             pos.getX() - range, pos.getY() - range, pos.getZ() - range,
             pos.getX() + range, pos.getY() + range, pos.getZ() + range
