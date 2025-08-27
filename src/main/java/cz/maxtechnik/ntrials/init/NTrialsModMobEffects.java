@@ -1,18 +1,17 @@
 package cz.maxtechnik.ntrials.init;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.potion.InfestedMobEffect;
-import cz.maxtechnik.ntrials.potion.OozingMobEffect;
-import cz.maxtechnik.ntrials.potion.WeavingMobEffect;
+import cz.maxtechnik.ntrials.potion.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 
-public class NTrialsModMobEffects {
-    public static final DeferredRegister<MobEffect>REGISTER=DeferredRegister.create(Registries.MOB_EFFECT, NTrialsMod.MODID);
+public class NTrialsModMobEffects{
+    public static final DeferredRegister<MobEffect>REGISTER=DeferredRegister.create(Registries.MOB_EFFECT,NTrialsMod.MODID);
     public static final RegistryObject<MobEffect>INFESTED=REGISTER.register("infested",InfestedMobEffect::new);
-    public static final RegistryObject<MobEffect>OOZING=REGISTER.register("oozing", OozingMobEffect::new);
-    public static final RegistryObject<MobEffect>WEAVING=REGISTER.register("weaving", WeavingMobEffect::new);
+    public static final RegistryObject<MobEffect>OOZING=REGISTER.register("oozing",OozingMobEffect::new);
+    public static final RegistryObject<MobEffect>WEAVING=REGISTER.register("weaving",WeavingMobEffect::new);
+    public static final RegistryObject<MobEffect>TRIAL_OMEN=REGISTER.register("trial_omen",TrialOmenMobEffect::new);
 }
