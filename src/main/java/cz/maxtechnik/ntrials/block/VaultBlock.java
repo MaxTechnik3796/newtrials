@@ -131,6 +131,7 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.startAnimation(loot);
                     }
 
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     // Spotřebuje klíč
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
@@ -168,7 +169,7 @@ public class VaultBlock extends BaseEntityBlock {
 
                         vaultEntity.startAnimation(loot);
                     }
-
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     // Spotřebuje klíč
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
@@ -178,7 +179,7 @@ public class VaultBlock extends BaseEntityBlock {
                 return InteractionResult.SUCCESS;
             }
         }
-
+        if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         return InteractionResult.PASS;
     }
 
