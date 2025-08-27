@@ -204,7 +204,9 @@ public class VaultBlock extends BaseEntityBlock {
         if (!level.isClientSide && level.getGameTime() % 5 == 0) {
             addSmokeParticles(level, pos);
         }
-
+        if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE) {
+            addFireParticles(level, pos);
+        }
 
         // Pokud je vault v animaci, zpracovává animaci
         if (vaultEntity.isAnimating()) {
@@ -233,6 +235,32 @@ public class VaultBlock extends BaseEntityBlock {
                 // Pošle particles všem hráčům v okolí
                 serverLevel.sendParticles(
                         ParticleTypes.SMOKE,
+                        x, y, z,
+                        1, // počet particles
+                        velocityX, velocityY, velocityZ,
+                        0.0 // rychlost
+                );
+            }
+        }
+    }
+
+    private static void addFireParticles(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            RandomSource random = level.random;
+
+            // Generuje 2-3 particles každý tick
+            for (int i = 0; i < 2 + random.nextInt(2); i++) {
+                double x = pos.getX() + 0.3 + random.nextDouble() * 0.4;
+                double y = pos.getY() + 0.8 + random.nextDouble() * 0.3;
+                double z = pos.getZ() + 0.3 + random.nextDouble() * 0.4;
+
+                double velocityX = (random.nextDouble() - 0.5) * 0.02;
+                double velocityY = random.nextDouble() * 0.05 + 0.02;
+                double velocityZ = (random.nextDouble() - 0.5) * 0.02;
+
+                // Pošle particles všem hráčům v okolí
+                serverLevel.sendParticles(
+                        ParticleTypes.FLAME,
                         x, y, z,
                         1, // počet particles
                         velocityX, velocityY, velocityZ,
