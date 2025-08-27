@@ -42,6 +42,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VaultBlock extends BaseEntityBlock {
@@ -184,7 +185,8 @@ public class VaultBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), VaultBlock::serverTick);
+        return createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
+            level.isClientSide ? VaultBlock::clientTick : VaultBlock::serverTick);
     }
 
     @Override
@@ -208,6 +210,21 @@ public class VaultBlock extends BaseEntityBlock {
             addFireParticles(level, pos);
         }
 
+        // Pokud je vault ACTIVE a ještě nemá zobrazované itemy, vygeneruje je z loot table
+        if (state.getValue(STATE) == VaultState.ACTIVE && !vaultEntity.hasDisplayItems()) {
+            generateDisplayItems(level, pos, state, vaultEntity);
+        }
+
+        // Pokud vault není ACTIVE, vymaže zobrazované itemy
+        if (state.getValue(STATE) != VaultState.ACTIVE && vaultEntity.hasDisplayItems()) {
+            vaultEntity.clearDisplayItems();
+        }
+
+        // Aktualizuje rotaci zobrazovaných itemů pokud je vault ACTIVE
+        if (state.getValue(STATE) == VaultState.ACTIVE) {
+            vaultEntity.tickDisplayItem();
+        }
+
         // Pokud je vault v animaci, zpracovává animaci
         if (vaultEntity.isAnimating()) {
             handleVaultAnimation(level, pos, state, vaultEntity);
@@ -216,6 +233,67 @@ public class VaultBlock extends BaseEntityBlock {
             checkNearbyPlayers(level, pos, vaultEntity, state);
         }
 
+    }
+
+    private static void clientTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+        // Client-side pouze tickuje rotaci zobrazovaných itemů
+        if (state.getValue(STATE) == VaultState.ACTIVE) {
+            vaultEntity.tickDisplayItem();
+        }
+    }
+
+    private static void generateDisplayItems(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+        if (level instanceof ServerLevel serverLevel) {
+            // Určí správnou loot table podle toho, zda je vault ominous nebo ne
+            ResourceLocation lootTableId;
+            if (state.getValue(OMINOUS)) {
+                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
+            } else {
+                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+            }
+
+            System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
+
+            LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+
+            // Vygeneruje vzorky itemů z loot table pro zobrazení
+            LootParams.Builder params = new LootParams.Builder(serverLevel)
+                    .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                    .withLuck(0.0f);
+
+            List<ItemStack> displayLoot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
+
+            System.out.println("DEBUG: Vygenerováno " + displayLoot.size() + " itemů z loot table");
+            for (ItemStack stack : displayLoot) {
+                System.out.println("DEBUG: Item: " + stack.getItem().getDescriptionId() + " x" + stack.getCount());
+            }
+
+            // Pokud loot table nevrátí žádné itemy, použije fallback
+            if (displayLoot.isEmpty()) {
+                System.out.println("DEBUG: Loot table je prázdná, používám fallback itemy");
+                displayLoot = java.util.Arrays.asList(
+                    new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1),
+                    new ItemStack(net.minecraft.world.item.Items.EMERALD, 1),
+                    new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1),
+                    new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 1),
+                    new ItemStack(net.minecraft.world.item.Items.NETHERITE_INGOT, 1)
+                );
+            }
+
+            // Pokud loot table vrátí pouze jeden item, přidá více různých itemů
+            if (displayLoot.size() == 1) {
+                System.out.println("DEBUG: Loot table vrátila pouze jeden item, přidávám více itemů");
+                List<ItemStack> expandedLoot = new ArrayList<>(displayLoot);
+                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1));
+                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.EMERALD, 1));
+                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1));
+                displayLoot = expandedLoot;
+            }
+
+            // Nastaví zobrazované itemy
+            vaultEntity.setDisplayItems(displayLoot);
+            System.out.println("DEBUG: Display items nastaveny");
+        }
     }
 
     private static void addSmokeParticles(Level level, BlockPos pos) {
