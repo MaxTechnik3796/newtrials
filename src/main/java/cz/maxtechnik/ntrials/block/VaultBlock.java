@@ -207,7 +207,7 @@ public class VaultBlock extends BaseEntityBlock {
             addSmokeParticles(level, pos);
         }
         if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE && level.getGameTime() % 5 == 0) {
-            addFireParticles(level, pos);
+            addFireParticles(level, pos, state);
         }
 
         // Pokud je vault ACTIVE a ještě nemá zobrazované itemy, vygeneruje je z loot table
@@ -322,7 +322,7 @@ public class VaultBlock extends BaseEntityBlock {
         }
     }
 
-    private static void addFireParticles(Level level, BlockPos pos) {
+    private static void addFireParticles(Level level, BlockPos pos, BlockState state) {
         if (level instanceof ServerLevel serverLevel) {
             RandomSource random = level.random;
 
@@ -336,6 +336,7 @@ public class VaultBlock extends BaseEntityBlock {
                 double velocityY = random.nextDouble() * 0.05 + 0.02;
                 double velocityZ = (random.nextDouble() - 0.5) * 0.02;
 
+                if (state.getValue(OMINOUS)) {
                 // Pošle particles všem hráčům v okolí
                 serverLevel.sendParticles(
                         ParticleTypes.FLAME,
@@ -343,7 +344,15 @@ public class VaultBlock extends BaseEntityBlock {
                         1, // počet particles
                         velocityX, velocityY, velocityZ,
                         0.0 // rychlost
-                );
+                ); } else {
+                    serverLevel.sendParticles(
+                            ParticleTypes.SOUL_FIRE_FLAME,
+                            x, y, z,
+                            1, // počet particles
+                            velocityX, velocityY, velocityZ,
+                            0.0 // rychlost
+                    );
+                }
             }
         }
     }
