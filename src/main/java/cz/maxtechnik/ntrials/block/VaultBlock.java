@@ -2,6 +2,7 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -37,7 +38,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.particles.ParticleTypes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VaultBlock extends BaseEntityBlock {
@@ -126,6 +131,7 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.startAnimation(loot);
                     }
 
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     // Spotřebuje klíč
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
@@ -163,7 +169,7 @@ public class VaultBlock extends BaseEntityBlock {
 
                         vaultEntity.startAnimation(loot);
                     }
-
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     // Spotřebuje klíč
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
@@ -173,23 +179,182 @@ public class VaultBlock extends BaseEntityBlock {
                 return InteractionResult.SUCCESS;
             }
         }
-
+        if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         return InteractionResult.PASS;
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), VaultBlock::serverTick);
+        return createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
+            level.isClientSide ? VaultBlock::clientTick : VaultBlock::serverTick);
     }
 
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        VaultState vaultState = state.getValue(STATE);
+        if (vaultState == VaultState.INACTIVE) {
+            return 6;
+        } else {
+            return 12;
+        }
+    }
+
+
+
     private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+
+        if (!level.isClientSide && level.getGameTime() % 5 == 0) {
+            addSmokeParticles(level, pos);
+        }
+        if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE && level.getGameTime() % 10 == 0) {
+            addFireParticles(level, pos, state);
+        }
+
+        // Pokud je vault ACTIVE a ještě nemá zobrazované itemy, vygeneruje je z loot table
+        if (state.getValue(STATE) == VaultState.ACTIVE && !vaultEntity.hasDisplayItems()) {
+            generateDisplayItems(level, pos, state, vaultEntity);
+        }
+
+        // Pokud vault není ACTIVE, vymaže zobrazované itemy
+        if (state.getValue(STATE) != VaultState.ACTIVE && vaultEntity.hasDisplayItems()) {
+            vaultEntity.clearDisplayItems();
+        }
+
+        // Aktualizuje rotaci zobrazovaných itemů pokud je vault ACTIVE
+        if (state.getValue(STATE) == VaultState.ACTIVE) {
+            vaultEntity.tickDisplayItem();
+        }
+
         // Pokud je vault v animaci, zpracovává animaci
         if (vaultEntity.isAnimating()) {
             handleVaultAnimation(level, pos, state, vaultEntity);
         } else {
             // Běžná kontrola hráčů v okolí
             checkNearbyPlayers(level, pos, vaultEntity, state);
+        }
+
+    }
+
+    private static void clientTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+        // Client-side pouze tickuje rotaci zobrazovaných itemů
+        if (state.getValue(STATE) == VaultState.ACTIVE) {
+            vaultEntity.tickDisplayItem();
+        }
+    }
+
+    private static void generateDisplayItems(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+        if (level instanceof ServerLevel serverLevel) {
+            // Určí správnou loot table podle toho, zda je vault ominous nebo ne
+            ResourceLocation lootTableId;
+            if (state.getValue(OMINOUS)) {
+                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
+            } else {
+                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+            }
+
+            System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
+
+            LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+
+            // Vygeneruje vzorky itemů z loot table pro zobrazení
+            LootParams.Builder params = new LootParams.Builder(serverLevel)
+                    .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                    .withLuck(0.0f);
+
+            List<ItemStack> displayLoot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
+
+            System.out.println("DEBUG: Vygenerováno " + displayLoot.size() + " itemů z loot table");
+            for (ItemStack stack : displayLoot) {
+                System.out.println("DEBUG: Item: " + stack.getItem().getDescriptionId() + " x" + stack.getCount());
+            }
+
+            // Pokud loot table nevrátí žádné itemy, použije fallback
+            if (displayLoot.isEmpty()) {
+                System.out.println("DEBUG: Loot table je prázdná, používám fallback itemy");
+                displayLoot = java.util.Arrays.asList(
+                    new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1),
+                    new ItemStack(net.minecraft.world.item.Items.EMERALD, 1),
+                    new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1),
+                    new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 1),
+                    new ItemStack(net.minecraft.world.item.Items.NETHERITE_INGOT, 1)
+                );
+            }
+
+            // Pokud loot table vrátí pouze jeden item, přidá více různých itemů
+            if (displayLoot.size() == 1) {
+                System.out.println("DEBUG: Loot table vrátila pouze jeden item, přidávám více itemů");
+                List<ItemStack> expandedLoot = new ArrayList<>(displayLoot);
+                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1));
+                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.EMERALD, 1));
+                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1));
+                displayLoot = expandedLoot;
+            }
+
+            // Nastaví zobrazované itemy
+            vaultEntity.setDisplayItems(displayLoot);
+            System.out.println("DEBUG: Display items nastaveny");
+        }
+    }
+
+    private static void addSmokeParticles(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            RandomSource random = level.random;
+
+            // Generuje 2-3 particles každý tick
+            for (int i = 0; i < 2 + random.nextInt(2); i++) {
+                double x = pos.getX() + 0.3 + random.nextDouble() * 0.4;
+                double y = pos.getY() + 0.8 + random.nextDouble() * 0.3;
+                double z = pos.getZ() + 0.3 + random.nextDouble() * 0.4;
+
+                double velocityX = (random.nextDouble() - 0.5) * 0.02;
+                double velocityY = random.nextDouble() * 0.05 + 0.02;
+                double velocityZ = (random.nextDouble() - 0.5) * 0.02;
+
+                // Pošle particles všem hráčům v okolí
+                serverLevel.sendParticles(
+                        ParticleTypes.SMOKE,
+                        x, y, z,
+                        1, // počet particles
+                        velocityX, velocityY, velocityZ,
+                        0.0 // rychlost
+                );
+            }
+        }
+    }
+
+    private static void addFireParticles(Level level, BlockPos pos, BlockState state) {
+        if (level instanceof ServerLevel serverLevel) {
+            RandomSource random = level.random;
+
+            // Generuje 2-3 particles každý tick
+            for (int i = 0; i < 2 + random.nextInt(2); i++) {
+                double x = pos.getX() + 0.3 + random.nextDouble() * 0.4;
+                double y = pos.getY() + 0.2 + random.nextDouble() * 0.3;
+                double z = pos.getZ() + 0.3 + random.nextDouble() * 0.4;
+
+                double velocityX = (random.nextDouble() - 0.5) * 0.02;
+                double velocityY = random.nextDouble() * 0.05 + 0.02;
+                double velocityZ = (random.nextDouble() - 0.5) * 0.02;
+
+                if (!state.getValue(OMINOUS)) {
+                // Pošle particles všem hráčům v okolí
+                serverLevel.sendParticles(
+                        ParticleTypes.FLAME,
+                        x, y, z,
+                        1, // počet particles
+                        velocityX, velocityY, velocityZ,
+                        0.0 // rychlost
+                ); } else {
+                    serverLevel.sendParticles(
+                            ParticleTypes.SOUL_FIRE_FLAME,
+                            x, y, z,
+                            1, // počet particles
+                            velocityX, velocityY, velocityZ,
+                            0.0 // rychlost
+                    );
+                }
+            }
         }
     }
 
@@ -201,10 +366,12 @@ public class VaultBlock extends BaseEntityBlock {
         // Fáze 1: UNLOCKING (0-10 ticků)
         if (tick == 10 && currentState == VaultState.UNLOCKING) {
             // Po 10 tickách přejde na EJECTING
+            if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_OPEN_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             BlockState newState = state.setValue(STATE, VaultState.EJECTING);
             level.setBlock(pos, newState, Block.UPDATE_ALL);
             return;
         }
+
 
         // Fáze 2: EJECTING - postupné dropování každých 20 ticků
         if (currentState == VaultState.EJECTING && tick > 10) {
@@ -223,6 +390,7 @@ public class VaultBlock extends BaseEntityBlock {
                     pos.getZ() + 0.5,
                     stack.copy()
                 );
+                if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_EJECT_ITEM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                 drop.setDeltaMovement(0.0, 0.15, 0.0); // X, Y, Z rychlost
                 drop.setPickUpDelay(10);
                 level.addFreshEntity(drop);
@@ -231,9 +399,13 @@ public class VaultBlock extends BaseEntityBlock {
 
             // Pokud byly všechny itemy vyhozeny, ukončí animaci a nastaví na INACTIVE
             if (currentDropIndex >= loot.size()) {
-                vaultEntity.stopAnimation();
-                BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
-                level.setBlock(pos, newState, Block.UPDATE_ALL);
+                // Počká 20 ticků (1 sekundu) před zavřením
+                if (tick >= (10 + loot.size() * 20 + 20)) {
+                    vaultEntity.stopAnimation();
+                    BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
+                    level.setBlock(pos, newState, Block.UPDATE_ALL);
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_CLOSE_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                }
             }
         }
     }
@@ -245,7 +417,7 @@ public class VaultBlock extends BaseEntityBlock {
             return; // Během animace nespouští kontrolu hráčů
         }
 
-        double range = 5.0;
+        double range = 4.0;
         net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
             pos.getX() - range, pos.getY() - range, pos.getZ() - range,
             pos.getX() + range, pos.getY() + range, pos.getZ() + range
@@ -260,6 +432,7 @@ public class VaultBlock extends BaseEntityBlock {
             if (state.getValue(STATE) != VaultState.INACTIVE) {
                 BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
                 level.setBlock(pos, newState, Block.UPDATE_ALL);
+                if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_DEACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             }
             return;
         }
@@ -271,6 +444,8 @@ public class VaultBlock extends BaseEntityBlock {
                 if (state.getValue(STATE) != VaultState.ACTIVE) {
                     BlockState newState = state.setValue(STATE, VaultState.ACTIVE);
                     level.setBlock(pos, newState, Block.UPDATE_ALL);
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_ACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+
                 }
                 return; // Našli jsme nepřipraveného hráče, nemusíme pokračovat
             }
