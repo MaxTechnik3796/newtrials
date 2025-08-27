@@ -62,7 +62,7 @@ public class VaultBlockEntityRenderer implements BlockEntityRenderer<VaultBlockE
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         BakedModel model = itemRenderer.getModel(currentItem, level, null, 0);
 
-        System.out.println("DEBUG: Renderuji item na pozici Y=1.5, scale=1.5: " + currentItem.getItem().getDescriptionId());
+
 
         itemRenderer.render(currentItem, ItemDisplayContext.GROUND, false, poseStack,
                           bufferSource, packedLight, OverlayTexture.NO_OVERLAY, model);
