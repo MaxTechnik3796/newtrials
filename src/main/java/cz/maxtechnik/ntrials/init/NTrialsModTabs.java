@@ -19,7 +19,9 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.TRIAL_SPAWNER.get().asItem());
         tabData.accept(NTrialsModBlocks.VAULT.get().asItem());
 
+        tabData.accept(NTrialsModItems.WIND_CHARGE.get());
         tabData.accept(NTrialsModBlocks.HEAVY_CORE.get().asItem());
+        tabData.accept(NTrialsModItems.MACE.get());
 
 
         tabData.accept(NTrialsModBlocks.TUFF_BRICKS.get().asItem());
