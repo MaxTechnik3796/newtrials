@@ -136,7 +136,7 @@ public class VaultBlockEntity extends BlockEntity {
 
             // Střídání itemů každých 10 ticků (0.5 sekundy)
             displayItemSwitchTick++;
-            if (displayItemSwitchTick >= 10) {
+            if (displayItemSwitchTick >= 20) {
                 displayItemSwitchTick = 0;
                 int oldIndex = currentDisplayItemIndex;
                 currentDisplayItemIndex = (currentDisplayItemIndex + 1) % displayItems.size();
