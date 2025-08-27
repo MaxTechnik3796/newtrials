@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.particles.ParticleTypes;
 
 import java.util.List;
 
@@ -187,12 +188,45 @@ public class VaultBlock extends BaseEntityBlock {
     }
 
     private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+
+        if (!level.isClientSide && level.getGameTime() % 5 == 0) {
+            addSmokeParticles(level, pos);
+        }
+
+
         // Pokud je vault v animaci, zpracovává animaci
         if (vaultEntity.isAnimating()) {
             handleVaultAnimation(level, pos, state, vaultEntity);
         } else {
             // Běžná kontrola hráčů v okolí
             checkNearbyPlayers(level, pos, vaultEntity, state);
+        }
+
+    }
+
+    private static void addSmokeParticles(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            RandomSource random = level.random;
+
+            // Generuje 2-3 particles každý tick
+            for (int i = 0; i < 2 + random.nextInt(2); i++) {
+                double x = pos.getX() + 0.3 + random.nextDouble() * 0.4;
+                double y = pos.getY() + 0.8 + random.nextDouble() * 0.3;
+                double z = pos.getZ() + 0.3 + random.nextDouble() * 0.4;
+
+                double velocityX = (random.nextDouble() - 0.5) * 0.02;
+                double velocityY = random.nextDouble() * 0.05 + 0.02;
+                double velocityZ = (random.nextDouble() - 0.5) * 0.02;
+
+                // Pošle particles všem hráčům v okolí
+                serverLevel.sendParticles(
+                        ParticleTypes.SMOKE,
+                        x, y, z,
+                        1, // počet particles
+                        velocityX, velocityY, velocityZ,
+                        0.0 // rychlost
+                );
+            }
         }
     }
 
