@@ -365,10 +365,12 @@ public class VaultBlock extends BaseEntityBlock {
         // Fáze 1: UNLOCKING (0-10 ticků)
         if (tick == 10 && currentState == VaultState.UNLOCKING) {
             // Po 10 tickách přejde na EJECTING
+            if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_OPEN_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             BlockState newState = state.setValue(STATE, VaultState.EJECTING);
             level.setBlock(pos, newState, Block.UPDATE_ALL);
             return;
         }
+
 
         // Fáze 2: EJECTING - postupné dropování každých 20 ticků
         if (currentState == VaultState.EJECTING && tick > 10) {
@@ -387,6 +389,7 @@ public class VaultBlock extends BaseEntityBlock {
                     pos.getZ() + 0.5,
                     stack.copy()
                 );
+                if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_EJECT_ITEM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                 drop.setDeltaMovement(0.0, 0.15, 0.0); // X, Y, Z rychlost
                 drop.setPickUpDelay(10);
                 level.addFreshEntity(drop);
@@ -396,6 +399,7 @@ public class VaultBlock extends BaseEntityBlock {
             // Pokud byly všechny itemy vyhozeny, ukončí animaci a nastaví na INACTIVE
             if (currentDropIndex >= loot.size()) {
                 vaultEntity.stopAnimation();
+                if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_CLOSE_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                 BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
                 level.setBlock(pos, newState, Block.UPDATE_ALL);
             }
