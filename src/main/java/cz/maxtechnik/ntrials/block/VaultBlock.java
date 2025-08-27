@@ -204,7 +204,7 @@ public class VaultBlock extends BaseEntityBlock {
         if (!level.isClientSide && level.getGameTime() % 5 == 0) {
             addSmokeParticles(level, pos);
         }
-        if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE) {
+        if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE && level.getGameTime() % 5 == 0) {
             addFireParticles(level, pos);
         }
 
@@ -251,7 +251,7 @@ public class VaultBlock extends BaseEntityBlock {
             // Generuje 2-3 particles každý tick
             for (int i = 0; i < 2 + random.nextInt(2); i++) {
                 double x = pos.getX() + 0.3 + random.nextDouble() * 0.4;
-                double y = pos.getY() + 0.8 + random.nextDouble() * 0.3;
+                double y = pos.getY() + 0.2 + random.nextDouble() * 0.3;
                 double z = pos.getZ() + 0.3 + random.nextDouble() * 0.4;
 
                 double velocityX = (random.nextDouble() - 0.5) * 0.02;
