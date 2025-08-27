@@ -206,7 +206,7 @@ public class VaultBlock extends BaseEntityBlock {
         if (!level.isClientSide && level.getGameTime() % 5 == 0) {
             addSmokeParticles(level, pos);
         }
-        if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE && level.getGameTime() % 5 == 0) {
+        if (!level.isClientSide && state.getValue(STATE) == VaultState.ACTIVE && level.getGameTime() % 10 == 0) {
             addFireParticles(level, pos, state);
         }
 
@@ -336,7 +336,7 @@ public class VaultBlock extends BaseEntityBlock {
                 double velocityY = random.nextDouble() * 0.05 + 0.02;
                 double velocityZ = (random.nextDouble() - 0.5) * 0.02;
 
-                if (state.getValue(OMINOUS)) {
+                if (!state.getValue(OMINOUS)) {
                 // Pošle particles všem hráčům v okolí
                 serverLevel.sendParticles(
                         ParticleTypes.FLAME,
