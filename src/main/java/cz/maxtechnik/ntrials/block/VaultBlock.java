@@ -401,9 +401,9 @@ public class VaultBlock extends BaseEntityBlock {
                 // Počká 20 ticků (1 sekundu) před zavřením
                 if (tick >= (10 + loot.size() * 20 + 20)) {
                     vaultEntity.stopAnimation();
-                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_CLOSE_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     BlockState newState = state.setValue(STATE, VaultState.INACTIVE);
                     level.setBlock(pos, newState, Block.UPDATE_ALL);
+                    if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_CLOSE_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
             }
         }
