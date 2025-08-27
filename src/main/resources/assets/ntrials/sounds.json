@@ -26,7 +26,7 @@
   "block.vault.close_shutter":{
     "sounds":[
       {
-        "name":"ntrials:block/trial_spawner/close_shutter",
+        "name":"ntrials:block/vault/close_shutter",
         "stream":false
       }
     ]
