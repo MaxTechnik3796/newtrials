@@ -25,6 +25,7 @@ public class NTrialsMod{
         MinecraftForge.EVENT_BUS.register(this);
         NTrialsModBlocks.REGISTRY.register(modEventBus);
         NTrialsModItems.REGISTRY.register(modEventBus);
+        NTrialsModEntityTypes.REGISTRY.register(modEventBus);
         NTrialsModTabs.REGISTER.register(modEventBus);
         NTrialsModMobEffects.REGISTER.register(modEventBus);
         NTrialsModBlockEntities.register(modEventBus);
