@@ -1,6 +1,9 @@
 package cz.maxtechnik.ntrials.entity;
 
 import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
+import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.NTrialsModParticles;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -17,11 +20,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
 
 import java.util.List;
 
 public class WindChargeProjectile extends ThrowableItemProjectile {
+    private int tickCount = 0;
+    private static final int MAX_LIFETIME = 100; // 5 seconds (20 ticks per second)
 
     public WindChargeProjectile(EntityType<? extends WindChargeProjectile> entityType, Level level) {
         super(entityType, level);
@@ -39,17 +43,56 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     @Override
     public void tick() {
         super.tick();
+        this.tickCount++;
+
         if (this.level().isClientSide) {
-            // Use cloud particles for wind effect in 1.20.1
-            this.level().addParticle(ParticleTypes.CLOUD, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+            // Use small gust particles for projectile trail
+            this.level().addParticle(NTrialsModParticles.SMALL_GUST.get(),
+                this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+        }
+
+        // Check for explosion conditions on server side only
+        if (!this.level().isClientSide) {
+            boolean shouldExplode = false;
+
+            // Explode after maximum lifetime
+            if (this.tickCount >= MAX_LIFETIME) {
+                shouldExplode = true;
+            }
+
+            // Explode if projectile is moving very slowly (almost stopped)
+            if (this.getDeltaMovement().lengthSqr() < 0.01D) {
+                shouldExplode = true;
+            }
+
+            // Explode if projectile is close to ground and has been flying for a bit
+            if (this.tickCount > 5 && this.onGround()) {
+                shouldExplode = true;
+            }
+
+            // Additional check: if projectile is very close to any block below
+            if (this.tickCount > 3) {
+                int blockX = (int) Math.floor(this.getX());
+                int blockY = (int) Math.floor(this.getY() - 0.5D);
+                int blockZ = (int) Math.floor(this.getZ());
+
+                if (!this.level().getBlockState(new BlockPos(blockX, blockY, blockZ)).isAir()) {
+                    shouldExplode = true;
+                }
+            }
+
+            if (shouldExplode) {
+                this.createWindExplosion();
+                this.discard();
+            }
         }
     }
 
     @Override
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
+        this.createWindExplosion();
         if (!this.level().isClientSide) {
-            this.createWindExplosion();
             this.discard();
         }
     }
@@ -57,8 +100,8 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
+        this.createWindExplosion();
         if (!this.level().isClientSide) {
-            this.createWindExplosion();
             this.discard();
         }
     }
@@ -71,16 +114,58 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
             SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.8F, 1.2F);
 
-        // Add wind particles
-        if (this.level().isClientSide) {
-            for (int i = 0; i < 20; i++) {
-                double offsetX = (this.random.nextDouble() - 0.5D) * 2.0D * radius;
-                double offsetY = (this.random.nextDouble() - 0.5D) * 2.0D * radius;
-                double offsetZ = (this.random.nextDouble() - 0.5D) * 2.0D * radius;
-                this.level().addParticle(ParticleTypes.CLOUD,
-                    center.x + offsetX, center.y + offsetY, center.z + offsetZ,
-                    0.0D, 0.0D, 0.0D);
-            }
+        // Enhanced gust particles - spawn on both sides for visibility
+        // Main gust explosion - large radial particles
+        for (int i = 0; i < 20; i++) {
+            double angle = (i / 20.0D) * Math.PI * 2;
+            double distance = 0.5D + this.random.nextDouble() * 2.0D;
+
+            double offsetX = Math.cos(angle) * distance;
+            double offsetY = (this.random.nextDouble() - 0.5D) * 1.0D;
+            double offsetZ = Math.sin(angle) * distance;
+
+            // Velocity for particles moving outward
+            double velocityX = offsetX * 0.3D;
+            double velocityY = Math.abs(offsetY) * 0.2D;
+            double velocityZ = offsetZ * 0.3D;
+
+            // Custom gust particles for main explosion
+            this.level().addParticle(NTrialsModParticles.GUST.get(),
+                center.x, center.y, center.z,
+                velocityX, velocityY, velocityZ);
+        }
+
+        // Small gust particles for detail
+        for (int i = 0; i < 30; i++) {
+            double offsetX = (this.random.nextDouble() - 0.5D) * radius * 0.5D;
+            double offsetY = (this.random.nextDouble() - 0.5D) * radius * 0.3D;
+            double offsetZ = (this.random.nextDouble() - 0.5D) * radius * 0.5D;
+
+            double velocityX = offsetX * 0.1D;
+            double velocityY = Math.abs(offsetY) * 0.05D;
+            double velocityZ = offsetZ * 0.1D;
+
+            // Small gust particles for wind swirl effect
+            this.level().addParticle(NTrialsModParticles.SMALL_GUST.get(),
+                center.x + offsetX * 0.2D, center.y + offsetY * 0.2D, center.z + offsetZ * 0.2D,
+                velocityX, velocityY, velocityZ);
+        }
+
+        // Additional vanilla particles for fallback visibility
+        for (int i = 0; i < 15; i++) {
+            double offsetX = (this.random.nextDouble() - 0.5D) * 2.0D;
+            double offsetY = (this.random.nextDouble() - 0.5D) * 2.0D;
+            double offsetZ = (this.random.nextDouble() - 0.5D) * 2.0D;
+
+            // Cloud particles as fallback
+            this.level().addParticle(ParticleTypes.CLOUD,
+                center.x + offsetX, center.y + offsetY, center.z + offsetZ,
+                offsetX * 0.1D, Math.abs(offsetY) * 0.1D, offsetZ * 0.1D);
+
+            // Poof particles for additional effect
+            this.level().addParticle(ParticleTypes.POOF,
+                center.x + offsetX * 0.5D, center.y + offsetY * 0.5D, center.z + offsetZ * 0.5D,
+                offsetX * 0.05D, Math.abs(offsetY) * 0.05D, offsetZ * 0.05D);
         }
 
         // Find and knockback entities
