@@ -20,6 +20,11 @@ public class WindChargeItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
 
+        // Zkontrolujte, zda má hráč cooldown na tento item
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return InteractionResultHolder.fail(itemstack);
+        }
+
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
             SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
 
@@ -33,6 +38,8 @@ public class WindChargeItem extends Item {
         if (!player.getAbilities().instabuild) {
             itemstack.shrink(1);
         }
+
+        player.getCooldowns().addCooldown(this, 10);
 
         return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
     }
