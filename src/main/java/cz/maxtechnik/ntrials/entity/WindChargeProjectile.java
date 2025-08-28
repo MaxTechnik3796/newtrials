@@ -86,7 +86,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         // Find and knockback entities
         List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(radius));
         for (Entity entity : entities) {
-            if (entity instanceof LivingEntity && entity != this.getOwner()) {
+            if (entity instanceof LivingEntity) {
                 double distance = entity.distanceTo(this);
                 if (distance <= radius) {
                     // Calculate knockback direction
