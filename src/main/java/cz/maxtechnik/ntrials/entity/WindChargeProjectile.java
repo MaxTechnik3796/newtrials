@@ -113,7 +113,9 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
 
     private void createWindExplosion() {
         Vec3 center = this.position();
-        double radius = 4.375D; // Increased by 25% from 3.5D to 4.375D
+        Vec3 explosion_center = new Vec3(center.x, center.y - 0.5D, center.z);
+
+        double radius = 4.375D; // Increased by 25% from 3.5D to 4.37D5
 
         // Play explosion sound as wind burst substitute
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -164,7 +166,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
                 double distance = entity.distanceTo(this);
                 if (distance <= radius) {
                     // Calculate knockback direction
-                    Vec3 direction = entity.position().subtract(center).normalize();
+                    Vec3 direction = entity.position().subtract(explosion_center).normalize();
                     // 1.5d strangth
                     double knockbackStrength = 1.5D * (1.0D - (distance / radius)); // Increased from 1.5D to 2.0D
 
