@@ -120,7 +120,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         // Main gust explosion - large radial particles
         if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             // Hlavní gust particles
-            for (int i = 0; i < 15; i++) {
+            for (int i = 0; i < 5; i++) {
                 double angle = (i / 20.0D) * Math.PI * 2;
                 double distance = 0.5D + this.random.nextDouble() * 2.0D;
 
@@ -138,7 +138,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
             }
 
             // Malé gust particles
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 10; i++) {
                 double offsetX = (this.random.nextDouble() - 0.5D) * radius * 0.5D;
                 double offsetY = (this.random.nextDouble() - 0.5D) * radius * 0.3D;
                 double offsetZ = (this.random.nextDouble() - 0.5D) * radius * 0.5D;
