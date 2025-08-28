@@ -176,13 +176,15 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
                 if (distance <= radius) {
                     // Calculate knockback direction
                     Vec3 direction = entity.position().subtract(center).normalize();
-                    double knockbackStrength = 2.0D * (1.0D - (distance / radius)); // Increased from 1.5D to 2.0D
+                    // 1.5d strangth
+                    double knockbackStrength = 1.5D * (1.0D - (distance / radius)); // Increased from 1.5D to 2.0D
 
                     // Apply stronger upward knockback (like modern Minecraft wind charge)
                     Vec3 knockback = direction.scale(knockbackStrength);
 
+                    //0.2d
                     // Enhanced vertical component - minimum 0.6D upward, stronger upward bias
-                    double verticalKnockback = Math.max(knockback.y + 0.3D, 0.6D);
+                    double verticalKnockback = Math.max(knockback.y + 0.2D, 0.6D);
 
                     // Reduce horizontal knockback slightly to emphasize upward movement
                     double horizontalMultiplier = 0.8D;
