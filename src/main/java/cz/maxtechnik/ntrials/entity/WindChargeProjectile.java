@@ -3,6 +3,7 @@ package cz.maxtechnik.ntrials.entity;
 import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
@@ -112,7 +113,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
 
         // Play explosion sound as wind burst substitute
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-            SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.8F, 1.2F);
+                NTrialsModSounds.WIND_BURST.get(), SoundSource.NEUTRAL, 0.8F, 1.2F);
 
         // Enhanced gust particles - spawn on both sides for visibility
         // Main gust explosion - large radial particles

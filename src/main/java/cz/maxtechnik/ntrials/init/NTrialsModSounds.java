@@ -16,4 +16,5 @@ public class NTrialsModSounds{
     public static final RegistryObject<SoundEvent>BLOCK_VAULT_EJECT_ITEM=REGISTER.register("block.vault.eject_item",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.vault.eject_item")));
     public static final RegistryObject<SoundEvent>BLOCK_VAULT_INSERT_ITEM=REGISTER.register("block.vault.insert_item",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.vault.insert_item")));
     public static final RegistryObject<SoundEvent>BLOCK_VAULT_INSERT_ITEM_FAIL=REGISTER.register("block.vault.insert_item_fail",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.vault.insert_item_fail")));
+    public static final RegistryObject<SoundEvent>WIND_BURST=REGISTER.register("wind.burst",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","wind.burst")));
 }
