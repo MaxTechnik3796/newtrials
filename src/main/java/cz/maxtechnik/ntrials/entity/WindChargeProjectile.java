@@ -65,7 +65,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
 
     private void createWindExplosion() {
         Vec3 center = this.position();
-        double radius = 3.5D;
+        double radius = 4.375D; // Increased by 25% from 3.5D to 4.375D
 
         // Play explosion sound as wind burst substitute
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -91,11 +91,22 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
                 if (distance <= radius) {
                     // Calculate knockback direction
                     Vec3 direction = entity.position().subtract(center).normalize();
-                    double knockbackStrength = 1.5D * (1.0D - (distance / radius));
+                    double knockbackStrength = 2.0D * (1.0D - (distance / radius)); // Increased from 1.5D to 2.0D
 
-                    // Apply knockback without damage
+                    // Apply stronger upward knockback (like modern Minecraft wind charge)
                     Vec3 knockback = direction.scale(knockbackStrength);
-                    entity.setDeltaMovement(entity.getDeltaMovement().add(knockback.x, Math.max(knockback.y, 0.4D), knockback.z));
+
+                    // Enhanced vertical component - minimum 0.6D upward, stronger upward bias
+                    double verticalKnockback = Math.max(knockback.y + 0.3D, 0.6D);
+
+                    // Reduce horizontal knockback slightly to emphasize upward movement
+                    double horizontalMultiplier = 0.8D;
+
+                    entity.setDeltaMovement(entity.getDeltaMovement().add(
+                        knockback.x * horizontalMultiplier,
+                        verticalKnockback,
+                        knockback.z * horizontalMultiplier
+                    ));
                     entity.hurtMarked = true;
                 }
             }
