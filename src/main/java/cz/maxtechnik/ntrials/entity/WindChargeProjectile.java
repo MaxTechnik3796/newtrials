@@ -31,10 +31,12 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
 
     public WindChargeProjectile(EntityType<? extends WindChargeProjectile> entityType, Level level) {
         super(entityType, level);
+        this.setNoGravity(true);
     }
 
     public WindChargeProjectile(Level level, LivingEntity shooter) {
         super(NTrialsModEntityTypes.WIND_CHARGE_PROJECTILE.get(), shooter, level);
+        this.setNoGravity(true);
     }
 
     @Override
@@ -45,6 +47,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     @Override
     public void tick() {
         super.tick();
+
         this.tickCount++;
 
         if (this.level().isClientSide) {
