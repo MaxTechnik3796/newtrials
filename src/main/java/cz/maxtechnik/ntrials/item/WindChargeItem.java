@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 
 public class WindChargeItem extends Item {
     public WindChargeItem(){
-        super(new Properties().stacksTo(16));
+        super(new Properties().stacksTo(64));
     }
 
     @Override
