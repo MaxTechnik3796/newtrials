@@ -25,6 +25,8 @@ public class NTrialsMod{
         MinecraftForge.EVENT_BUS.register(this);
         NTrialsModBlocks.REGISTRY.register(modEventBus);
         NTrialsModItems.REGISTRY.register(modEventBus);
+        NTrialsModEntityTypes.REGISTRY.register(modEventBus);
+        NTrialsModParticles.REGISTRY.register(modEventBus);
         NTrialsModTabs.REGISTER.register(modEventBus);
         NTrialsModMobEffects.REGISTER.register(modEventBus);
         NTrialsModBlockEntities.register(modEventBus);
@@ -34,6 +36,7 @@ public class NTrialsMod{
     private void commonSetup(final FMLCommonSetupEvent event){
         LOGGER.info("NewTrials Common loading...");
         event.enqueueWork(NTrialsModEvents::setupOxidation);
+         event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
     }
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event){

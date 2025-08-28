@@ -62,5 +62,13 @@
         "stream":false
       }
     ]
+  },
+  "wind.burst":{
+    "sounds":[
+      {
+        "name":"ntrials:wind/wind_burst1",
+        "stream":false
+      }
+    ]
   }
 }

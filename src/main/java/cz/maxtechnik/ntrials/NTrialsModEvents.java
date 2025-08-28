@@ -1,6 +1,9 @@
 package cz.maxtechnik.ntrials;
 
+import cz.maxtechnik.ntrials.item.WindChargeDispenserBehavior;
+import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.fml.common.Mod;
 import cz.maxtechnik.ntrials.init.NTrialsModBlocks;
 import com.google.common.collect.BiMap;
@@ -129,6 +132,12 @@ public class NTrialsModEvents{
         SCRAPING_MAP.put(NTrialsModBlocks.WEATHERED_COPPER_BULB.get(), NTrialsModBlocks.EXPOSED_COPPER_BULB.get());
         SCRAPING_MAP.put(NTrialsModBlocks.OXIDIZED_COPPER_BULB.get(), NTrialsModBlocks.WEATHERED_COPPER_BULB.get());
     }
+
+    public static void setupDispenserBehaviors(){
+        // Register Wind Charge dispenser behavior
+        DispenserBlock.registerBehavior(NTrialsModItems.WIND_CHARGE.get(), new WindChargeDispenserBehavior());
+    }
+
     // Pro Minecraft 1.20.1 Forge zatím odstraníme waxování - bude třeba implementovat jinak
     // V této verzi Forge nemůžeme přímo modifikovat HoneycombItem mapy
 }
