@@ -20,7 +20,8 @@ public class NTrialsModItems{
 
     public static final RegistryObject<Item>TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
     public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
-
+    public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
+    public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
 
 
     public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);

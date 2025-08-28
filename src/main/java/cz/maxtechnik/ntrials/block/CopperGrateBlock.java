@@ -67,6 +67,16 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
     }
 
     @Override
+    public float getShadeBrightness(@NotNull BlockState blockState,@NotNull BlockGetter blockGetter,@NotNull BlockPos pos){
+        return 1.0f;
+    }
+    @Override
+    public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
+        return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
+    }
+
+
+    @Override
     public @NotNull VoxelShape getVisualShape(@NotNull BlockState state,@NotNull BlockGetter world,@NotNull BlockPos pos,@NotNull CollisionContext context){
         return Shapes.empty();
     }

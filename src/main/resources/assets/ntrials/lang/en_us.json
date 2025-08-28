@@ -5,11 +5,15 @@
   "effect.ntrials.infested": "Infested",
   "effect.ntrials.oozing": "Oozing",
   "effect.ntrials.weaving": "Weaving",
+  "effect.ntrials.trial_omen": "Trial Omen",
 
 
   "block.ntrials.heavy_core": "§dHeavy Core§r",
   "item.ntrials.trial_key": "Trial Key",
   "item.ntrials.ominous_trial_key": "Ominous Trial Key",
+  "item.ntrials.mace": "§dMace§r",
+
+  "item.ntrials.wind_charge": "Wind Charge",
 
   "block.ntrials.trial_spawner": "Trial Spawner",
   "block.ntrials.vault": "Vault",

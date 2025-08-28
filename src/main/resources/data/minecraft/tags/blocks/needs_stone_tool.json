@@ -33,6 +33,14 @@
     "ntrials:waxed_copper_grate",
     "ntrials:waxed_exposed_copper_grate",
     "ntrials:waxed_weathered_copper_grate",
-    "ntrials:waxed_oxidized_copper_grate"
+    "ntrials:waxed_oxidized_copper_grate",
+    "ntrials:copper_bulb",
+    "ntrials:exposed_copper_bulb",
+    "ntrials:weathered_copper_bulb",
+    "ntrials:oxidized_copper_bulb",
+    "ntrials:waxed_copper_bulb",
+    "ntrials:waxed_exposed_copper_bulb",
+    "ntrials:waxed_weathered_copper_bulb",
+    "ntrials:waxed_oxidized_copper_bulb"
   ]
 }
