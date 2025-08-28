@@ -1,5 +1,6 @@
 package cz.maxtechnik.ntrials.item;
 
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -7,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -38,9 +38,20 @@ public class MaceItem extends SwordItem {
 
                 // Efekty při větším pádu
                 if (bonusDamage > 3.0f) {
-                    // Zvuk při silném úderu
-                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
+                    // Zvuk podle typu útoku
+                    if (fallDistance > 15.0f) {
+                        // Těžký úder z vysoké výšky
+                        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            NTrialsModSounds.MACE_SMASH_GROUND_HEAVY.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+                    } else if (fallSpeed > 0.3) {
+                        // Úder ve vzduchu
+                        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            NTrialsModSounds.MACE_SMASH_AIR.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
+                    } else {
+                        // Běžný úder na zemi
+                        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            NTrialsModSounds.MACE_SMASH_GROUND.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
+                    }
 
                     // Knockback efekt
                     float knockbackStrength = Math.min(bonusDamage / 10.0f, 1.5f);
@@ -56,14 +67,16 @@ public class MaceItem extends SwordItem {
 
                     // Critické efekty při extrémní výšce
                     if (fallDistance > 20.0f) {
-                        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                            SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.5f, 2.0f);
                         target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0));
                     }
                 }
 
                 // Reset fall distance po útoku
                 player.fallDistance = 0;
+            } else {
+                // Běžný úder bez pádu - přehraj základní zvuk
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                    NTrialsModSounds.MACE_SMASH_GROUND.get(), SoundSource.PLAYERS, 0.8f, 1.0f);
             }
         }
 
