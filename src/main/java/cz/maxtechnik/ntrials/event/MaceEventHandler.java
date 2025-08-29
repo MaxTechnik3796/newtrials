@@ -47,7 +47,9 @@ public class MaceEventHandler {
                     // Omez maximální bonus
                     bonusDamage = Math.min(bonusDamage, 25.0f);
 
-
+					if (densityLevel > 0) {
+						bonusDamage += ((densityLevel * 0.5) * fallDistance);
+					}
 
 
                     // Přidej bonus k původnímu damage
