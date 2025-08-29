@@ -60,6 +60,21 @@ public class MaceEventHandler {
 						bonusDamage += ((densityLevel * 0.5) * fallDistance);
 					}
 
+					if (breachLevel > 0) {
+						LivingEntity target = (LivingEntity) event.getEntity();
+						float armorValue = target.getArmorValue();
+						float armorToughness = (float) target.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS);
+
+						float totalArmor = armorValue + armorToughness;
+						float armorReduction = totalArmor / (totalArmor + 20.0f);
+
+						float breachEffectiveness = Math.min(breachLevel * 0.20f, 1.0f);
+						float ignoredArmorReduction = armorReduction * breachEffectiveness;
+
+						float breachBonus = bonusDamage * (ignoredArmorReduction / (1.0f - armorReduction + 0.001f));
+						bonusDamage += breachBonus;
+					}
+
 					if (windBurstLevel > 0 && player.level() instanceof ServerLevel serverLevel) {
 						Vec3 center = player.position();
 						Vec3 explosion_center = new Vec3(center.x, center.y - 0.0D, center.z);
