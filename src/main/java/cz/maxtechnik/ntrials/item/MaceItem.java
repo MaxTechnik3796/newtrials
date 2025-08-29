@@ -1,5 +1,6 @@
 package cz.maxtechnik.ntrials.item;
 
+import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -7,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -87,5 +89,17 @@ public class MaceItem extends SwordItem {
     @Override
     public int getEnchantmentValue() {
         return 15;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        // Povolit naše custom enchanty
+        if (enchantment == NTrialsModEnchantments.WIND_BURST.get() ||
+            enchantment == NTrialsModEnchantments.DENSITY.get() ||
+            enchantment == NTrialsModEnchantments.BREACH.get()) {
+            return true;
+        }
+        // Jinak použij standardní chování
+        return super.canApplyAtEnchantingTable(stack, enchantment);
     }
 }
