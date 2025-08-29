@@ -1,0 +1,6 @@
+{
+  "parent": "ntrials:item/handheld_mace",
+  "textures": {
+    "layer0": "ntrials:item/mace"
+  }
+}
