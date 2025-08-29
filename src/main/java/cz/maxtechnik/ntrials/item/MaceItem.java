@@ -13,7 +13,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public class MaceItem extends SwordItem {
     private static final float MIN_FALL_DISTANCE = 1.5f;
@@ -31,16 +30,7 @@ public class MaceItem extends SwordItem {
             Vec3 velocity = player.getDeltaMovement();
             double fallSpeed = Math.abs(velocity.y);
 
-			ItemStack maceStack = attacker.getMainHandItem();
 
-			int windBurstLevel = EnchantmentHelper.getItemEnchantmentLevel(
-					NTrialsModEnchantments.WIND_BURST.get(), maceStack);
-
-			int densityLevel = EnchantmentHelper.getItemEnchantmentLevel(
-					NTrialsModEnchantments.DENSITY.get(), maceStack);
-
-			int breachLevel = EnchantmentHelper.getItemEnchantmentLevel(
-					NTrialsModEnchantments.BREACH.get(), maceStack);
 
             // Efekty při pádu z výšky - BEZ aplikování dodatečného damage
             if (fallDistance > MIN_FALL_DISTANCE) {
