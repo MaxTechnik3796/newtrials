@@ -1,12 +1,14 @@
 package cz.maxtechnik.ntrials.event;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
+import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
 import cz.maxtechnik.ntrials.item.MaceItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 @Mod.EventBusSubscriber(modid = NTrialsMod.MODID)
 public class MaceEventHandler {
@@ -16,6 +18,18 @@ public class MaceEventHandler {
         // Zkontroluj jestli útočník je hráč s mace
         if (event.getSource().getEntity() instanceof Player player) {
             ItemStack heldItem = player.getMainHandItem();
+
+			ItemStack maceStack = player.getMainHandItem();
+
+			int windBurstLevel = EnchantmentHelper.getItemEnchantmentLevel(
+					NTrialsModEnchantments.WIND_BURST.get(), maceStack);
+
+			int densityLevel = EnchantmentHelper.getItemEnchantmentLevel(
+					NTrialsModEnchantments.DENSITY.get(), maceStack);
+
+			int breachLevel = EnchantmentHelper.getItemEnchantmentLevel(
+					NTrialsModEnchantments.BREACH.get(), maceStack);
+
 
             if (heldItem.getItem() instanceof MaceItem) {
                 float fallDistance = player.fallDistance;
@@ -32,6 +46,9 @@ public class MaceEventHandler {
 
                     // Omez maximální bonus
                     bonusDamage = Math.min(bonusDamage, 25.0f);
+
+
+
 
                     // Přidej bonus k původnímu damage
                     event.setAmount(event.getAmount() + bonusDamage);
