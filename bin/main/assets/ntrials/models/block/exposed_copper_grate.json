@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "ntrials:block/exposed_copper_grate"
+  },
+   "render_type": "cutout"
+}
