@@ -130,3 +130,14 @@ tasks.named('jar',Jar).configure{
 tasks.withType(JavaCompile).configureEach{
     options.encoding ='UTF-8'
 }
+
+// Do build.gradle
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+eclipse {
+    classpath {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

@@ -17,4 +17,9 @@ public class NTrialsModSounds{
     public static final RegistryObject<SoundEvent>BLOCK_VAULT_INSERT_ITEM=REGISTER.register("block.vault.insert_item",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.vault.insert_item")));
     public static final RegistryObject<SoundEvent>BLOCK_VAULT_INSERT_ITEM_FAIL=REGISTER.register("block.vault.insert_item_fail",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.vault.insert_item_fail")));
     public static final RegistryObject<SoundEvent>WIND_BURST=REGISTER.register("wind.burst",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","wind.burst")));
+
+    // Mace sounds
+    public static final RegistryObject<SoundEvent>MACE_SMASH_AIR=REGISTER.register("mace.smash_air",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","mace.smash_air")));
+    public static final RegistryObject<SoundEvent>MACE_SMASH_GROUND=REGISTER.register("mace.smash_ground",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","mace.smash_ground")));
+    public static final RegistryObject<SoundEvent>MACE_SMASH_GROUND_HEAVY=REGISTER.register("mace.smash_ground_heavy",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","mace.smash_ground_heavy")));
 }

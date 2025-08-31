@@ -105,7 +105,7 @@ public class VaultBlock extends BaseEntityBlock {
         }
         //normal
         if (!state.getValue(OMINOUS)) {
-            if (heldItem.getItem() == NTrialsModItems.TRIAL_KEY.get()) {
+            if (heldItem.getItem() == NTrialsModItems.TRIAL_KEY.get() && state.getValue(STATE) == VaultState.ACTIVE) {
                 if (!level.isClientSide) {
                     // Označí hráče jako toho, kdo otevřel vault
                     BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -144,7 +144,7 @@ public class VaultBlock extends BaseEntityBlock {
 
         //ominous
         } else {
-            if (heldItem.getItem() == NTrialsModItems.OMINOUS_TRIAL_KEY.get()) {
+            if (heldItem.getItem() == NTrialsModItems.OMINOUS_TRIAL_KEY.get()  && state.getValue(STATE) == VaultState.ACTIVE) {
                 if (!level.isClientSide) {
                     // Označí hráče jako toho, kdo otevřel vault
                     BlockEntity blockEntity = level.getBlockEntity(pos);
