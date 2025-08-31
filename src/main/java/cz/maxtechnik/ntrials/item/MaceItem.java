@@ -53,8 +53,8 @@ public class MaceItem extends SwordItem {
                             NTrialsModSounds.MACE_SMASH_AIR.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
                     } else {
                         // Běžný úder na zemi
-                        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                            NTrialsModSounds.MACE_SMASH_GROUND.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
+                        //player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                         //   NTrialsModSounds.MACE_SMASH_GROUND.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
                     }
 
                     // Knockback efekt
