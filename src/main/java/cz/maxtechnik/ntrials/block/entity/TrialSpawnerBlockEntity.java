@@ -354,7 +354,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             return;
         }
 
-        System.out.println("Spawning wave " + currentWave + "/" + maxWaves + " at " + getBlockPos());
+        // Check if block state is ominous
+        BlockState currentState = level.getBlockState(getBlockPos());
+        boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
+
+        System.out.println("Spawning wave " + currentWave + "/" + maxWaves + " at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
 
         for (int i = 0; i < mobsPerWave; i++) {
             // Find spawn position around the spawner
@@ -370,13 +374,19 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                                 level.getCurrentDifficultyAt(spawnPos),
                                 net.minecraft.world.entity.MobSpawnType.SPAWNER,
                                 null, null);
+
+                        // If block state ominous is true, give random equipment and make stronger
+                        if (isOminousBlock) {
+                            equipOminousMob(mob);
+                        }
                     }
 
                     level.addFreshEntity(entity);
                     spawnedEntities.add(entity.getUUID());
                     currentWaveMobs++;
 
-                    System.out.println("Spawned " + entity.getType().getDescriptionId() + " at " + spawnPos);
+                    System.out.println("Spawned " + entity.getType().getDescriptionId() + " at " + spawnPos +
+                        (isOminousBlock ? " [OMINOUS]" : ""));
                 }
             }
         }
@@ -454,6 +464,161 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     entity.discard();
                 }
             });
+        }
+    }
+
+    private void equipOminousMob(net.minecraft.world.entity.Mob mob) {
+        if (level == null || level.random == null) {
+            return;
+        }
+
+        // Make mob stronger
+        // Increase health by 50%
+        float currentHealth = mob.getMaxHealth();
+        mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH)
+            .setBaseValue(currentHealth * 1.5f);
+        mob.setHealth(mob.getMaxHealth());
+
+        // Increase attack damage by 25%
+        if (mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE) != null) {
+            double currentDamage = mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE).getBaseValue();
+            mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)
+                .setBaseValue(currentDamage * 1.25);
+        }
+
+        // Random armor pieces and weapons
+        net.minecraft.util.RandomSource random = level.random;
+
+        // Armor materials (different tiers)
+        net.minecraft.world.item.Item[] helmets = {
+            net.minecraft.world.item.Items.LEATHER_HELMET,
+            net.minecraft.world.item.Items.CHAINMAIL_HELMET,
+            net.minecraft.world.item.Items.IRON_HELMET,
+            net.minecraft.world.item.Items.DIAMOND_HELMET,
+            net.minecraft.world.item.Items.NETHERITE_HELMET
+        };
+
+        net.minecraft.world.item.Item[] chestplates = {
+            net.minecraft.world.item.Items.LEATHER_CHESTPLATE,
+            net.minecraft.world.item.Items.CHAINMAIL_CHESTPLATE,
+            net.minecraft.world.item.Items.IRON_CHESTPLATE,
+            net.minecraft.world.item.Items.DIAMOND_CHESTPLATE,
+            net.minecraft.world.item.Items.NETHERITE_CHESTPLATE
+        };
+
+        net.minecraft.world.item.Item[] leggings = {
+            net.minecraft.world.item.Items.LEATHER_LEGGINGS,
+            net.minecraft.world.item.Items.CHAINMAIL_LEGGINGS,
+            net.minecraft.world.item.Items.IRON_LEGGINGS,
+            net.minecraft.world.item.Items.DIAMOND_LEGGINGS,
+            net.minecraft.world.item.Items.NETHERITE_LEGGINGS
+        };
+
+        net.minecraft.world.item.Item[] boots = {
+            net.minecraft.world.item.Items.LEATHER_BOOTS,
+            net.minecraft.world.item.Items.CHAINMAIL_BOOTS,
+            net.minecraft.world.item.Items.IRON_BOOTS,
+            net.minecraft.world.item.Items.DIAMOND_BOOTS,
+            net.minecraft.world.item.Items.NETHERITE_BOOTS
+        };
+
+        net.minecraft.world.item.Item[] weapons = {
+            net.minecraft.world.item.Items.WOODEN_SWORD,
+            net.minecraft.world.item.Items.STONE_SWORD,
+            net.minecraft.world.item.Items.IRON_SWORD,
+            net.minecraft.world.item.Items.DIAMOND_SWORD,
+            net.minecraft.world.item.Items.NETHERITE_SWORD,
+            net.minecraft.world.item.Items.IRON_AXE,
+            net.minecraft.world.item.Items.DIAMOND_AXE
+        };
+
+        // Randomly equip armor pieces (30% chance for each piece)
+        if (random.nextFloat() < 0.3f) {
+            net.minecraft.world.item.ItemStack helmet = new net.minecraft.world.item.ItemStack(
+                helmets[random.nextInt(helmets.length)]);
+            mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, helmet);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.HEAD, 0.1f);
+        }
+
+        if (random.nextFloat() < 0.3f) {
+            net.minecraft.world.item.ItemStack chestplate = new net.minecraft.world.item.ItemStack(
+                chestplates[random.nextInt(chestplates.length)]);
+            mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, chestplate);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.CHEST, 0.1f);
+        }
+
+        if (random.nextFloat() < 0.3f) {
+            net.minecraft.world.item.ItemStack legging = new net.minecraft.world.item.ItemStack(
+                leggings[random.nextInt(leggings.length)]);
+            mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.LEGS, legging);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.LEGS, 0.1f);
+        }
+
+        if (random.nextFloat() < 0.3f) {
+            net.minecraft.world.item.ItemStack boot = new net.minecraft.world.item.ItemStack(
+                boots[random.nextInt(boots.length)]);
+            mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET, boot);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.FEET, 0.1f);
+        }
+
+        // Randomly give weapons (50% chance)
+        if (random.nextFloat() < 0.5f) {
+            net.minecraft.world.item.ItemStack weapon = new net.minecraft.world.item.ItemStack(
+                weapons[random.nextInt(weapons.length)]);
+            mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, weapon);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND, 0.15f);
+        }
+
+        // Add some enchantments randomly
+        addRandomEnchantments(mob);
+
+        System.out.println("Equipped ominous mob with random gear");
+    }
+
+    private void addRandomEnchantments(net.minecraft.world.entity.Mob mob) {
+        if (level == null || level.random == null) {
+            return;
+        }
+
+        net.minecraft.util.RandomSource random = level.random;
+
+        // 40% chance to add enchantments
+        if (random.nextFloat() < 0.4f) {
+            net.minecraft.world.entity.EquipmentSlot[] slots = {
+                net.minecraft.world.entity.EquipmentSlot.HEAD,
+                net.minecraft.world.entity.EquipmentSlot.CHEST,
+                net.minecraft.world.entity.EquipmentSlot.LEGS,
+                net.minecraft.world.entity.EquipmentSlot.FEET,
+                net.minecraft.world.entity.EquipmentSlot.MAINHAND
+            };
+
+            for (net.minecraft.world.entity.EquipmentSlot slot : slots) {
+                net.minecraft.world.item.ItemStack item = mob.getItemBySlot(slot);
+                if (!item.isEmpty() && random.nextFloat() < 0.3f) {
+                    if (slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+                        // Weapon enchantments
+                        if (random.nextBoolean()) {
+                            item.enchant(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS,
+                                random.nextInt(3) + 1);
+                        }
+                        if (random.nextBoolean()) {
+                            item.enchant(net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK,
+                                random.nextInt(2) + 1);
+                        }
+                    } else {
+                        // Armor enchantments
+                        if (random.nextBoolean()) {
+                            item.enchant(net.minecraft.world.item.enchantment.Enchantments.ALL_DAMAGE_PROTECTION,
+                                random.nextInt(3) + 1);
+                        }
+                        if (random.nextBoolean()) {
+                            item.enchant(net.minecraft.world.item.enchantment.Enchantments.UNBREAKING,
+                                random.nextInt(2) + 1);
+                        }
+                    }
+                    mob.setItemSlot(slot, item);
+                }
+            }
         }
     }
 }
