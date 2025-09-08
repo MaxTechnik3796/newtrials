@@ -289,13 +289,13 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         // FOR TESTING IN SINGLE PLAYER - Include entities with "player" tag as fake players
         // Comment out or remove this section when not needed for testing
-
+		/*
         List<net.minecraft.world.entity.Entity> entitiesWithPlayerTag = level.getEntitiesOfClass(
                 net.minecraft.world.entity.Entity.class, searchArea,
                 entity -> entity.getTags().contains("player"));
         int fakePlayerCount = entitiesWithPlayerTag.size();
-
-        //int fakePlayerCount = 0; // Set to 0 when not testing, or uncomment above section for testing
+		*/
+        int fakePlayerCount = 0; // Set to 0 when not testing, or uncomment above section for testing
 
         int playerCount = players.size() + fakePlayerCount;
 
