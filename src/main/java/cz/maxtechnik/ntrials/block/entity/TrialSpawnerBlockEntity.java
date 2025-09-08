@@ -33,6 +33,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     // Trial spawner wave settings
     private int maxWaves = 5; // Default number of waves
     private int mobsPerWave = 3; // Default mobs per wave
+    private int currentTrialMobsPerWave = 3; // Actual mobs per wave for current trial (scaled by player count)
     private int currentWave = 0; // Current wave number (0 = not started)
     private int currentWaveMobs = 0; // Number of alive mobs in current wave
     private boolean trialActive = false; // Whether trial is currently active
@@ -286,7 +287,19 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         List<net.minecraft.world.entity.player.Player> players = level.getEntitiesOfClass(
                 net.minecraft.world.entity.player.Player.class, searchArea);
 
-        boolean hasPlayers = !players.isEmpty();
+        // FOR TESTING IN SINGLE PLAYER - Include entities with "player" tag as fake players
+        // Comment out or remove this section when not needed for testing
+
+        List<net.minecraft.world.entity.Entity> entitiesWithPlayerTag = level.getEntitiesOfClass(
+                net.minecraft.world.entity.Entity.class, searchArea,
+                entity -> entity.getTags().contains("player"));
+        int fakePlayerCount = entitiesWithPlayerTag.size();
+
+        //int fakePlayerCount = 0; // Set to 0 when not testing, or uncomment above section for testing
+
+        int playerCount = players.size() + fakePlayerCount;
+
+        boolean hasPlayers = playerCount > 0;
 
         if (hasPlayers && !trialActive && currentWave == 0) {
             // Start trial
@@ -336,7 +349,49 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         currentWave = 1;
         currentWaveMobs = 0;
         spawnedEntities.clear();
+
+        // Scan for players in 16 block radius to scale mob count
+        updateMobCountBasedOnPlayers();
+
         spawnWave();
+    }
+
+    private void updateMobCountBasedOnPlayers() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+
+        // Scan 16 blocks around spawner for players
+        double scanRange = 16.0;
+        net.minecraft.world.phys.AABB scanArea = new net.minecraft.world.phys.AABB(
+                getBlockPos().getX() - scanRange, getBlockPos().getY() - scanRange, getBlockPos().getZ() - scanRange,
+                getBlockPos().getX() + scanRange, getBlockPos().getY() + scanRange, getBlockPos().getZ() + scanRange
+        );
+
+        List<net.minecraft.world.entity.player.Player> playersInRange = level.getEntitiesOfClass(
+                net.minecraft.world.entity.player.Player.class, scanArea);
+
+        // FOR TESTING IN SINGLE PLAYER - Include entities with "player" tag as fake players
+        // Comment out or remove this section when not needed for testing
+        /*
+        List<net.minecraft.world.entity.Entity> entitiesWithPlayerTag = level.getEntitiesOfClass(
+                net.minecraft.world.entity.Entity.class, scanArea,
+                entity -> entity.getTags().contains("player"));
+        int fakePlayerCount = entitiesWithPlayerTag.size();
+        */
+        int fakePlayerCount = 0; // Set to 0 when not testing, or uncomment above section for testing
+
+        int playerCount = playersInRange.size() + fakePlayerCount;
+
+        // Calculate scaled mob count (default 3 mobs per wave * player count)
+        int baseMobsPerWave = 3; // Default value
+        int scaledMobsPerWave = baseMobsPerWave * playerCount;
+
+        // Update mobs per wave for this trial
+        this.currentTrialMobsPerWave = scaledMobsPerWave;
+
+        System.out.println("Found " + playerCount + " players in 16 block radius. Scaling mobs per wave from " +
+                          baseMobsPerWave + " to " + scaledMobsPerWave);
     }
 
     private void stopTrial() {
@@ -358,9 +413,9 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         BlockState currentState = level.getBlockState(getBlockPos());
         boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
 
-        System.out.println("Spawning wave " + currentWave + "/" + maxWaves + " at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
+        System.out.println("Spawning wave " + currentWave + "/" + maxWaves + " with " + currentTrialMobsPerWave + " mobs at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
 
-        for (int i = 0; i < mobsPerWave; i++) {
+        for (int i = 0; i < currentTrialMobsPerWave; i++) {
             // Find spawn position around the spawner
             BlockPos spawnPos = findSpawnPosition();
             if (spawnPos != null) {
