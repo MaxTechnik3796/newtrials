@@ -42,10 +42,7 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
             return;
         }
 
-        // Debug output (remove later)
-        if (blockEntity.getClientTickCount() % 20 == 0) {
-            System.out.println("Rendering entity: " + entityType.getDescriptionId() + " at tick: " + blockEntity.getClientTickCount());
-        }
+
 
         // Get or create cached entity for this type
         Entity entity = getOrCreateEntity(entityType, level);
@@ -57,19 +54,18 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
         poseStack.pushPose();
 
         // Position the entity higher and more centered
-        poseStack.translate(0.5, 0.8, 0.5);
+        poseStack.translate(0.5, 0.25, 0.5);
 
         // Much faster and more visible rotation
         float time = (float) blockEntity.getClientTickCount() + partialTick;
-        float rotation = time * 4.0F; // Faster rotation
+        float rotation = time * 16.0F; // Faster rotation
         poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
 
-        // Bigger bob up and down
-        float bobOffset = Mth.sin(time * 0.1F) * 0.2F;
-        poseStack.translate(0, bobOffset, 0);
+
+
 
         // Make the entity much bigger for testing
-        float scale = 1.0F; // Full size for now
+        float scale = 0.3F; // Full size for now
         poseStack.scale(scale, scale, scale);
 
         // Set entity properties for proper rendering
