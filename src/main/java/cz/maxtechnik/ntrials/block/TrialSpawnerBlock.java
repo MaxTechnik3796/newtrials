@@ -120,28 +120,4 @@ public class TrialSpawnerBlock extends BaseEntityBlock{
     public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
         return 0;
     }
-
-
-
-
-	private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
-
-	}
-
-
-	private static void checkNearbyPlayers(Level level, BlockPos pos, VaultBlockEntity vaultEntity, BlockState state) {
-
-		double range = 8.0;
-		net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
-				pos.getX() - range, pos.getY() - range, pos.getZ() - range,
-				pos.getX() + range, pos.getY() + range, pos.getZ() + range
-		);
-
-		List<Player> players = level.getEntitiesOfClass(Player.class, searchArea);
-		long currentTime = System.currentTimeMillis();
-		int playerCount = players.size();
-
-
-	}
-
 }
