@@ -1,12 +1,15 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
+import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -32,6 +35,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class TrialSpawnerBlock extends BaseEntityBlock{
     public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
@@ -115,4 +120,28 @@ public class TrialSpawnerBlock extends BaseEntityBlock{
     public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
         return 0;
     }
+
+
+
+
+	private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+
+	}
+
+
+	private static void checkNearbyPlayers(Level level, BlockPos pos, VaultBlockEntity vaultEntity, BlockState state) {
+
+		double range = 8.0;
+		net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
+				pos.getX() - range, pos.getY() - range, pos.getZ() - range,
+				pos.getX() + range, pos.getY() + range, pos.getZ() + range
+		);
+
+		List<Player> players = level.getEntitiesOfClass(Player.class, searchArea);
+		long currentTime = System.currentTimeMillis();
+		int playerCount = players.size();
+
+
+	}
+
 }
