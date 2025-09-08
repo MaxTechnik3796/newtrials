@@ -1,12 +1,16 @@
 package cz.maxtechnik.ntrials.block.entity;
 
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.network.NetworkHandler;
+import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +26,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private int tickCount = 0;
     private int clientTickCount = 0; // Client-side tick counter pro animace
     private EntityType<?> spawnEntity = null; // Tag pro uložení entity typu
+    private boolean hasBeenSynced = false; // Track if data has been synced to clients
 
     public TrialSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(), pos, blockState);
@@ -32,6 +37,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (this.cooldownTime > 0) {
             this.cooldownTime--;
+        }
+
+        // Synchronize to clients periodically if needed (every 5 seconds)
+        if (!hasBeenSynced && this.spawnEntity != null && this.tickCount % 100 == 0) {
+            syncToClients();
+            hasBeenSynced = true;
         }
 
         // Add your trial spawner logic here
@@ -70,6 +81,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     // Invalid UUID, skip
                 }
             }
+        }
+
+        // Synchronize to client when data is loaded (only on server side)
+        if (level != null && !level.isClientSide() && this.spawnEntity != null) {
+            syncToClients();
         }
     }
 
@@ -134,7 +150,19 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     public void setSpawnEntity(@Nullable EntityType<?> spawnEntity) {
         this.spawnEntity = spawnEntity;
+        this.hasBeenSynced = false; // Reset sync flag when entity changes
         setChanged();
+
+        // Immediately sync to clients when spawn entity is set
+        syncToClients();
+    }
+
+    private void syncToClients() {
+        if (level != null && !level.isClientSide() && level instanceof ServerLevel serverLevel) {
+            TrialSpawnerSyncPacket packet = new TrialSpawnerSyncPacket(getBlockPos(), this.spawnEntity);
+            NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() ->
+                serverLevel.getChunkAt(getBlockPos())), packet);
+        }
     }
 
     public boolean hasSpawnEntity() {
