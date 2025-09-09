@@ -5,6 +5,7 @@ import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -22,6 +23,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +54,13 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private String normalLootTable = "minecraft:chests/desert_pyramid"; // Default loot table for normal state
     private String ominousLootTable = "minecraft:chests/village/village_plains_house"; // Default loot table for ominous state
 
+    // Loot animation system
+    private boolean isLootAnimating = false;
+    private int lootAnimationTick = 0;
+    private List<ItemStack> pendingLootItems = new ArrayList<>();
+    private int currentLootDropIndex = 0;
+    private static final int LOOT_DROP_INTERVAL = 10; // Ticks between each item drop (0.5 seconds)
+
     public TrialSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(), pos, blockState);
     }
@@ -61,6 +70,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (this.cooldownTime > 0) {
             this.cooldownTime--;
+        }
+
+        // Handle loot animation
+        if (isLootAnimating) {
+            tickLootAnimation();
         }
 
         // Check for players and manage trial every second (20 ticks)
@@ -103,6 +117,22 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
         if (tag.contains("OminousLootTable")) {
             this.ominousLootTable = tag.getString("OminousLootTable");
+        }
+
+        // Load loot animation data
+        this.isLootAnimating = tag.getBoolean("IsLootAnimating");
+        this.lootAnimationTick = tag.getInt("LootAnimationTick");
+        this.currentLootDropIndex = tag.getInt("CurrentLootDropIndex");
+
+        // Load pending loot items
+        if (tag.contains("PendingLootItems")) {
+            this.pendingLootItems.clear();
+            ListTag lootItemsTag = tag.getList("PendingLootItems", 10); // 10 = CompoundTag
+            for (int i = 0; i < lootItemsTag.size(); i++) {
+                CompoundTag itemTag = lootItemsTag.getCompound(i);
+                ItemStack item = ItemStack.of(itemTag);
+                this.pendingLootItems.add(item);
+            }
         }
 
         // Load spawn entity
@@ -165,6 +195,20 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Save loot tables
         tag.putString("NormalLootTable", this.normalLootTable);
         tag.putString("OminousLootTable", this.ominousLootTable);
+
+        // Save loot animation data
+        tag.putBoolean("IsLootAnimating", this.isLootAnimating);
+        tag.putInt("LootAnimationTick", this.lootAnimationTick);
+        tag.putInt("CurrentLootDropIndex", this.currentLootDropIndex);
+
+        // Save pending loot items
+        ListTag lootItemsTag = new ListTag();
+        for (ItemStack item : this.pendingLootItems) {
+            CompoundTag itemTag = new CompoundTag();
+            item.save(itemTag);
+            lootItemsTag.add(itemTag);
+        }
+        tag.put("PendingLootItems", lootItemsTag);
 
         // Save spawn entity
         if (this.spawnEntity != null) {
@@ -355,6 +399,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (this.cooldownTime > 0) {
             newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
+        } else if (this.isLootAnimating) {
+            newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
         } else if (this.trialActive) {
             newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.ACTIVE;
         } else if (!hasSpawnEntity()) {
@@ -567,45 +613,145 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         LootParams lootParams = lootParamsBuilder.create(LootContextParamSets.CHEST);
 
-        // Generate loot multiple times based on player count
+        // Generate all loot items based on player count
         int lootMultiplier = Math.max(1, playersCount);
+        List<ItemStack> allLootItems = new ArrayList<>();
 
         System.out.println("Generating loot from table " + lootTableId + " with multiplier " + lootMultiplier +
                           " (Ominous: " + isOminousBlock + ")");
 
         for (int i = 0; i < lootMultiplier; i++) {
             List<ItemStack> lootItems = lootTable.getRandomItems(lootParams);
-
-            // Drop items at spawner location
             for (ItemStack item : lootItems) {
                 if (!item.isEmpty()) {
-                    Containers.dropItemStack(level,
-                            getBlockPos().getX() + 0.5,
-                            getBlockPos().getY() + 1.0,
-                            getBlockPos().getZ() + 0.5,
-                            item);
+                    allLootItems.add(item.copy());
                 }
             }
         }
+
+        // Start animated loot drop instead of dropping all at once
+        if (!allLootItems.isEmpty()) {
+            startLootAnimation(allLootItems);
+        }
     }
 
-    // Getters and setters for loot tables
-    public String getNormalLootTable() {
-        return normalLootTable;
-    }
-
-    public void setNormalLootTable(String normalLootTable) {
-        this.normalLootTable = normalLootTable != null ? normalLootTable : "minecraft:chests/desert_pyramid";
+    // Loot animation methods
+    private void startLootAnimation(List<ItemStack> lootItems) {
+        this.isLootAnimating = true;
+        this.lootAnimationTick = 0;
+        this.currentLootDropIndex = 0;
+        this.pendingLootItems = new ArrayList<>(lootItems);
         setChanged();
+
+        // Sync animation start to clients
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
+
+        System.out.println("Started loot animation with " + lootItems.size() + " items");
     }
 
-    public String getOminousLootTable() {
-        return ominousLootTable;
+    private void tickLootAnimation() {
+        if (!isLootAnimating || pendingLootItems.isEmpty()) {
+            stopLootAnimation();
+            return;
+        }
+
+        lootAnimationTick++;
+
+        // Drop next item every LOOT_DROP_INTERVAL ticks
+        if (lootAnimationTick % LOOT_DROP_INTERVAL == 0 && currentLootDropIndex < pendingLootItems.size()) {
+            dropNextLootItem();
+        }
+
+        // Stop animation when all items are dropped
+        if (currentLootDropIndex >= pendingLootItems.size()) {
+            stopLootAnimation();
+        }
     }
 
-    public void setOminousLootTable(String ominousLootTable) {
-        this.ominousLootTable = ominousLootTable != null ? ominousLootTable : "minecraft:chests/village/village_plains_house";
+    private void dropNextLootItem() {
+        if (level == null || level.isClientSide() || currentLootDropIndex >= pendingLootItems.size()) {
+            return;
+        }
+
+        ItemStack itemToDrop = pendingLootItems.get(currentLootDropIndex);
+
+        // Add some randomness to drop position for visual effect
+        double offsetX = (level.random.nextDouble() - 0.5) * 0.8; // -0.4 to +0.4
+        double offsetZ = (level.random.nextDouble() - 0.5) * 0.8; // -0.4 to +0.4
+        double offsetY = 0.2 + level.random.nextDouble() * 0.3; // 0.2 to 0.5
+
+        // Drop item with slight upward velocity for visual effect
+        net.minecraft.world.entity.item.ItemEntity itemEntity = new net.minecraft.world.entity.item.ItemEntity(
+                level,
+                getBlockPos().getX() + 0.5 + offsetX,
+                getBlockPos().getY() + 1.0 + offsetY,
+                getBlockPos().getZ() + 0.5 + offsetZ,
+                itemToDrop.copy()
+        );
+
+        // Add upward motion
+        itemEntity.setDeltaMovement(0.0, 0.15, 0.0);
+
+        level.addFreshEntity(itemEntity);
+
+        currentLootDropIndex++;
         setChanged();
+
+        System.out.println("Dropped loot item " + currentLootDropIndex + "/" + pendingLootItems.size() +
+                          ": " + itemToDrop.getDisplayName().getString());
+    }
+
+    private void stopLootAnimation() {
+        this.isLootAnimating = false;
+        this.lootAnimationTick = 0;
+        this.currentLootDropIndex = 0;
+        this.pendingLootItems.clear();
+        setChanged();
+
+        // Sync animation end to clients
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
+
+        System.out.println("Stopped loot animation");
+    }
+
+    // Getters for animation state (for client rendering)
+    public boolean isLootAnimating() {
+        return isLootAnimating;
+    }
+
+    public int getLootAnimationTick() {
+        return lootAnimationTick;
+    }
+
+    public int getCurrentLootDropIndex() {
+        return currentLootDropIndex;
+    }
+
+    public int getTotalLootItems() {
+        return pendingLootItems.size();
+    }
+
+    // Synchronization methods for client-server communication
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
+        this.saveAdditional(tag);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
+        this.load(tag);
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
     private void cleanupSpawnedEntities() {
