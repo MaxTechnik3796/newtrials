@@ -10,6 +10,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +47,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private int currentWaveMobs = 0; // Number of alive mobs in current wave
     private boolean trialActive = false; // Whether trial is currently active
     private long lastPlayerCheckTime = 0; // Last time we checked for players
+
+    // Loot table settings
+    private String normalLootTable = "minecraft:chests/desert_pyramid"; // Default loot table for normal state
+    private String ominousLootTable = "minecraft:chests/village/village_plains_house"; // Default loot table for ominous state
 
     public TrialSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(), pos, blockState);
@@ -85,6 +96,14 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.currentWave = tag.getInt("CurrentWave");
         this.currentWaveMobs = tag.getInt("CurrentWaveMobs");
         this.trialActive = tag.getBoolean("TrialActive");
+
+        // Load loot tables
+        if (tag.contains("NormalLootTable")) {
+            this.normalLootTable = tag.getString("NormalLootTable");
+        }
+        if (tag.contains("OminousLootTable")) {
+            this.ominousLootTable = tag.getString("OminousLootTable");
+        }
 
         // Load spawn entity
         if (tag.contains("SpawnEntity")) {
@@ -142,6 +161,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         tag.putInt("CurrentWave", this.currentWave);
         tag.putInt("CurrentWaveMobs", this.currentWaveMobs);
         tag.putBoolean("TrialActive", this.trialActive);
+
+        // Save loot tables
+        tag.putString("NormalLootTable", this.normalLootTable);
+        tag.putString("OminousLootTable", this.ominousLootTable);
 
         // Save spawn entity
         if (this.spawnEntity != null) {
@@ -511,8 +534,78 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         currentWaveMobs = 0;
         spawnedEntities.clear();
 
+        // Generate and drop loot
+        generateLootReward();
+
         // Set cooldown
         setCooldownTime(36000);
+    }
+
+    private void generateLootReward() {
+        if (level == null || level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        // Determine which loot table to use based on ominous state
+        BlockState currentState = level.getBlockState(getBlockPos());
+        boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
+
+        String lootTableId = isOminousBlock ? ominousLootTable : normalLootTable;
+        ResourceLocation lootTableLocation = new ResourceLocation(lootTableId);
+
+        LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
+
+        if (lootTable == LootTable.EMPTY) {
+            System.out.println("Warning: Loot table " + lootTableId + " not found, using default");
+            lootTableLocation = new ResourceLocation("minecraft:chests/desert_pyramid");
+            lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
+        }
+
+        // Create loot context
+        LootParams.Builder lootParamsBuilder = new LootParams.Builder(serverLevel)
+                .withParameter(LootContextParams.ORIGIN, getBlockPos().getCenter());
+
+        LootParams lootParams = lootParamsBuilder.create(LootContextParamSets.CHEST);
+
+        // Generate loot multiple times based on player count
+        int lootMultiplier = Math.max(1, playersCount);
+
+        System.out.println("Generating loot from table " + lootTableId + " with multiplier " + lootMultiplier +
+                          " (Ominous: " + isOminousBlock + ")");
+
+        for (int i = 0; i < lootMultiplier; i++) {
+            List<ItemStack> lootItems = lootTable.getRandomItems(lootParams);
+
+            // Drop items at spawner location
+            for (ItemStack item : lootItems) {
+                if (!item.isEmpty()) {
+                    Containers.dropItemStack(level,
+                            getBlockPos().getX() + 0.5,
+                            getBlockPos().getY() + 1.0,
+                            getBlockPos().getZ() + 0.5,
+                            item);
+                }
+            }
+        }
+    }
+
+    // Getters and setters for loot tables
+    public String getNormalLootTable() {
+        return normalLootTable;
+    }
+
+    public void setNormalLootTable(String normalLootTable) {
+        this.normalLootTable = normalLootTable != null ? normalLootTable : "minecraft:chests/desert_pyramid";
+        setChanged();
+    }
+
+    public String getOminousLootTable() {
+        return ominousLootTable;
+    }
+
+    public void setOminousLootTable(String ominousLootTable) {
+        this.ominousLootTable = ominousLootTable != null ? ominousLootTable : "minecraft:chests/village/village_plains_house";
+        setChanged();
     }
 
     private void cleanupSpawnedEntities() {
