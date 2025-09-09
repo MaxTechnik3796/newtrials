@@ -278,7 +278,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
 
         // Check for players in range
-        double range = 8.0;
+        double range = 14.0;
         net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(
                 getBlockPos().getX() - range, getBlockPos().getY() - range, getBlockPos().getZ() - range,
                 getBlockPos().getX() + range, getBlockPos().getY() + range, getBlockPos().getZ() + range
@@ -508,7 +508,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         spawnedEntities.clear();
 
         // Set cooldown
-        setCooldownTime(6000); // 5 minutes cooldown
+        setCooldownTime(36000);
     }
 
     private void cleanupSpawnedEntities() {
