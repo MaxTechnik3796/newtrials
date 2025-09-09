@@ -368,6 +368,27 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         int playerCount = players.size() + fakePlayerCount;
 
+        // Check if any player has Bad Omen effect and activate ominous mode
+        boolean hasPlayerWithBadOmen = false;
+        for (net.minecraft.world.entity.player.Player player : players) {
+            if (player.hasEffect(net.minecraft.world.effect.MobEffects.BAD_OMEN)) {
+                hasPlayerWithBadOmen = true;
+                // Remove Bad Omen effect from player when activating ominous mode
+                player.removeEffect(net.minecraft.world.effect.MobEffects.BAD_OMEN);
+                System.out.println("Player " + player.getName().getString() + " had Bad Omen - activating ominous mode");
+            }
+        }
+
+        // Set ominous state on the block if any player had Bad Omen
+        if (hasPlayerWithBadOmen) {
+            BlockState currentState = level.getBlockState(getBlockPos());
+            if (!currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
+                level.setBlock(getBlockPos(),
+                    currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, true), 3);
+                System.out.println("Trial Spawner at " + getBlockPos() + " switched to ominous mode due to Bad Omen");
+            }
+        }
+
         boolean hasPlayers = playerCount > 0;
 
         if (hasPlayers && !trialActive && currentWave == 0) {
