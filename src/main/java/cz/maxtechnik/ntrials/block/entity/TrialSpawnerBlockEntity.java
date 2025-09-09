@@ -397,10 +397,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState newState;
 
-        if (this.cooldownTime > 0) {
-            newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
-        } else if (this.isLootAnimating) {
-            newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
+        if (this.isLootAnimating) {
+			newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
+        } else if (this.cooldownTime > 0) {
+			newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
         } else if (this.trialActive) {
             newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.ACTIVE;
         } else if (!hasSpawnEntity()) {
@@ -714,6 +714,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
         }
+
+        // After loot animation completes, set block to appropriate state
+        // If we have cooldown time, it will go to COOLDOWN state
+        // Otherwise it will go to appropriate state based on current conditions
+        updateBlockState();
 
         System.out.println("Stopped loot animation");
     }
