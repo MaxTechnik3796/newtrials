@@ -304,8 +304,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (hasPlayers && !trialActive && currentWave == 0) {
             // Start trial
             startTrial();
-        } else if (!hasPlayers && trialActive) {
-            // Stop trial if no players
+        } else if (!hasPlayers && trialActive && spawnedEntities.isEmpty()) {
+            // Stop trial only if no players AND no spawned entities remain
             stopTrial();
         } else if (trialActive) {
             // Check if current wave is completed
