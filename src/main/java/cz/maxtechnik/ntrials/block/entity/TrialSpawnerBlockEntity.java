@@ -342,9 +342,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
 
         // Don't start trial during cooldown
-        if (this.cooldownTime > 0) {
-            return;
-        }
+
 
         // Check for players in range
         double range = 14.0;
@@ -387,7 +385,17 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, true), 3);
                 System.out.println("Trial Spawner at " + getBlockPos() + " switched to ominous mode due to Bad Omen");
             }
+
+            // If spawner is on cooldown but player has Bad Omen, cancel cooldown and start trial immediately
+            if (this.cooldownTime > 0) {
+                this.cooldownTime = 0;
+                System.out.println("Bad Omen overrides cooldown - cancelling cooldown and starting ominous trial immediately");
+            }
         }
+
+		if (this.cooldownTime > 0) {
+			return;
+		}
 
         boolean hasPlayers = playerCount > 0;
 
