@@ -31,10 +31,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private boolean hasBeenSynced = false;
 
     // Trial spawner wave settings
-    private int maxWaves = 5; // Default number of waves
+    private int maxWaves = 2; // Default number of waves
     private int mobsPerWave = 3; // Default mobs per wave
-    private int currentTrialMobsPerWave = 3; // Actual mobs per wave for current trial (scaled by player count)
-    private int currentWave = 0; // Current wave number (0 = not started)
+    private int currentTrialMobsPerWave = 2; // Actual mobs per wave for current trial (scaled by player count)
+    private int maxWavesCount = 2;
+	private int playersCount = 0;
+	private int currentWave = 0; // Current wave number (0 = not started)
     private int currentWaveMobs = 0; // Number of alive mobs in current wave
     private boolean trialActive = false; // Whether trial is currently active
     private long lastPlayerCheckTime = 0; // Last time we checked for players
@@ -384,11 +386,13 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int playerCount = playersInRange.size() + fakePlayerCount;
 
         // Calculate scaled mob count (default 3 mobs per wave * player count)
-        int baseMobsPerWave = 3; // Default value
-        int scaledMobsPerWave = baseMobsPerWave * playerCount;
-
+        int baseMobsPerWave = 2; // Default value
+        int scaledMobsPerWave = baseMobsPerWave + (playerCount*2);
+		int maxWavesCount = maxWaves + playerCount;
         // Update mobs per wave for this trial
         this.currentTrialMobsPerWave = scaledMobsPerWave;
+		this.maxWavesCount = maxWavesCount;
+		this.playersCount = playerCount;
 
         System.out.println("Found " + playerCount + " players in 16 block radius. Scaling mobs per wave from " +
                           baseMobsPerWave + " to " + scaledMobsPerWave);
@@ -488,7 +492,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (aliveCount == 0 && currentWaveMobs > 0) {
             // Wave completed
-            if (currentWave < maxWaves) {
+            if (currentWave < maxWavesCount) {
                 // Start next wave
                 currentWave++;
                 currentWaveMobs = 0;
