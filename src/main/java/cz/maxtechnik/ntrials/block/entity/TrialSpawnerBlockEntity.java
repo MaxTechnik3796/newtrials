@@ -484,7 +484,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int playerCount = playersInRange.size() + fakePlayerCount;
 
         // Calculate scaled mob count (default 3 mobs per wave * player count)
-        int baseMobsPerWave = 2; // Default value
+        int baseMobsPerWave = 1; // Default value
         int scaledMobsPerWave = baseMobsPerWave + (playerCount*2);
 		int maxWavesCount = maxWaves + playerCount;
         // Update mobs per wave for this trial
