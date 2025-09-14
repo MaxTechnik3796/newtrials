@@ -1,6 +1,7 @@
 package cz.maxtechnik.ntrials.block.entity;
 
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
@@ -8,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -75,6 +77,20 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Handle loot animation
         if (isLootAnimating) {
             tickLootAnimation();
+        }
+
+        // Play ambient sounds periodically (every 3 seconds when waiting for players)
+        if (this.tickCount % 60 == 0 && !level.isClientSide() && hasSpawnEntity() && !trialActive && cooldownTime == 0) {
+            BlockState currentState = level.getBlockState(getBlockPos());
+            boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
+
+            if (isOminousBlock) {
+                level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS.get(),
+                    SoundSource.BLOCKS, 0.8f, 1.0f);
+            } else {
+                level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT.get(),
+                    SoundSource.BLOCKS, 0.6f, 1.0f);
+            }
         }
 
         // Check for players and manage trial every second (20 ticks)
@@ -384,6 +400,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                 level.setBlock(getBlockPos(),
                     currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, true), 3);
                 System.out.println("Trial Spawner at " + getBlockPos() + " switched to ominous mode due to Bad Omen");
+
+                // Play ominous activation sound
+                level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE.get(),
+                    SoundSource.BLOCKS, 1.0f, 1.0f);
             }
 
             // If spawner is on cooldown but player has Bad Omen, cancel cooldown and start trial immediately
@@ -399,7 +419,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         boolean hasPlayers = playerCount > 0;
 
+        // Detect player sound when first entering range
         if (hasPlayers && !trialActive && currentWave == 0) {
+            // Play detect player sound
+            level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_DETECT_PLAYER.get(),
+                SoundSource.BLOCKS, 1.0f, 1.0f);
             // Start trial
             startTrial();
         } else if (!hasPlayers && trialActive && spawnedEntities.isEmpty()) {
@@ -516,6 +540,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
 
         System.out.println("Spawning wave " + currentWave + "/" + maxWaves + " with " + currentTrialMobsPerWave + " mobs at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
+
+        // Play spawn sound at the beginning of wave
+        level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(),
+            SoundSource.BLOCKS, 1.0f, 1.0f);
 
         for (int i = 0; i < currentTrialMobsPerWave; i++) {
             // Find spawn position around the spawner
@@ -672,6 +700,14 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.pendingLootItems = new ArrayList<>(lootItems);
         setChanged();
 
+        // Play open shutter sound when starting loot animation
+        level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OPEN_SHUTTER.get(),
+            SoundSource.BLOCKS, 1.0f, 1.0f);
+
+        // Play spawn item begin sound to indicate loot is about to drop
+        level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN_ITEM_BEGIN.get(),
+            SoundSource.BLOCKS, 0.8f, 1.0f);
+
         // Sync animation start to clients
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
@@ -706,6 +742,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         ItemStack itemToDrop = pendingLootItems.get(currentLootDropIndex);
 
+        // Play eject item sound for each item drop
+        level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_EJECT_ITEM.get(),
+            SoundSource.BLOCKS, 0.7f, 1.0f + (level.random.nextFloat() - 0.5f) * 0.4f); // Random pitch variation
+
         // Add some randomness to drop position for visual effect
         double offsetX = (level.random.nextDouble() - 0.5) * 0.8; // -0.4 to +0.4
         double offsetZ = (level.random.nextDouble() - 0.5) * 0.8; // -0.4 to +0.4
@@ -738,6 +778,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.currentLootDropIndex = 0;
         this.pendingLootItems.clear();
         setChanged();
+
+        // Play close shutter sound when loot animation ends
+        level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_CLOSE_SHUTTER.get(),
+            SoundSource.BLOCKS, 1.0f, 1.0f);
 
         // Sync animation end to clients
         if (level != null && !level.isClientSide()) {
