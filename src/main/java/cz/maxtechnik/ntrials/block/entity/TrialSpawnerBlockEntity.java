@@ -429,8 +429,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         } else if (!hasPlayers && trialActive && spawnedEntities.isEmpty()) {
             // Stop trial only if no players AND no spawned entities remain
             stopTrial();
-        } else if (trialActive) {
-            // Check if current wave is completed
+        } else if (trialActive && hasPlayers) {
             checkWaveCompletion();
         }
 
@@ -471,7 +470,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         System.out.println("Starting trial at " + getBlockPos());
         trialActive = true;
         currentWave = 1;
-        currentWaveMobs = 0;
         spawnedEntities.clear();
 
         // Scan for players in 16 block radius to scale mob count
@@ -508,9 +506,9 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int playerCount = playersInRange.size() + fakePlayerCount;
 
         // Calculate scaled mob count (default 3 mobs per wave * player count)
-        int baseMobsPerWave = 1; // Default value
-        int scaledMobsPerWave = baseMobsPerWave + (playerCount*2);
-		int maxWavesCount = maxWaves + playerCount;
+        int baseMobsPerWave = 2; // Default value
+        int scaledMobsPerWave = baseMobsPerWave + playerCount;
+  int maxWavesCount = maxWaves + playerCount;
         // Update mobs per wave for this trial
         this.currentTrialMobsPerWave = scaledMobsPerWave;
 		this.maxWavesCount = maxWavesCount;
@@ -539,7 +537,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         BlockState currentState = level.getBlockState(getBlockPos());
         boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
 
-        System.out.println("Spawning wave " + currentWave + "/" + maxWaves + " with " + currentTrialMobsPerWave + " mobs at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
+        System.out.println("Spawning wave " + currentWave + "/" + maxWavesCount + " with " + currentTrialMobsPerWave + " mobs at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
 
         // Play spawn sound at the beginning of wave
         level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(),
@@ -568,7 +566,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
                     level.addFreshEntity(entity);
                     spawnedEntities.add(entity.getUUID());
-                    currentWaveMobs++;
 
                     System.out.println("Spawned " + entity.getType().getDescriptionId() + " at " + spawnPos +
                         (isOminousBlock ? " [OMINOUS]" : ""));
@@ -607,25 +604,56 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     }
 
     private void checkWaveCompletion() {
-        // Count how many spawned entities are still alive
-        int aliveCount = 0;
+        // Remove dead entities and count alive
         spawnedEntities.removeIf(uuid -> {
             net.minecraft.world.entity.Entity entity = ((net.minecraft.server.level.ServerLevel) level).getEntity(uuid);
             return entity == null || !entity.isAlive();
         });
-
-        aliveCount = spawnedEntities.size();
-
-        if (aliveCount == 0 && currentWaveMobs > 0) {
-            // Wave completed
-            if (currentWave < maxWavesCount) {
-                // Start next wave
-                currentWave++;
-                currentWaveMobs = 0;
-                spawnWave();
-            } else {
-                // Trial completed
+        int alive = spawnedEntities.size();
+        if (alive == 0) {
+            if (currentWave >= maxWavesCount) {
                 completeTrial();
+            }
+            return;
+        }
+        int target = currentTrialMobsPerWave;
+        int needed = target - alive;
+        if (needed > 0) {
+            int projectedWave = currentWave + 1;
+            BlockState currentState = level.getBlockState(getBlockPos());
+            boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
+            if (projectedWave <= maxWavesCount) {
+                // Safe to refill, increment wave by 1 for this batch
+                currentWave = projectedWave;
+                // Play spawn sound for refill batch
+                level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(),
+                    SoundSource.BLOCKS, 1.0f, 1.0f);
+                for (int i = 0; i < needed; i++) {
+                    BlockPos spawnPos = findSpawnPosition();
+                    if (spawnPos != null) {
+                        net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
+                        if (entity != null) {
+                            entity.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                            if (entity instanceof net.minecraft.world.entity.Mob mob) {
+                                mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
+                                    level.getCurrentDifficultyAt(spawnPos),
+                                    net.minecraft.world.entity.MobSpawnType.SPAWNER,
+                                    null, null);
+                                if (isOminousBlock) {
+                                    equipOminousMob(mob);
+                                }
+                            }
+                            level.addFreshEntity(entity);
+                            spawnedEntities.add(entity.getUUID());
+                            System.out.println("Refilled " + entity.getType().getDescriptionId() + " at " + spawnPos +
+                                (isOminousBlock ? " [OMINOUS]" : ""));
+                        }
+                    }
+                }
+                System.out.println("Refilled " + needed + " mobs (batch). Current wave: " + currentWave + "/" + maxWavesCount);
+            } else {
+                // Final phase: no refill, no wave increment
+                System.out.println("Final phase: " + needed + " mobs killed, no refill. Wave remains " + currentWave + "/" + maxWavesCount);
             }
         }
     }
