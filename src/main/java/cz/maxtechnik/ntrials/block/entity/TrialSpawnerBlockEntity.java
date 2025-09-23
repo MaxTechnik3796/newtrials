@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -385,16 +387,20 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int playerCount = players.size() + fakePlayerCount;
 
         // Check if any player has Bad Omen effect and activate ominous mode
+        boolean hasSurvivalPlayer = false;
         boolean hasPlayerWithBadOmen = false;
         for (net.minecraft.world.entity.player.Player player : players) {
-			if (player.hasEffect(MobEffects.BAD_OMEN)) {
-				player.removeEffect(MobEffects.BAD_OMEN);
-				MobEffectInstance trialOmenEffect = new MobEffectInstance(NTrialsModMobEffects.TRIAL_OMEN.get(),36000,0);
-				player.addEffect(trialOmenEffect);
-			}
+            if (player instanceof ServerPlayer serverPlayer && serverPlayer.gameMode.getGameModeForPlayer() == GameType.SURVIVAL) {
+                hasSurvivalPlayer = true;
+                if (player.hasEffect(MobEffects.BAD_OMEN)) {
+                    player.removeEffect(MobEffects.BAD_OMEN);
+                    MobEffectInstance trialOmenEffect = new MobEffectInstance(NTrialsModMobEffects.TRIAL_OMEN.get(),36000,0);
+                    player.addEffect(trialOmenEffect);
+                }
 
-            if (player.hasEffect(NTrialsModMobEffects.TRIAL_OMEN.get())) {
-                hasPlayerWithBadOmen = true;
+                if (player.hasEffect(NTrialsModMobEffects.TRIAL_OMEN.get())) {
+                    hasPlayerWithBadOmen = true;
+                }
             }
         }
 
@@ -426,7 +432,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         boolean hasPlayers = playerCount > 0;
 
         // Detect player sound when first entering range
-        if (hasPlayers && !trialActive && currentWave == 0) {
+        if (hasSurvivalPlayer && !trialActive && currentWave == 0) {
             // Play detect player sound
             level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_DETECT_PLAYER.get(),
                 SoundSource.BLOCKS, 1.0f, 1.0f);
