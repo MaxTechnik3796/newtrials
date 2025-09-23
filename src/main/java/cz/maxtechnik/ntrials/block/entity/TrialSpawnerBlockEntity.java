@@ -391,7 +391,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
 
         // Set ominous state on the block if any player had Bad Omen
-        if (hasPlayerWithBadOmen) {
+		BlockState currentState_now = level.getBlockState(getBlockPos());
+        if (hasPlayerWithBadOmen && !currentState_now.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
             BlockState currentState = level.getBlockState(getBlockPos());
             if (!currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
                 level.setBlock(getBlockPos(),
