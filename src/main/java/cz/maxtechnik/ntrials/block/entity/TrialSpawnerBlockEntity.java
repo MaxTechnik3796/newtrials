@@ -10,6 +10,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -385,6 +387,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Check if any player has Bad Omen effect and activate ominous mode
         boolean hasPlayerWithBadOmen = false;
         for (net.minecraft.world.entity.player.Player player : players) {
+			if (player.hasEffect(MobEffects.BAD_OMEN)) {
+				player.removeEffect(MobEffects.BAD_OMEN);
+				MobEffectInstance trialOmenEffect = new MobEffectInstance(NTrialsModMobEffects.TRIAL_OMEN.get(),36000,0);
+				player.addEffect(trialOmenEffect);
+			}
+
             if (player.hasEffect(NTrialsModMobEffects.TRIAL_OMEN.get())) {
                 hasPlayerWithBadOmen = true;
             }
