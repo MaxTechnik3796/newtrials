@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import java.util.ArrayList;
@@ -111,6 +113,25 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     public void clientTick() {
         this.clientTickCount++;
+
+        if (level != null) {
+            BlockState state = level.getBlockState(worldPosition);
+            if (state.getBlock() instanceof cz.maxtechnik.ntrials.block.TrialSpawnerBlock spawnerBlock) {
+                boolean ominous = state.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
+                cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState spawnerState = state.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE);
+
+                if (spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.WAITING_FOR_PLAYERS ||
+                    spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.ACTIVE) {
+                    if (clientTickCount % 5 == 0) {
+                        ParticleOptions particle = ominous ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+                        double x = worldPosition.getX() + 0.3 + level.random.nextDouble() * 0.4;
+                        double y = worldPosition.getY() + 0.5 + level.random.nextDouble() * 0.4;
+                        double z = worldPosition.getZ() + 0.3 + level.random.nextDouble() * 0.4;
+                        level.addParticle(particle, x, y, z, 0.0, 0.05, 0.0);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -426,6 +447,28 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                 // Play ominous activation sound
                 level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE.get(),
                     SoundSource.BLOCKS, 1.0f, 1.0f);
+
+                // Spawn ominous activation particles within 3-block range
+                BlockPos pos = getBlockPos();
+                double radius = 3.0;
+                int numParticles = 50;
+                for (int i = 0; i < numParticles; i++) {
+                    double x = pos.getX() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                    double y = pos.getY() + level.random.nextDouble() * radius;
+                    double z = pos.getZ() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                    
+                    // Ensure within radius
+                    while (Math.sqrt(Math.pow(x - pos.getX(), 2) + Math.pow(y - pos.getY(), 2) + Math.pow(z - pos.getZ(), 2)) > radius) {
+                        x = pos.getX() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                        y = pos.getY() + level.random.nextDouble() * radius;
+                        z = pos.getZ() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                    }
+                    
+                    double vx = (level.random.nextDouble() - 0.5) * 0.1;
+                    double vy = level.random.nextDouble() * 0.2;
+                    double vz = (level.random.nextDouble() - 0.5) * 0.1;
+                    level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, x, y, z, vx, vy, vz);
+                }
             }
 
             // If spawner is on cooldown but player has Bad Omen, cancel cooldown and start trial immediately
@@ -589,6 +632,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     level.addFreshEntity(entity);
                     spawnedEntities.add(entity.getUUID());
 
+                    // Spawn particles at spawn location
+                    ParticleOptions particleType = isOminousBlock ? ParticleTypes.SOUL : ParticleTypes.ENCHANT;
+                    level.addParticle(particleType, spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5, 0.0, 0.0, 0.0);
+
                     System.out.println("Spawned " + entity.getType().getDescriptionId() + " at " + spawnPos +
                         (isOminousBlock ? " [OMINOUS]" : ""));
                 }
@@ -667,6 +714,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                             }
                             level.addFreshEntity(entity);
                             spawnedEntities.add(entity.getUUID());
+
+                            // Spawn particles at spawn location
+                            ParticleOptions particleType = isOminousBlock ? ParticleTypes.SOUL : ParticleTypes.ENCHANT;
+                            level.addParticle(particleType, spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5, 0.0, 0.0, 0.0);
+
                             System.out.println("Refilled " + entity.getType().getDescriptionId() + " at " + spawnPos +
                                 (isOminousBlock ? " [OMINOUS]" : ""));
                         }
