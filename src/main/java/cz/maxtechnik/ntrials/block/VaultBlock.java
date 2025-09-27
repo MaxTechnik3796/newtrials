@@ -1,7 +1,11 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import net.minecraft.nbt.CompoundTag;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -106,10 +110,18 @@ public class VaultBlock extends BaseEntityBlock {
         //normal
         if (!state.getValue(OMINOUS)) {
             if (heldItem.getItem() == NTrialsModItems.TRIAL_KEY.get() && state.getValue(STATE) == VaultState.ACTIVE) {
-                if (!level.isClientSide) {
-                    // Označí hráče jako toho, kdo otevřel vault
-                    BlockEntity blockEntity = level.getBlockEntity(pos);
-                    if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                    String vaultTag = vaultEntity.getVaultTag();
+                    CompoundTag itemTag = heldItem.getTag();
+                    String keyTag = itemTag != null ? itemTag.getString("vault_tag") : "";
+                    if (!((keyTag.isEmpty() && vaultTag.isEmpty()) || keyTag.equals(vaultTag))) {
+                        if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                        return InteractionResult.PASS;
+                    }
+
+                    if (!level.isClientSide) {
+                        // Označí hráče jako toho, kdo otevřel vault
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
@@ -457,6 +469,21 @@ public class VaultBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new VaultBlockEntity(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && placer instanceof Player player) {
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains("vault_tag")) {
+                String vaultTag = tag.getString("vault_tag");
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                    vaultEntity.setVaultTag(vaultTag);
+                }
+            }
+        }
     }
 
     @Override

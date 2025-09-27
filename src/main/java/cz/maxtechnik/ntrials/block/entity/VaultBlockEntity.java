@@ -32,6 +32,7 @@ public class VaultBlockEntity extends BlockEntity {
     private int currentDisplayItemIndex = 0;
     private int displayItemSwitchTick = 0;
     private float itemRotation = 0.0f;
+    private String vaultTag = "";
 
     public VaultBlockEntity(BlockPos pos, BlockState blockState) {
         super(cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), pos, blockState);
@@ -164,6 +165,15 @@ public class VaultBlockEntity extends BlockEntity {
         return !displayItems.isEmpty();
     }
 
+    public String getVaultTag() {
+        return vaultTag;
+    }
+
+    public void setVaultTag(String tag) {
+        this.vaultTag = tag;
+        setChanged();
+    }
+
     // Synchronizace dat mezi serverem a clientem
     @Override
     public CompoundTag getUpdateTag() {
@@ -207,6 +217,7 @@ public class VaultBlockEntity extends BlockEntity {
         tag.put("DisplayItems", displayItemsTag);
         tag.putInt("CurrentDisplayItemIndex", currentDisplayItemIndex);
         tag.putFloat("ItemRotation", itemRotation);
+        tag.putString("VaultTag", vaultTag);
     }
 
     @Override
@@ -238,5 +249,6 @@ public class VaultBlockEntity extends BlockEntity {
         }
         this.currentDisplayItemIndex = tag.getInt("CurrentDisplayItemIndex");
         this.itemRotation = tag.getFloat("ItemRotation");
+        this.vaultTag = tag.getString("VaultTag");
     }
 }
