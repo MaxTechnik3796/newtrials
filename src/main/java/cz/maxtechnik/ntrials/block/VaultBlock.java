@@ -125,7 +125,8 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                        String lootPath = vaultTag.isEmpty() ? "normal" : vaultTag;
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
                         LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
@@ -263,7 +264,8 @@ public class VaultBlock extends BaseEntityBlock {
             if (state.getValue(OMINOUS)) {
                 lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
             } else {
-                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                String lootPath = vaultEntity.getVaultTag().isEmpty() ? "normal" : vaultEntity.getVaultTag();
+                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
             }
 
             System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
