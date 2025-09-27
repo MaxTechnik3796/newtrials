@@ -2,6 +2,7 @@ package cz.maxtechnik.ntrials;
 
 import com.mojang.logging.LogUtils;
 import cz.maxtechnik.ntrials.init.*;
+import cz.maxtechnik.ntrials.network.NetworkHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -38,6 +39,9 @@ public class NTrialsMod{
         LOGGER.info("NewTrials Common loading...");
         event.enqueueWork(NTrialsModEvents::setupOxidation);
          event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
+        event.enqueueWork(() -> {
+            NetworkHandler.registerPackets();
+        });
     }
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event){
