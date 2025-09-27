@@ -284,28 +284,6 @@ public class VaultBlock extends BaseEntityBlock {
                 System.out.println("DEBUG: Item: " + stack.getItem().getDescriptionId() + " x" + stack.getCount());
             }
 
-            // Pokud loot table nevrátí žádné itemy, použije fallback
-            if (displayLoot.isEmpty()) {
-                System.out.println("DEBUG: Loot table je prázdná, používám fallback itemy");
-                displayLoot = java.util.Arrays.asList(
-                    new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1),
-                    new ItemStack(net.minecraft.world.item.Items.EMERALD, 1),
-                    new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1),
-                    new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 1),
-                    new ItemStack(net.minecraft.world.item.Items.NETHERITE_INGOT, 1)
-                );
-            }
-
-            // Pokud loot table vrátí pouze jeden item, přidá více různých itemů
-            if (displayLoot.size() == 1) {
-                System.out.println("DEBUG: Loot table vrátila pouze jeden item, přidávám více itemů");
-                List<ItemStack> expandedLoot = new ArrayList<>(displayLoot);
-                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1));
-                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.EMERALD, 1));
-                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1));
-                displayLoot = expandedLoot;
-            }
-
             // Nastaví zobrazované itemy
             vaultEntity.setDisplayItems(displayLoot);
             System.out.println("DEBUG: Display items nastaveny");
