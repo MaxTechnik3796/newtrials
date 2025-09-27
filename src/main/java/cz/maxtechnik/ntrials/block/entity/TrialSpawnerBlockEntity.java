@@ -983,43 +983,41 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         // Armor materials (different tiers)
         net.minecraft.world.item.Item[] helmets = {
-            net.minecraft.world.item.Items.LEATHER_HELMET,
+
             net.minecraft.world.item.Items.CHAINMAIL_HELMET,
             net.minecraft.world.item.Items.IRON_HELMET,
-            net.minecraft.world.item.Items.DIAMOND_HELMET,
-            net.minecraft.world.item.Items.NETHERITE_HELMET
+            net.minecraft.world.item.Items.DIAMOND_HELMET
+
         };
 
         net.minecraft.world.item.Item[] chestplates = {
-            net.minecraft.world.item.Items.LEATHER_CHESTPLATE,
+
             net.minecraft.world.item.Items.CHAINMAIL_CHESTPLATE,
             net.minecraft.world.item.Items.IRON_CHESTPLATE,
-            net.minecraft.world.item.Items.DIAMOND_CHESTPLATE,
-            net.minecraft.world.item.Items.NETHERITE_CHESTPLATE
+            net.minecraft.world.item.Items.DIAMOND_CHESTPLATE
+
         };
 
         net.minecraft.world.item.Item[] leggings = {
-            net.minecraft.world.item.Items.LEATHER_LEGGINGS,
+
             net.minecraft.world.item.Items.CHAINMAIL_LEGGINGS,
             net.minecraft.world.item.Items.IRON_LEGGINGS,
-            net.minecraft.world.item.Items.DIAMOND_LEGGINGS,
-            net.minecraft.world.item.Items.NETHERITE_LEGGINGS
+            net.minecraft.world.item.Items.DIAMOND_LEGGINGS
+
         };
 
         net.minecraft.world.item.Item[] boots = {
-            net.minecraft.world.item.Items.LEATHER_BOOTS,
+
             net.minecraft.world.item.Items.CHAINMAIL_BOOTS,
             net.minecraft.world.item.Items.IRON_BOOTS,
-            net.minecraft.world.item.Items.DIAMOND_BOOTS,
-            net.minecraft.world.item.Items.NETHERITE_BOOTS
+            net.minecraft.world.item.Items.DIAMOND_BOOTS
+
         };
 
         net.minecraft.world.item.Item[] weapons = {
-            net.minecraft.world.item.Items.WOODEN_SWORD,
             net.minecraft.world.item.Items.STONE_SWORD,
             net.minecraft.world.item.Items.IRON_SWORD,
             net.minecraft.world.item.Items.DIAMOND_SWORD,
-            net.minecraft.world.item.Items.NETHERITE_SWORD,
             net.minecraft.world.item.Items.IRON_AXE,
             net.minecraft.world.item.Items.DIAMOND_AXE
         };
