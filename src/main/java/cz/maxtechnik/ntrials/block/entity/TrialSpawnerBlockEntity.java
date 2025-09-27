@@ -25,6 +25,8 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random; // For client-side randomness if needed, but level.random is available
 import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.particles.ParticleOptions;
@@ -46,6 +48,9 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private int clientTickCount = 0;
     private EntityType<?> spawnEntity = null;
     private boolean hasBeenSynced = false;
+
+    // Client-side only for detecting ominous state change
+    private transient boolean wasOminous = false;
 
     // Trial spawner wave settings
     private int maxWaves = 2; // Default number of waves
@@ -114,12 +119,41 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     public void clientTick() {
         this.clientTickCount++;
 
-        if (level != null) {
+        if (level != null && level.isClientSide) {
             BlockState state = level.getBlockState(worldPosition);
             if (state.getBlock() instanceof cz.maxtechnik.ntrials.block.TrialSpawnerBlock spawnerBlock) {
                 boolean ominous = state.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
                 cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState spawnerState = state.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE);
 
+                // Detect ominous activation and spawn particles
+                if (ominous && !wasOminous) {
+                    // Spawn ominous activation particles within 3-block range
+                    BlockPos pos = worldPosition;
+                    double radius = 3.0;
+                    int numParticles = 50;
+                    for (int i = 0; i < numParticles; i++) {
+                        double x = pos.getX() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                        double y = pos.getY() + level.random.nextDouble() * radius;
+                        double z = pos.getZ() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                        
+                        // Ensure within radius
+                        while (Math.sqrt(Math.pow(x - pos.getX(), 2) + Math.pow(y - pos.getY(), 2) + Math.pow(z - pos.getZ(), 2)) > radius) {
+                            x = pos.getX() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                            y = pos.getY() + level.random.nextDouble() * radius;
+                            z = pos.getZ() + (level.random.nextDouble() - 0.5) * 2 * radius;
+                        }
+                        
+                        double vx = (level.random.nextDouble() - 0.5) * 0.1;
+                        double vy = level.random.nextDouble() * 0.2;
+                        double vz = (level.random.nextDouble() - 0.5) * 0.1;
+                        level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, x, y, z, vx, vy, vz);
+                    }
+                    wasOminous = true;
+                } else if (!ominous) {
+                    wasOminous = false;
+                }
+
+                // Ambient particles
                 if (spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.WAITING_FOR_PLAYERS ||
                     spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.ACTIVE) {
                     if (clientTickCount % 5 == 0) {
@@ -448,27 +482,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                 level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE.get(),
                     SoundSource.BLOCKS, 1.0f, 1.0f);
 
-                // Spawn ominous activation particles within 3-block range
-                BlockPos pos = getBlockPos();
-                double radius = 3.0;
-                int numParticles = 50;
-                for (int i = 0; i < numParticles; i++) {
-                    double x = pos.getX() + (level.random.nextDouble() - 0.5) * 2 * radius;
-                    double y = pos.getY() + level.random.nextDouble() * radius;
-                    double z = pos.getZ() + (level.random.nextDouble() - 0.5) * 2 * radius;
-                    
-                    // Ensure within radius
-                    while (Math.sqrt(Math.pow(x - pos.getX(), 2) + Math.pow(y - pos.getY(), 2) + Math.pow(z - pos.getZ(), 2)) > radius) {
-                        x = pos.getX() + (level.random.nextDouble() - 0.5) * 2 * radius;
-                        y = pos.getY() + level.random.nextDouble() * radius;
-                        z = pos.getZ() + (level.random.nextDouble() - 0.5) * 2 * radius;
-                    }
-                    
-                    double vx = (level.random.nextDouble() - 0.5) * 0.1;
-                    double vy = level.random.nextDouble() * 0.2;
-                    double vz = (level.random.nextDouble() - 0.5) * 0.1;
-                    level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, x, y, z, vx, vy, vz);
-                }
+                // Ominous particles now handled client-side in clientTick()
             }
 
             // If spawner is on cooldown but player has Bad Omen, cancel cooldown and start trial immediately
