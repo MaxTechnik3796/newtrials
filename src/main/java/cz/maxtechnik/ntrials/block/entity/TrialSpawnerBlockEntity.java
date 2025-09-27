@@ -335,6 +335,16 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public void setNormalLootTable(String lootTable) {
+        this.normalLootTable = lootTable;
+        setChanged();
+    }
+
+    public void setOminousLootTable(String lootTable) {
+        this.ominousLootTable = lootTable;
+        setChanged();
+    }
+
     public int getMobsPerWave() {
         return mobsPerWave;
     }
