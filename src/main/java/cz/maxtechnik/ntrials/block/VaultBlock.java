@@ -125,7 +125,7 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        String lootPath = vaultTag.isEmpty() ? "normal" : vaultTag;
+                        String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
                         ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
                         LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
@@ -264,7 +264,7 @@ public class VaultBlock extends BaseEntityBlock {
             if (state.getValue(OMINOUS)) {
                 lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
             } else {
-                String lootPath = vaultEntity.getVaultTag().isEmpty() ? "normal" : vaultEntity.getVaultTag();
+                String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
                 lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
             }
 
@@ -478,11 +478,17 @@ public class VaultBlock extends BaseEntityBlock {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide && placer instanceof Player player) {
             CompoundTag tag = stack.getTag();
-            if (tag != null && tag.contains("vault_tag")) {
-                String vaultTag = tag.getString("vault_tag");
+            if (tag != null) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
                 if (blockEntity instanceof VaultBlockEntity vaultEntity) {
-                    vaultEntity.setVaultTag(vaultTag);
+                    if (tag.contains("vault_tag")) {
+                        String vaultTag = tag.getString("vault_tag");
+                        vaultEntity.setVaultTag(vaultTag);
+                    }
+                    if (tag.contains("loot_table")) {
+                        String lootTable = tag.getString("loot_table");
+                        vaultEntity.setLootTable(lootTable);
+                    }
                 }
             }
         }
