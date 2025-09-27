@@ -1,7 +1,11 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import net.minecraft.nbt.CompoundTag;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -106,14 +110,23 @@ public class VaultBlock extends BaseEntityBlock {
         //normal
         if (!state.getValue(OMINOUS)) {
             if (heldItem.getItem() == NTrialsModItems.TRIAL_KEY.get() && state.getValue(STATE) == VaultState.ACTIVE) {
-                if (!level.isClientSide) {
-                    // Označí hráče jako toho, kdo otevřel vault
-                    BlockEntity blockEntity = level.getBlockEntity(pos);
-                    if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                    String vaultTag = vaultEntity.getVaultTag();
+                    CompoundTag itemTag = heldItem.getTag();
+                    String keyTag = itemTag != null ? itemTag.getString("vault_tag") : "";
+                    if (!((keyTag.isEmpty() && vaultTag.isEmpty()) || keyTag.equals(vaultTag))) {
+                        if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                        return InteractionResult.PASS;
+                    }
+
+                    if (!level.isClientSide) {
+                        // Označí hráče jako toho, kdo otevřel vault
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                        String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
                         LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
@@ -251,7 +264,8 @@ public class VaultBlock extends BaseEntityBlock {
             if (state.getValue(OMINOUS)) {
                 lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
             } else {
-                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/normal");
+                String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
+                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
             }
 
             System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
@@ -268,28 +282,6 @@ public class VaultBlock extends BaseEntityBlock {
             System.out.println("DEBUG: Vygenerováno " + displayLoot.size() + " itemů z loot table");
             for (ItemStack stack : displayLoot) {
                 System.out.println("DEBUG: Item: " + stack.getItem().getDescriptionId() + " x" + stack.getCount());
-            }
-
-            // Pokud loot table nevrátí žádné itemy, použije fallback
-            if (displayLoot.isEmpty()) {
-                System.out.println("DEBUG: Loot table je prázdná, používám fallback itemy");
-                displayLoot = java.util.Arrays.asList(
-                    new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1),
-                    new ItemStack(net.minecraft.world.item.Items.EMERALD, 1),
-                    new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1),
-                    new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 1),
-                    new ItemStack(net.minecraft.world.item.Items.NETHERITE_INGOT, 1)
-                );
-            }
-
-            // Pokud loot table vrátí pouze jeden item, přidá více různých itemů
-            if (displayLoot.size() == 1) {
-                System.out.println("DEBUG: Loot table vrátila pouze jeden item, přidávám více itemů");
-                List<ItemStack> expandedLoot = new ArrayList<>(displayLoot);
-                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.DIAMOND, 1));
-                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.EMERALD, 1));
-                expandedLoot.add(new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 1));
-                displayLoot = expandedLoot;
             }
 
             // Nastaví zobrazované itemy
@@ -457,6 +449,27 @@ public class VaultBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new VaultBlockEntity(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && placer instanceof Player player) {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                    if (tag.contains("vault_tag")) {
+                        String vaultTag = tag.getString("vault_tag");
+                        vaultEntity.setVaultTag(vaultTag);
+                    }
+                    if (tag.contains("loot_table")) {
+                        String lootTable = tag.getString("loot_table");
+                        vaultEntity.setLootTable(lootTable);
+                    }
+                }
+            }
+        }
     }
 
     @Override

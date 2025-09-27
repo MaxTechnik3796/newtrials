@@ -69,9 +69,7 @@ public class MaceItem extends SwordItem {
                 // Reset fall distance po útoku
                 player.fallDistance = 0;
             } else {
-                // Běžný úder bez pádu - přehraj základní zvuk
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                    NTrialsModSounds.MACE_SMASH_GROUND.get(), SoundSource.PLAYERS, 0.8f, 1.0f);
+                // base attack
             }
         }
 
