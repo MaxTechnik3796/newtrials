@@ -28,11 +28,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random; // For client-side randomness if needed, but level.random is available
 import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.entity.AreaEffectCloud;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -66,6 +68,18 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     // Loot table settings
     private String normalLootTable = "minecraft:chests/desert_pyramid"; // Default loot table for normal state
     private String ominousLootTable = "minecraft:chests/village/village_plains_house"; // Default loot table for ominous state
+
+    // Ominous effects list
+    private static final List<MobEffect> OMNIOUS_EFFECTS = List.of(
+        MobEffects.REGENERATION,
+        MobEffects.BLINDNESS,
+        MobEffects.POISON,
+        MobEffects.MOVEMENT_SLOWDOWN,
+        MobEffects.CONFUSION,
+        MobEffects.WEAKNESS,
+        MobEffects.MOVEMENT_SPEED,
+			MobEffects.DAMAGE_BOOST
+    );
 
     // Loot animation system
     private boolean isLootAnimating = false;
@@ -113,6 +127,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (!hasBeenSynced && this.spawnEntity != null && this.tickCount % 100 == 0) {
             syncToClients();
             hasBeenSynced = true;
+        }
+
+        // Spawn random ominous effects during active waves
+        if (!level.isClientSide() && isOminous() && trialActive && this.tickCount % 300 == 0) {
+            spawnRandomOminousEffect();
         }
     }
 
@@ -476,6 +495,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             if (!currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
                 level.setBlock(getBlockPos(),
                     currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, true), 3);
+                this.setOminous(true);
                 System.out.println("Trial Spawner at " + getBlockPos() + " switched to ominous mode due to Bad Omen");
 
                 // Play ominous activation sound
@@ -646,9 +666,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     level.addFreshEntity(entity);
                     spawnedEntities.add(entity.getUUID());
 
-                    // Spawn particles at spawn location
-                    ParticleOptions particleType = isOminousBlock ? ParticleTypes.SOUL : ParticleTypes.ENCHANT;
-                    level.addParticle(particleType, spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5, 0.0, 0.0, 0.0);
+                    spawnSpawnParticles(getBlockPos(), isOminousBlock);
 
                     System.out.println("Spawned " + entity.getType().getDescriptionId() + " at " + spawnPos +
                         (isOminousBlock ? " [OMINOUS]" : ""));
@@ -729,9 +747,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                             level.addFreshEntity(entity);
                             spawnedEntities.add(entity.getUUID());
 
-                            // Spawn particles at spawn location
-                            ParticleOptions particleType = isOminousBlock ? ParticleTypes.SOUL : ParticleTypes.ENCHANT;
-                            level.addParticle(particleType, spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5, 0.0, 0.0, 0.0);
+                            spawnSpawnParticles(getBlockPos(), isOminousBlock);
 
                             System.out.println("Refilled " + entity.getType().getDescriptionId() + " at " + spawnPos +
                                 (isOminousBlock ? " [OMINOUS]" : ""));
@@ -1110,5 +1126,77 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                 }
             }
         }
+    }
+
+    private void spawnSpawnParticles(BlockPos center, boolean isOminous) {
+        if (level == null) return;
+
+        double radius = 2.0;
+        int numParticles = 20;
+        ParticleOptions particle = isOminous ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+
+        for (int i = 0; i < numParticles; i++) {
+            double x = center.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 2 * radius;
+            double y = center.getY() + 0.5 + (level.random.nextDouble() - 0.5) * 2 * radius;
+            double z = center.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 2 * radius;
+            
+            // Ensure within radius
+            double cx = center.getX() + 0.5;
+            double cy = center.getY() + 0.5;
+            double cz = center.getZ() + 0.5;
+            while (Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2) + Math.pow(z - cz, 2)) > radius) {
+                x = center.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 2 * radius;
+                y = center.getY() + 0.5 + (level.random.nextDouble() - 0.5) * 2 * radius;
+                z = center.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 2 * radius;
+            }
+            
+            double vx = (level.random.nextDouble() - 0.5) * 0.05;
+            double vy = level.random.nextDouble() * 0.1;
+            double vz = (level.random.nextDouble() - 0.5) * 0.05;
+            level.addParticle(particle, x, y, z, vx, vy, vz);
+        }
+    }
+
+    private void spawnRandomOminousEffect() {
+        if (level == null || OMNIOUS_EFFECTS.isEmpty()) return;
+
+        MobEffect selectedEffect = OMNIOUS_EFFECTS.get(level.random.nextInt(OMNIOUS_EFFECTS.size()));
+        BlockPos effectPos = findEffectPosition();
+        if (effectPos == null) return;
+
+        AreaEffectCloud cloud = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, level);
+        cloud.setPos(effectPos.getX() + 0.5, effectPos.getY() + 0.5, effectPos.getZ() + 0.5);
+        cloud.setRadius(3.0f);
+        cloud.setDuration(200); // 10 seconds
+        cloud.addEffect(new MobEffectInstance(selectedEffect, 200, 0)); // Apply for 10 seconds, amplifier 0
+        cloud.setParticle(ParticleTypes.ENTITY_EFFECT);
+
+        level.addFreshEntity(cloud);
+        System.out.println("Spawned ominous area effect: " + ForgeRegistries.MOB_EFFECTS.getKey(selectedEffect) + " at " + effectPos);
+    }
+
+    private BlockPos findEffectPosition() {
+        double radius = 10.0;
+        for (int attempts = 0; attempts < 20; attempts++) {
+            double dx = (level.random.nextDouble() - 0.5) * 2 * radius;
+            double dz = (level.random.nextDouble() - 0.5) * 2 * radius;
+            double dist = Math.sqrt(dx * dx + dz * dz);
+            if (dist > radius) continue; // Ensure within horizontal radius
+
+            int x = getBlockPos().getX() + (int) dx;
+            int z = getBlockPos().getZ() + (int) dz;
+            int y = getBlockPos().getY();
+
+            // Check a few blocks up and down for space
+            for (int yOffset = -2; yOffset <= 3; yOffset++) {
+                BlockPos pos = new BlockPos(x, y + yOffset, z);
+                if (level.getBlockState(pos).isAir() &&
+                    level.getBlockState(pos.above()).isAir() &&
+                    level.getBlockState(pos.below()).isSolid()) { // Solid below
+                    return pos;
+                }
+            }
+        }
+        return null; // No valid position found
     }
 }
