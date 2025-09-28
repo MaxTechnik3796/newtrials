@@ -652,15 +652,14 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
                     // Make sure it's a mob and set it up properly
                     if (entity instanceof net.minecraft.world.entity.Mob mob) {
-                        mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
-                                level.getCurrentDifficultyAt(spawnPos),
-                                net.minecraft.world.entity.MobSpawnType.SPAWNER,
-                                null, null);
-
                         // If block state ominous is true, give random equipment and make stronger
                         if (isOminousBlock) {
                             equipOminousMob(mob);
                         }
+                        mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
+                                level.getCurrentDifficultyAt(spawnPos),
+                                net.minecraft.world.entity.MobSpawnType.SPAWNER,
+                                null, null);
                     }
 
                     level.addFreshEntity(entity);
@@ -736,13 +735,13 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                         if (entity != null) {
                             entity.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
                             if (entity instanceof net.minecraft.world.entity.Mob mob) {
+                                if (isOminousBlock) {
+                                    equipOminousMob(mob);
+                                }
                                 mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
                                     level.getCurrentDifficultyAt(spawnPos),
                                     net.minecraft.world.entity.MobSpawnType.SPAWNER,
                                     null, null);
-                                if (isOminousBlock) {
-                                    equipOminousMob(mob);
-                                }
                             }
                             level.addFreshEntity(entity);
                             spawnedEntities.add(entity.getUUID());
@@ -997,35 +996,37 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Random armor pieces and weapons
         net.minecraft.util.RandomSource random = level.random;
 
+        String[] trimPatterns = {"coast", "dune", "eye", "host", "raiser", "rib", "sentry", "shaper", "silence", "snout", "spire", "tide", "ward", "wayfinder", "wild"};
+
         // Armor materials (different tiers)
         net.minecraft.world.item.Item[] helmets = {
 
-            net.minecraft.world.item.Items.CHAINMAIL_HELMET,
             net.minecraft.world.item.Items.IRON_HELMET,
+            net.minecraft.world.item.Items.GOLDEN_HELMET,
             net.minecraft.world.item.Items.DIAMOND_HELMET
 
         };
 
         net.minecraft.world.item.Item[] chestplates = {
 
-            net.minecraft.world.item.Items.CHAINMAIL_CHESTPLATE,
             net.minecraft.world.item.Items.IRON_CHESTPLATE,
+            net.minecraft.world.item.Items.GOLDEN_CHESTPLATE,
             net.minecraft.world.item.Items.DIAMOND_CHESTPLATE
 
         };
 
         net.minecraft.world.item.Item[] leggings = {
 
-            net.minecraft.world.item.Items.CHAINMAIL_LEGGINGS,
             net.minecraft.world.item.Items.IRON_LEGGINGS,
+            net.minecraft.world.item.Items.GOLDEN_LEGGINGS,
             net.minecraft.world.item.Items.DIAMOND_LEGGINGS
 
         };
 
         net.minecraft.world.item.Item[] boots = {
 
-            net.minecraft.world.item.Items.CHAINMAIL_BOOTS,
             net.minecraft.world.item.Items.IRON_BOOTS,
+            net.minecraft.world.item.Items.GOLDEN_BOOTS,
             net.minecraft.world.item.Items.DIAMOND_BOOTS
 
         };
@@ -1040,29 +1041,85 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         // Randomly equip armor pieces (30% chance for each piece)
         if (random.nextFloat() < 0.3f) {
-            net.minecraft.world.item.ItemStack helmet = new net.minecraft.world.item.ItemStack(
-                helmets[random.nextInt(helmets.length)]);
+            net.minecraft.world.item.Item chosenHelmet = helmets[random.nextInt(helmets.length)];
+            net.minecraft.world.item.ItemStack helmet = new net.minecraft.world.item.ItemStack(chosenHelmet);
+            // Apply trim
+            String pattern = trimPatterns[random.nextInt(trimPatterns.length)];
+            String material;
+            if (chosenHelmet == net.minecraft.world.item.Items.IRON_HELMET) {
+                material = "trim_material:iron";
+            } else if (chosenHelmet == net.minecraft.world.item.Items.GOLDEN_HELMET) {
+                material = "trim_material:gold";
+            } else {
+                material = "trim_material:diamond";
+            }
+            net.minecraft.nbt.CompoundTag trimTag = new net.minecraft.nbt.CompoundTag();
+            trimTag.putString("pattern", "trim_pattern:" + pattern);
+            trimTag.putString("material", material);
+            helmet.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, helmet);
             mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.HEAD, 0.1f);
         }
 
         if (random.nextFloat() < 0.3f) {
-            net.minecraft.world.item.ItemStack chestplate = new net.minecraft.world.item.ItemStack(
-                chestplates[random.nextInt(chestplates.length)]);
+            net.minecraft.world.item.Item chosenChestplate = chestplates[random.nextInt(chestplates.length)];
+            net.minecraft.world.item.ItemStack chestplate = new net.minecraft.world.item.ItemStack(chosenChestplate);
+            // Apply trim
+            String pattern = trimPatterns[random.nextInt(trimPatterns.length)];
+            String material;
+            if (chosenChestplate == net.minecraft.world.item.Items.IRON_CHESTPLATE) {
+                material = "trim_material:iron";
+            } else if (chosenChestplate == net.minecraft.world.item.Items.GOLDEN_CHESTPLATE) {
+                material = "trim_material:gold";
+            } else {
+                material = "trim_material:diamond";
+            }
+            net.minecraft.nbt.CompoundTag trimTag = new net.minecraft.nbt.CompoundTag();
+            trimTag.putString("pattern", "trim_pattern:" + pattern);
+            trimTag.putString("material", material);
+            chestplate.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, chestplate);
             mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.CHEST, 0.1f);
         }
 
         if (random.nextFloat() < 0.3f) {
-            net.minecraft.world.item.ItemStack legging = new net.minecraft.world.item.ItemStack(
-                leggings[random.nextInt(leggings.length)]);
+            net.minecraft.world.item.Item chosenLeggings = leggings[random.nextInt(leggings.length)];
+            net.minecraft.world.item.ItemStack legging = new net.minecraft.world.item.ItemStack(chosenLeggings);
+            // Apply trim
+            String pattern = trimPatterns[random.nextInt(trimPatterns.length)];
+            String material;
+            if (chosenLeggings == net.minecraft.world.item.Items.IRON_LEGGINGS) {
+                material = "trim_material:iron";
+            } else if (chosenLeggings == net.minecraft.world.item.Items.GOLDEN_LEGGINGS) {
+                material = "trim_material:gold";
+            } else {
+                material = "trim_material:diamond";
+            }
+            net.minecraft.nbt.CompoundTag trimTag = new net.minecraft.nbt.CompoundTag();
+            trimTag.putString("pattern", "trim_pattern:" + pattern);
+            trimTag.putString("material", material);
+            legging.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.LEGS, legging);
             mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.LEGS, 0.1f);
         }
 
         if (random.nextFloat() < 0.3f) {
-            net.minecraft.world.item.ItemStack boot = new net.minecraft.world.item.ItemStack(
-                boots[random.nextInt(boots.length)]);
+            net.minecraft.world.item.Item chosenBoots = boots[random.nextInt(boots.length)];
+            net.minecraft.world.item.ItemStack boot = new net.minecraft.world.item.ItemStack(chosenBoots);
+            // Apply trim
+            String pattern = trimPatterns[random.nextInt(trimPatterns.length)];
+            String material;
+            if (chosenBoots == net.minecraft.world.item.Items.IRON_BOOTS) {
+                material = "trim_material:iron";
+            } else if (chosenBoots == net.minecraft.world.item.Items.GOLDEN_BOOTS) {
+                material = "trim_material:gold";
+            } else {
+                material = "trim_material:diamond";
+            }
+            net.minecraft.nbt.CompoundTag trimTag = new net.minecraft.nbt.CompoundTag();
+            trimTag.putString("pattern", "trim_pattern:" + pattern);
+            trimTag.putString("material", material);
+            boot.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET, boot);
             mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.FEET, 0.1f);
         }
