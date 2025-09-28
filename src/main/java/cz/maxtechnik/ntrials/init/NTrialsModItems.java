@@ -3,7 +3,7 @@ package cz.maxtechnik.ntrials.init;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.block.*;
 import cz.maxtechnik.ntrials.item.*;
-import cz.maxtechnik.ntrials.item.TrialSpawnerItem;
+//import cz.maxtechnik.ntrials.item.TrialSpawnerItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
@@ -16,7 +16,8 @@ public class NTrialsModItems{
     public static final DeferredRegister<Item>REGISTRY=DeferredRegister.create(ForgeRegistries.ITEMS,NTrialsMod.MODID);
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
-    public static final RegistryObject<Item>TRIAL_SPAWNER=REGISTRY.register("trial_spawner", () -> new TrialSpawnerItem(NTrialsModBlocks.TRIAL_SPAWNER.get(), new Item.Properties()));
+    //public static final RegistryObject<Item>TRIAL_SPAWNER=REGISTRY.register("trial_spawner", () -> new TrialSpawnerItem(NTrialsModBlocks.TRIAL_SPAWNER.get(), new Item.Properties()));
+    public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
     public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
 
     public static final RegistryObject<Item>TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
