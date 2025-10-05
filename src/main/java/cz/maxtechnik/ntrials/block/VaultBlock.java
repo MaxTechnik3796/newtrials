@@ -165,6 +165,13 @@ public class VaultBlock extends BaseEntityBlock {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
+                        String vaultTag = vaultEntity.getVaultTag();
+                        CompoundTag itemTag = heldItem.getTag();
+                        String keyTag = itemTag != null ? itemTag.getString("vault_tag") : "";
+                        if (!((keyTag.isEmpty() && vaultTag.isEmpty()) || keyTag.equals(vaultTag))) {
+                            if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                            return InteractionResult.PASS;
+                        }
 
                         // Získání LootTable
                         String lootPath = vaultEntity.getLootTable().isEmpty() ? "ntrials:vaults/ominous" : vaultEntity.getLootTable();
@@ -194,7 +201,6 @@ public class VaultBlock extends BaseEntityBlock {
                         heldItem.shrink(1);
                     }
                 }
-
                 return InteractionResult.SUCCESS;
             }
         }
