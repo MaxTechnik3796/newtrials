@@ -102,7 +102,7 @@ public class VaultBlock extends BaseEntityBlock {
             if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                 if (vaultEntity.hasPlayerOpened(player.getUUID())) {
                     // Hráč již otevřel tento vault
-                    player.displayClientMessage(Component.literal("You Alerdy Opened This Vault."), true);
+                    player.displayClientMessage(Component.literal("You Already Opened This Vault."), true);
                     return InteractionResult.FAIL;
                 }
             }
@@ -125,8 +125,10 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
+                        String lootPath = vaultEntity.getLootTable().isEmpty() ? "ntrials:vaults/normal" : vaultEntity.getLootTable();
+                        String modId=removeSuffix(lootPath);
+                        String path=removePrefix(lootPath);
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
                         LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
@@ -165,7 +167,10 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
+                        String lootPath = vaultEntity.getLootTable().isEmpty() ? "ntrials:vaults/ominous" : vaultEntity.getLootTable();
+                        String modId=removeSuffix(lootPath);
+                        String path=removePrefix(lootPath);
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
                         LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
@@ -256,18 +261,33 @@ public class VaultBlock extends BaseEntityBlock {
             vaultEntity.tickDisplayItem();
         }
     }
+    public static String removePrefix(String text){
+        int index=text.indexOf(':');
+        return(index!=-1)?text.substring(index+1):text;
+    }
+    public static String removeSuffix(String text){
+        int index=text.indexOf(':');
+        if (index!=-1){
+            return text.substring(0,index);
+        }else{
+            return"";
+        }
+    }
+
+
+
+
 
     private static void generateDisplayItems(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
         if (level instanceof ServerLevel serverLevel) {
             // Určí správnou loot table podle toho, zda je vault ominous nebo ne
-            ResourceLocation lootTableId;
+            String lootPath=vaultEntity.getLootTable().isEmpty() ? "ntrials:vaults/normal" : vaultEntity.getLootTable();;
             if (state.getValue(OMINOUS)) {
-                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
-            } else {
-                String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
-                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
+                lootPath = vaultEntity.getLootTable().isEmpty() ? "ntrials:vaults/ominous" : vaultEntity.getLootTable();
             }
-
+            String modId=removeSuffix(lootPath);
+            String path=removePrefix(lootPath);
+            ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
             System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
 
             LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
