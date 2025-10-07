@@ -44,8 +44,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class VaultBlock extends BaseEntityBlock {
-    static String defaultLootNormal="ntrials:chest/reward";
-    static String defaultLootOminous="ntrials:chest/reward_ominous";
+    static String defaultLootNormal="ntrials:chests/reward";
+    static String defaultLootOminous="ntrials:chests/reward_ominous";
     public static final DirectionProperty FACING=HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
     public static final EnumProperty<VaultState>STATE=EnumProperty.create("vault_state",VaultState.class);
