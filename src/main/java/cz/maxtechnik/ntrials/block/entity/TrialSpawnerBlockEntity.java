@@ -1,5 +1,6 @@
 package cz.maxtechnik.ntrials.block.entity;
 
+import cz.maxtechnik.ntrials.block.VaultBlock;
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -88,6 +90,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private int currentLootDropIndex = 0;
     private static final int LOOT_DROP_INTERVAL = 10; // Ticks between each item drop (0.5 seconds)
 
+    private int completeTrialTimer = -1; // Timer for delay before loot generation
+
     public TrialSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(), pos, blockState);
     }
@@ -97,6 +101,24 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (this.cooldownTime > 0) {
             this.cooldownTime--;
+        }
+
+        // Handle completion timer
+        if (completeTrialTimer > 0) {
+            completeTrialTimer--;
+            if (completeTrialTimer == 0) {
+                // Timer finished, now generate loot and set cooldown
+				trialActive = false;
+				currentWave = 0;
+				currentWaveMobs = 0;
+				spawnedEntities.clear();
+
+				completeTrialTimer = -1;
+
+				generateLootReward();
+                setCooldownTime(36000);
+
+            }
         }
 
         // Handle loot animation
@@ -548,7 +570,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState newState;
 
-        if (this.isLootAnimating) {
+        if (this.completeTrialTimer > 0 || this.isLootAnimating || (this.pendingLootItems != null && !this.pendingLootItems.isEmpty())) {
 			newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
         } else if (this.cooldownTime > 0) {
 			newState = cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
@@ -562,6 +584,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE) != newState) {
             level.setBlock(getBlockPos(), currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE, newState), 3);
+            System.out.println("Block state changed to: " + newState);
         }
     }
 
@@ -763,22 +786,16 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     private void completeTrial() {
         System.out.println("Trial completed at " + getBlockPos());
-        trialActive = false;
-        currentWave = 0;
-        currentWaveMobs = 0;
-        spawnedEntities.clear();
 
-        // Generate and drop loot
-        generateLootReward();
-
-        // Set cooldown
-        setCooldownTime(36000);
+        // Start the timer instead of generating loot immediately
+        completeTrialTimer = 20; // 20 ticks delay
     }
 
     private void generateLootReward() {
         if (level == null || level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
             return;
         }
+
 
         // Determine which loot table to use based on ominous state
         BlockState currentState = level.getBlockState(getBlockPos());
@@ -917,12 +934,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Sync animation end to clients
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            // Set cooldown state after animation ends
+            setCooldownTime(36000);
+            updateBlockState();
         }
-
-        // After loot animation completes, set block to appropriate state
-        // If we have cooldown time, it will go to COOLDOWN state
-        // Otherwise it will go to appropriate state based on current conditions
-        updateBlockState();
 
         System.out.println("Stopped loot animation");
     }
