@@ -91,6 +91,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private static final int LOOT_DROP_INTERVAL = 10; // Ticks between each item drop (0.5 seconds)
 
     private int completeTrialTimer = -1; // Timer for delay before loot generation
+    private int startTrialTimer = -1;
 
     public TrialSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(), pos, blockState);
@@ -101,6 +102,16 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (this.cooldownTime > 0) {
             this.cooldownTime--;
+        }
+
+        // Handle start trial timer
+        if (startTrialTimer > 0) {
+            startTrialTimer--;
+            if (startTrialTimer == 0) {
+                // Timer finished, now start spawning
+                spawnWave();
+                startTrialTimer = -1;
+            }
         }
 
         // Handle completion timer
@@ -594,10 +605,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         currentWave = 1;
         spawnedEntities.clear();
 
+        // Místo přímého spuštění nastavíme timer
+
+
         // Scan for players in 16 block radius to scale mob count
         updateMobCountBasedOnPlayers();
-
-        spawnWave();
+		startTrialTimer = 20;
     }
 
     private void updateMobCountBasedOnPlayers() {
