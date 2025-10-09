@@ -1058,7 +1058,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             trimTag.putString("material", material);
             helmet.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, helmet);
-            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.HEAD, 0.1f);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.HEAD, 0.0f);
         }
 
         if (random.nextFloat() < 0.3f) {
@@ -1079,7 +1079,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             trimTag.putString("material", material);
             chestplate.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, chestplate);
-            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.CHEST, 0.1f);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.CHEST, 0.0f);
         }
 
         if (random.nextFloat() < 0.3f) {
@@ -1100,7 +1100,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             trimTag.putString("material", material);
             legging.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.LEGS, legging);
-            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.LEGS, 0.1f);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.LEGS, 0.0f);
         }
 
         if (random.nextFloat() < 0.3f) {
@@ -1121,7 +1121,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             trimTag.putString("material", material);
             boot.getOrCreateTag().put("Trim", trimTag);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET, boot);
-            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.FEET, 0.1f);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.FEET, 0.0f);
         }
 
         // Randomly give weapons (50% chance)
@@ -1129,7 +1129,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             net.minecraft.world.item.ItemStack weapon = new net.minecraft.world.item.ItemStack(
                 weapons[random.nextInt(weapons.length)]);
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, weapon);
-            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND, 0.15f);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND, 0.0f);
         }
 
         // Add some enchantments randomly
