@@ -68,8 +68,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private long lastPlayerCheckTime = 0; // Last time we checked for players
 
     // Loot table settings
-    private String normalLootTable = "minecraft:chests/desert_pyramid"; // Default loot table for normal state
-    private String ominousLootTable = "minecraft:chests/village/village_plains_house"; // Default loot table for ominous state
+    private String normalLootTable = "ntrials:chests/spawner"; // Default loot table for normal state
+    private String ominousLootTable = "ntrials:chests/spawner_ominous"; // Default loot table for ominous state
 
     // Ominous effects list
     private static final List<MobEffect> OMNIOUS_EFFECTS = List.of(
@@ -80,7 +80,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         MobEffects.CONFUSION,
         MobEffects.WEAKNESS,
         MobEffects.MOVEMENT_SPEED,
-			MobEffects.DAMAGE_BOOST
+        MobEffects.DAMAGE_BOOST
     );
 
     // Loot animation system
