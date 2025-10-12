@@ -25,7 +25,7 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
     public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
     public static final RegistryObject<Item>OMINOUS_BOTTLE=REGISTRY.register("ominous_bottle",OminousBottleItem::new);
-    public static final RegistryObject<Item>COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",BasicItem::new);
+    public static final RegistryObject<Item>COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",CopperUpgradeSmithingTemplateItem::new);
 
 
     public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
