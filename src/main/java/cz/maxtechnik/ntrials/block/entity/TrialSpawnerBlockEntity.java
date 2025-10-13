@@ -946,6 +946,15 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         // Sync animation end to clients
         if (level != null && !level.isClientSide()) {
+            // Reset ominous state to false after reward is completed
+            BlockState currentState = level.getBlockState(getBlockPos());
+            if (currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
+                level.setBlock(getBlockPos(),
+                    currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, false), 3);
+                this.setOminous(false);
+                System.out.println("Trial Spawner at " + getBlockPos() + " switched back to normal mode after reward");
+            }
+            
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             // Set cooldown state after animation ends
             setCooldownTime(36000);
