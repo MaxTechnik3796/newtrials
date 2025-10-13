@@ -3,7 +3,6 @@ package cz.maxtechnik.ntrials.init;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.block.*;
 import cz.maxtechnik.ntrials.item.*;
-//import cz.maxtechnik.ntrials.item.TrialSpawnerItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
@@ -12,11 +11,12 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.security.PublicKey;
+
 public class NTrialsModItems{
     public static final DeferredRegister<Item>REGISTRY=DeferredRegister.create(ForgeRegistries.ITEMS,NTrialsMod.MODID);
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
-    //public static final RegistryObject<Item>TRIAL_SPAWNER=REGISTRY.register("trial_spawner", () -> new TrialSpawnerItem(NTrialsModBlocks.TRIAL_SPAWNER.get(), new Item.Properties()));
     public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
     public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
 
@@ -24,6 +24,8 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
     public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
     public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
+    public static final RegistryObject<Item>OMINOUS_BOTTLE=REGISTRY.register("ominous_bottle",OminousBottleItem::new);
+    public static final RegistryObject<Item>COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",CopperUpgradeSmithingTemplateItem::new);
 
 
     public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
