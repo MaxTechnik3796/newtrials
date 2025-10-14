@@ -821,7 +821,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (lootTable == LootTable.EMPTY) {
             System.out.println("Warning: Loot table " + lootTableId + " not found, using default");
-            lootTableLocation = new ResourceLocation("minecraft:chests/desert_pyramid");
+            lootTableLocation = new ResourceLocation(normalLootTable);
             lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
         }
 
