@@ -22,8 +22,10 @@ public class NTrialsModTabs{
         tabData.accept(NTrialsModBlocks.VAULT.get().asItem());
 
         tabData.accept(NTrialsModItems.WIND_CHARGE.get());
+        tabData.accept(NTrialsModItems.BREEZE_ROD.get());
         tabData.accept(NTrialsModBlocks.HEAVY_CORE.get().asItem());
         tabData.accept(NTrialsModItems.MACE.get());
+        tabData.accept(NTrialsModItems.MACE_HANDLE.get());
 
 
         tabData.accept(NTrialsModBlocks.TUFF_BRICKS.get().asItem());

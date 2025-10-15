@@ -22,6 +22,8 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
     public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
     public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
+    public static final RegistryObject<Item>BREEZE_ROD=REGISTRY.register("breeze_rod",BasicItem::new);
+    public static final RegistryObject<Item>MACE_HANDLE=REGISTRY.register("mace_handle",BasicItem::new);
     public static final RegistryObject<Item>OMINOUS_BOTTLE=REGISTRY.register("ominous_bottle",OminousBottleItem::new);
     public static final RegistryObject<Item>COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",CopperUpgradeSmithingTemplateItem::new);
 
