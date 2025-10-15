@@ -39,9 +39,7 @@ public class NTrialsMod{
         LOGGER.info("NewTrials Common loading...");
         event.enqueueWork(NTrialsModEvents::setupOxidation);
          event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
-        event.enqueueWork(() -> {
-            NetworkHandler.registerPackets();
-        });
+        event.enqueueWork(NetworkHandler::registerPackets);
     }
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event){
@@ -50,9 +48,8 @@ public class NTrialsMod{
     @Mod.EventBusSubscriber(modid=MODID,bus=Mod.EventBusSubscriber.Bus.MOD,value=Dist.CLIENT)
     public static class ClientModEvents{
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void onClientSetup(FMLClientSetupEvent event){
             LOGGER.info("NewTrials Client loading...");
-            //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 }
