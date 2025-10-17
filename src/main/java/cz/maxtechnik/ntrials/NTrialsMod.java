@@ -21,7 +21,7 @@ public class NTrialsMod{
     public static final String MODID="ntrials";
     public static final Logger LOGGER=LogUtils.getLogger();
     public NTrialsMod(){
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus=FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         NTrialsModBlocks.REGISTRY.register(modEventBus);
@@ -32,6 +32,7 @@ public class NTrialsMod{
         NTrialsModMobEffects.REGISTER.register(modEventBus);
         NTrialsModBlockEntities.register(modEventBus);
         NTrialsModSounds.REGISTER.register(modEventBus);
+        NTrialsModEntities.REGISTRY.register(modEventBus);
         NTrialsModEnchantments.register(modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,Config.SPEC);
     }
