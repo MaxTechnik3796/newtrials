@@ -1,22 +1,18 @@
 package cz.maxtechnik.ntrials.entity;
 
-import net.minecraft.server.level.ServerLevel;
 import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;

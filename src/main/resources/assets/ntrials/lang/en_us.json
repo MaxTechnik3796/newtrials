@@ -2,18 +2,22 @@
   "creative_tab.ntrials.main": "NewTrials: Main",
   "creative_tab.ntrials.copper": "NewTrials: Copper",
 
-  "effect.ntrials.infested": "Infested",
-  "effect.ntrials.oozing": "Oozing",
-  "effect.ntrials.weaving": "Weaving",
   "effect.ntrials.trial_omen": "Trial Omen",
-
 
   "block.ntrials.heavy_core": "§dHeavy Core§r",
   "item.ntrials.trial_key": "Trial Key",
   "item.ntrials.ominous_trial_key": "Ominous Trial Key",
   "item.ntrials.mace": "§dMace§r",
+  "item.ntrials.mace_handle": "§dMace Handle§r",
+  "item.ntrials.copper_upgrade_smithing_template": "Smithing Template",
+  "upgrade.ntrials.copper_upgrade": "Copper Upgrade",
+  "item.ntrials.smithing_template.copper_upgrade.applies_to": "Breeze Rod",
+  "item.ntrials.smithing_template.copper_upgrade.ingredients": "Netherite Scrap",
+
+  "item.ntrials.ominous_bottle": "Ominous Bottle",
 
   "item.ntrials.wind_charge": "Wind Charge",
+  "item.ntrials.breeze_rod": "Breeze Rod",
 
   "block.ntrials.trial_spawner": "Trial Spawner",
   "block.ntrials.vault": "Vault",

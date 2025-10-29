@@ -21,7 +21,7 @@ public class NTrialsMod{
     public static final String MODID="ntrials";
     public static final Logger LOGGER=LogUtils.getLogger();
     public NTrialsMod(){
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus=FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         NTrialsModBlocks.REGISTRY.register(modEventBus);
@@ -32,6 +32,7 @@ public class NTrialsMod{
         NTrialsModMobEffects.REGISTER.register(modEventBus);
         NTrialsModBlockEntities.register(modEventBus);
         NTrialsModSounds.REGISTER.register(modEventBus);
+        NTrialsModEntities.REGISTRY.register(modEventBus);
         NTrialsModEnchantments.register(modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,Config.SPEC);
     }
@@ -39,9 +40,7 @@ public class NTrialsMod{
         LOGGER.info("NewTrials Common loading...");
         event.enqueueWork(NTrialsModEvents::setupOxidation);
          event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
-        event.enqueueWork(() -> {
-            NetworkHandler.registerPackets();
-        });
+        event.enqueueWork(NetworkHandler::registerPackets);
     }
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event){
@@ -50,9 +49,8 @@ public class NTrialsMod{
     @Mod.EventBusSubscriber(modid=MODID,bus=Mod.EventBusSubscriber.Bus.MOD,value=Dist.CLIENT)
     public static class ClientModEvents{
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void onClientSetup(FMLClientSetupEvent event){
             LOGGER.info("NewTrials Client loading...");
-            //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 }

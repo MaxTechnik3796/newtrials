@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
-import net.minecraft.nbt.CompoundTag;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,12 +15,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,7 +30,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -43,14 +38,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class VaultBlock extends BaseEntityBlock {
+    static String defaultLootNormal="ntrials:chests/reward";
+    static String defaultLootOminous="ntrials:chests/reward_ominous";
     public static final DirectionProperty FACING=HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
     public static final EnumProperty<VaultState>STATE=EnumProperty.create("vault_state",VaultState.class);
@@ -92,8 +87,7 @@ public class VaultBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos,
-                                 Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state,Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
         ItemStack heldItem = player.getItemInHand(hand);
 
         // Zkontroluje, zda má blok block entity a zda hráč již otevřel tento vault
@@ -102,7 +96,7 @@ public class VaultBlock extends BaseEntityBlock {
             if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                 if (vaultEntity.hasPlayerOpened(player.getUUID())) {
                     // Hráč již otevřel tento vault
-                    player.displayClientMessage(Component.literal("You Alerdy Opened This Vault."), true);
+                    player.displayClientMessage(Component.literal("You Already Opened This Vault."), true);
                     return InteractionResult.FAIL;
                 }
             }
@@ -125,9 +119,11 @@ public class VaultBlock extends BaseEntityBlock {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
 
                         // Získání LootTable
-                        String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
-                        LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
+                        String lootPath = vaultEntity.getLootTable().isEmpty() ? defaultLootNormal : vaultEntity.getLootTable();
+                        String modId=removeSuffix(lootPath);
+                        String path=removePrefix(lootPath);
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
+                        LootTable lootTable = Objects.requireNonNull(level.getServer()).getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
                         LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
@@ -163,10 +159,20 @@ public class VaultBlock extends BaseEntityBlock {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if (blockEntity instanceof VaultBlockEntity vaultEntity) {
                         vaultEntity.addPlayerWhoOpened(player.getUUID());
+                        String vaultTag = vaultEntity.getVaultTag();
+                        CompoundTag itemTag = heldItem.getTag();
+                        String keyTag = itemTag != null ? itemTag.getString("vault_tag") : "";
+                        if (!((keyTag.isEmpty() && vaultTag.isEmpty()) || keyTag.equals(vaultTag))) {
+                            if (!level.isClientSide()) level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                            return InteractionResult.PASS;
+                        }
 
                         // Získání LootTable
-                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
-                        LootTable lootTable = level.getServer().getLootData().getLootTable(lootTableId);
+                        String lootPath = vaultEntity.getLootTable().isEmpty() ? defaultLootOminous : vaultEntity.getLootTable();
+                        String modId=removeSuffix(lootPath);
+                        String path=removePrefix(lootPath);
+                        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
+                        LootTable lootTable = Objects.requireNonNull(level.getServer()).getLootData().getLootTable(lootTableId);
 
                         // Kontext – kdo otevřel, kde, atd.
                         LootParams.Builder params = new LootParams.Builder((ServerLevel) level)
@@ -189,7 +195,6 @@ public class VaultBlock extends BaseEntityBlock {
                         heldItem.shrink(1);
                     }
                 }
-
                 return InteractionResult.SUCCESS;
             }
         }
@@ -199,7 +204,7 @@ public class VaultBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         return createTickerHelper(blockEntityType, cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
             level.isClientSide ? VaultBlock::clientTick : VaultBlock::serverTick);
     }
@@ -256,18 +261,33 @@ public class VaultBlock extends BaseEntityBlock {
             vaultEntity.tickDisplayItem();
         }
     }
+    public static String removePrefix(String text){
+        int index=text.indexOf(':');
+        return(index!=-1)?text.substring(index+1):text;
+    }
+    public static String removeSuffix(String text){
+        int index=text.indexOf(':');
+        if (index!=-1){
+            return text.substring(0,index);
+        }else{
+            return"";
+        }
+    }
+
+
+
+
 
     private static void generateDisplayItems(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
         if (level instanceof ServerLevel serverLevel) {
             // Určí správnou loot table podle toho, zda je vault ominous nebo ne
-            ResourceLocation lootTableId;
+            String lootPath=vaultEntity.getLootTable().isEmpty() ? defaultLootNormal : vaultEntity.getLootTable();;
             if (state.getValue(OMINOUS)) {
-                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/ominous");
-            } else {
-                String lootPath = vaultEntity.getLootTable().isEmpty() ? "normal" : vaultEntity.getLootTable();
-                lootTableId = ResourceLocation.fromNamespaceAndPath("ntrials", "vaults/" + lootPath);
+                lootPath = vaultEntity.getLootTable().isEmpty() ? defaultLootOminous : vaultEntity.getLootTable();
             }
-
+            String modId=removeSuffix(lootPath);
+            String path=removePrefix(lootPath);
+            ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
             System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
 
             LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
@@ -447,12 +467,12 @@ public class VaultBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new VaultBlockEntity(pos, state);
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide && placer instanceof Player player) {
             CompoundTag tag = stack.getTag();
@@ -473,7 +493,7 @@ public class VaultBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state){
         return RenderShape.MODEL;
     }
 }
