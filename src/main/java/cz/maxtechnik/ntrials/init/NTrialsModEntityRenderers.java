@@ -1,5 +1,6 @@
 package cz.maxtechnik.ntrials.init;
 
+import cz.maxtechnik.ntrials.client.model.ModelBogged;
 import cz.maxtechnik.ntrials.client.renderer.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,6 +12,11 @@ public class NTrialsModEntityRenderers{
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(NTrialsModEntities.BOGGED.get(),BoggedRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(ModelBogged.LAYER_LOCATION, ModelBogged::createBodyLayer);
     }
 }
 
