@@ -49,6 +49,8 @@ import org.jetbrains.annotations.Nullable;
 
 import cz.maxtechnik.ntrials.init.NTrialsModEntities;
 import java.util.Objects;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 
 public class BoggedEntity extends Monster implements RangedAttackMob {
     public BoggedEntity(PlayMessages.SpawnEntity packet, Level world) {
@@ -191,11 +193,10 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
     }
     
     protected AbstractArrow getArrow(ItemStack arrowStack, float distanceFactor, ItemStack bow) {
-        AbstractArrow arrow = ProjectileUtil.getMobArrow(this, arrowStack, distanceFactor);
-        // Mark that arrow was shot from bow
-        if (bow.is(Items.BOW)) {
-            arrow.setBaseDamage(arrow.getBaseDamage());
-        }
+        // Vždy vystřel poison šíp
+        ItemStack poisonArrowStack = new ItemStack(Items.TIPPED_ARROW);
+        PotionUtils.setPotion(poisonArrowStack, Potions.POISON);
+        AbstractArrow arrow = ProjectileUtil.getMobArrow(this, poisonArrowStack, distanceFactor);
         return arrow;
     }
     
