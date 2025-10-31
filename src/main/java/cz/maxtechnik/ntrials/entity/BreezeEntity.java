@@ -1,6 +1,7 @@
 package cz.maxtechnik.ntrials.entity;
 
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import java.util.EnumSet;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -150,13 +151,30 @@ public class BreezeEntity extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getDirectEntity() instanceof Projectile) {
+            this.playSound(NTrialsModSounds.ENTITY_BREEZE_DEFLECT.get(), 1.0F, 1.0F);
             return false; // Immune to projectiles
         }
         return super.hurt(source, amount);
     }
 
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return this.level().dimensionType().hasCeiling() ? NTrialsModSounds.ENTITY_BREEZE_AMBIENT_CAVE.get() : NTrialsModSounds.ENTITY_BREEZE_AMBIENT.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return NTrialsModSounds.ENTITY_BREEZE_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return NTrialsModSounds.ENTITY_BREEZE_DEATH.get();
+    }
+
     public void shootWindCharge(LivingEntity target) {
         if (attackCooldown <= 0) {
+            this.playSound(NTrialsModSounds.ENTITY_BREEZE_SHOOT.get(), 1.0F, 1.0F);
             WindChargeProjectile windCharge = new WindChargeProjectile(this.level(), this);
             double d0 = target.getX() - this.getX();
             double d1 = target.getY(0.3333333333333333D) - windCharge.getY();
@@ -320,12 +338,12 @@ public class BreezeEntity extends Monster {
             if (isCharging) {
                 return true;
             }
-            
+
             LivingEntity target = this.breeze.getTarget();
             if (target == null || this.breeze.isInWater() || jumpCooldown > 0) {
                 return false;
             }
-            
+
             double distSqr = this.breeze.distanceToSqr(target);
             // Jump if target is far but within range (6-16 blocks) or path is blocked
             if ((distSqr > 36.0D && distSqr < 256.0D) || // Between 6 and 16 blocks
@@ -333,6 +351,7 @@ public class BreezeEntity extends Monster {
                 isCharging = true;
                 chargeTime = CHARGE_DURATION;
                 this.breeze.entityData.set(DATA_IS_CHARGING, true);
+                this.breeze.playSound(NTrialsModSounds.ENTITY_BREEZE_INHALE.get(), 1.0F, 1.0F);
                 return true;
             }
             return false;
@@ -343,7 +362,7 @@ public class BreezeEntity extends Monster {
             if (jumpCooldown > 0) {
                 jumpCooldown--;
             }
-            
+
             if (isCharging) {
                 chargeTime--;
                 if (chargeTime <= 0) {
@@ -355,6 +374,7 @@ public class BreezeEntity extends Monster {
         private void performJump() {
             LivingEntity target = this.breeze.getTarget();
             if (target != null) {
+                this.breeze.playSound(NTrialsModSounds.ENTITY_BREEZE_JUMP.get(), 1.0F, 1.0F);
                 // Calculate direction to target
                 Vec3 directionToTarget = target.position().subtract(this.breeze.position()).normalize();
 
