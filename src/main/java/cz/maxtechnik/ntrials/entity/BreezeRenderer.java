@@ -5,10 +5,11 @@ import cz.maxtechnik.ntrials.client.model.BreezeWind;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public class BreezeRenderer extends MobRenderer<BreezeEntity, BreezeModel> {
-    private static final ResourceLocation BREEZE_TEXTURE = new ResourceLocation("ntrials", "textures/entities/breeze.png");
-    private static final ResourceLocation BREEZE_WIND_TEXTURE = new ResourceLocation("ntrials", "textures/entities/breeze_wind.png");
+    private static final ResourceLocation BREEZE_TEXTURE =ResourceLocation.fromNamespaceAndPath("ntrials", "textures/entities/breeze.png");
+    private static final ResourceLocation BREEZE_WIND_TEXTURE = ResourceLocation.fromNamespaceAndPath("ntrials", "textures/entities/breeze_wind.png");
 
     private final BreezeWind<BreezeEntity> windModel;
 
@@ -18,17 +19,17 @@ public class BreezeRenderer extends MobRenderer<BreezeEntity, BreezeModel> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BreezeEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull BreezeEntity entity) {
         return BREEZE_TEXTURE;
     }
 
     @Override
-    protected float getFlipDegrees(BreezeEntity entity) {
+    protected float getFlipDegrees(@NotNull BreezeEntity entity) {
         return 0.0F; // Breeze doesn't flip when dying
     }
 
     @Override
-    public void render(BreezeEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource bufferSource, int packedLight) {
+    public void render(@NotNull BreezeEntity entity,float entityYaw,float partialTicks,@NotNull PoseStack poseStack,net.minecraft.client.renderer.@NotNull MultiBufferSource bufferSource,int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
 
         // Render the spinning wind effect
