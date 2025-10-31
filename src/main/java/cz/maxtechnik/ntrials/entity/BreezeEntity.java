@@ -37,8 +37,7 @@ public class BreezeEntity extends Monster {
 
     public BreezeEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.setNoGravity(true);
+        this.setNoGravity(false);
     }
 
     @Override
@@ -52,7 +51,6 @@ public class BreezeEntity extends Monster {
                 .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.ATTACK_DAMAGE, 2.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.23D)
-                .add(Attributes.FLYING_SPEED, 0.3D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
     }
 
@@ -60,31 +58,40 @@ public class BreezeEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new BreezeAttackGoal(this));
-        this.goalSelector.addGoal(3, new RandomFlyGoal(this));
+        this.goalSelector.addGoal(3, new RandomJumpGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 16.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
-    protected PathNavigation createNavigation(Level level) {
-        FlyingPathNavigation flyingPathNavigation = new FlyingPathNavigation(this, level);
-        flyingPathNavigation.setCanOpenDoors(false);
-        flyingPathNavigation.setCanFloat(true);
-        flyingPathNavigation.setCanPassDoors(true);
-        return flyingPathNavigation;
-    }
-
-    @Override
     public void tick() {
         super.tick();
+        // Enhanced wind particle effects
         if (!this.onGround()) {
+            // Main wind particles
+            if (this.random.nextFloat() < 0.2F) {
+                for (int i = 0; i < 3; i++) {
+                    double angle = this.random.nextDouble() * Math.PI * 2;
+                    double radius = 0.5D + this.random.nextDouble() * 0.5D;
+                    double d0 = this.getX() + Math.cos(angle) * radius;
+                    double d1 = this.getY() + 0.3D + (this.random.nextDouble() - 0.5D) * 0.5D;
+                    double d2 = this.getZ() + Math.sin(angle) * radius;
+                    
+                    this.level().addParticle(NTrialsModParticles.SMALL_GUST.get(),
+                        d0, d1, d2,
+                        Math.cos(angle) * 0.05D,
+                        (this.random.nextDouble() - 0.5D) * 0.05D,
+                        Math.sin(angle) * 0.05D);
+                }
+            }
+            
+            // Additional gust particles
             if (this.random.nextFloat() < 0.1F) {
-                // Spawn wind particles during movement
-                double d0 = this.getX() + (this.random.nextDouble() - 0.5D) * 0.5D;
-                double d1 = this.getY() + 0.3D;
-                double d2 = this.getZ() + (this.random.nextDouble() - 0.5D) * 0.5D;
-                this.level().addParticle(NTrialsModParticles.SMALL_GUST.get(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                double d0 = this.getX() + (this.random.nextDouble() - 0.5D) * 1.0D;
+                double d1 = this.getY() + 0.5D;
+                double d2 = this.getZ() + (this.random.nextDouble() - 0.5D) * 1.0D;
+                this.level().addParticle(NTrialsModParticles.GUST.get(), d0, d1, d2, 0.0D, 0.1D, 0.0D);
             }
         }
 
@@ -117,6 +124,11 @@ public class BreezeEntity extends Monster {
                 this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.1D, 0.0D));
             }
         }
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+        return false; // Immune to fall damage
     }
 
     @Override
@@ -190,33 +202,42 @@ public class BreezeEntity extends Monster {
         }
     }
 
-    static class RandomFlyGoal extends Goal {
+    static class RandomJumpGoal extends Goal {
         private final BreezeEntity breeze;
+        private int jumpDelay;
 
-        public RandomFlyGoal(BreezeEntity breeze) {
+        public RandomJumpGoal(BreezeEntity breeze) {
             this.breeze = breeze;
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+            this.setFlags(EnumSet.of(Goal.Flag.JUMP));
         }
 
         @Override
         public boolean canUse() {
-            if (this.breeze.getTarget() != null) {
+            if (this.breeze.getTarget() != null || this.breeze.isInWater()) {
                 return false;
             }
-            return !this.breeze.getMoveControl().hasWanted();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return false;
+            if (this.jumpDelay > 0) {
+                --this.jumpDelay;
+                return false;
+            }
+            return true;
         }
 
         @Override
         public void start() {
-            double d0 = this.breeze.getX() + (this.breeze.getRandom().nextFloat() * 2.0F - 1.0F) * 4.0F;
-            double d1 = this.breeze.getY() + (this.breeze.getRandom().nextFloat() * 2.0F - 1.0F) * 4.0F;
-            double d2 = this.breeze.getZ() + (this.breeze.getRandom().nextFloat() * 2.0F - 1.0F) * 4.0F;
-            this.breeze.getMoveControl().setWantedPosition(d0, d1, d2, 1.0D);
+            // Random jump in a direction
+            double jumpStrength = 0.4D + this.breeze.getRandom().nextDouble() * 0.2D;
+            double jumpAngle = this.breeze.getRandom().nextDouble() * Math.PI * 2.0D;
+            
+            Vec3 motion = this.breeze.getDeltaMovement();
+            this.breeze.setDeltaMovement(
+                motion.x + Math.cos(jumpAngle) * jumpStrength,
+                0.5D, // Vertical jump component
+                motion.z + Math.sin(jumpAngle) * jumpStrength
+            );
+            
+            // Set random delay before next jump (20-60 ticks)
+            this.jumpDelay = 20 + this.breeze.getRandom().nextInt(40);
         }
     }
 }
