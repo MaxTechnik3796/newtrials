@@ -3,6 +3,8 @@ package cz.maxtechnik.ntrials.entity;
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
 import net.minecraft.core.BlockPos;
 import java.util.EnumSet;
+import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -38,6 +40,17 @@ public class BreezeEntity extends Monster {
     public BreezeEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
         this.setNoGravity(false);
+        this.moveControl = new MoveControl(this);
+        this.navigation = this.createNavigation(level);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
+        flyingpathnavigation.setCanOpenDoors(false);
+        flyingpathnavigation.setCanFloat(true);
+        flyingpathnavigation.setCanPassDoors(true);
+        return flyingpathnavigation;
     }
 
     @Override
@@ -50,7 +63,7 @@ public class BreezeEntity extends Monster {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0D) //set max health
                 .add(Attributes.ATTACK_DAMAGE, 2.0D) //set attack damage
-                .add(Attributes.MOVEMENT_SPEED, 0.23D) //set movemoment speed
+                .add(Attributes.MOVEMENT_SPEED, 3.0D) //set movemoment speed
                 .add(Attributes.FOLLOW_RANGE, 16.0D); //set follow range
     }
 
@@ -58,9 +71,11 @@ public class BreezeEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new BreezeAttackGoal(this));
-        this.goalSelector.addGoal(3, new CombatJumpGoal(this));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 16.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new BreezeKeepDistanceGoal(this));
+        this.goalSelector.addGoal(4, new CombatJumpGoal(this));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 16.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
@@ -202,12 +217,62 @@ public class BreezeEntity extends Monster {
         }
     }
 
+    static class BreezeKeepDistanceGoal extends Goal {
+        private final BreezeEntity breeze;
+        private static final double IDEAL_DISTANCE = 3.0D;
+        private static final double DISTANCE_TOLERANCE = 1.0D;
+        private static final double MOVE_SPEED = 1.0D;
+
+        public BreezeKeepDistanceGoal(BreezeEntity breeze) {
+            this.breeze = breeze;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.breeze.getTarget() != null;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = this.breeze.getTarget();
+            if (target == null) return;
+
+            double distanceToTarget = this.breeze.distanceTo(target);
+            Vec3 directionToTarget = target.position().subtract(this.breeze.position()).normalize();
+
+            if (Math.abs(distanceToTarget - IDEAL_DISTANCE) > DISTANCE_TOLERANCE) {
+                // Too close or too far - adjust position
+                if (distanceToTarget < IDEAL_DISTANCE) {
+                    // Move away
+                    this.breeze.getMoveControl().setWantedPosition(
+                        this.breeze.getX() - directionToTarget.x * MOVE_SPEED,
+                        this.breeze.getY(),
+                        this.breeze.getZ() - directionToTarget.z * MOVE_SPEED,
+                        1.0D
+                    );
+                } else {
+                    // Move closer
+                    this.breeze.getMoveControl().setWantedPosition(
+                        this.breeze.getX() + directionToTarget.x * MOVE_SPEED,
+                        this.breeze.getY(),
+                        this.breeze.getZ() + directionToTarget.z * MOVE_SPEED,
+                        1.0D
+                    );
+                }
+            }
+        }
+    }
+
     static class CombatJumpGoal extends Goal {
         private final BreezeEntity breeze;
         private int jumpCooldown = 0;
-        private static final int JUMP_COOLDOWN = 100; // 5 seconds (100 ticks)
-        private static final double JUMP_STRENGTH = 1.2D; // Strong enough for ~10 block distance
-        private static final double JUMP_HEIGHT = 0.6D;
+        private static final int JUMP_COOLDOWN = 60; // 3 seconds (60 ticks)
+        private static final double JUMP_STRENGTH = 2.0D; // Strong enough for 8 block distance
+        private static final double JUMP_HEIGHT = 1.0D;
+        private static final int CHARGE_DURATION = 15; // 0.75 second charge-up time
+        private int chargeTime = 0;
+        private boolean isCharging = false;
 
         public CombatJumpGoal(BreezeEntity breeze) {
             this.breeze = breeze;
@@ -216,14 +281,25 @@ public class BreezeEntity extends Monster {
 
         @Override
         public boolean canUse() {
+            if (isCharging) {
+                return true;
+            }
+            
             LivingEntity target = this.breeze.getTarget();
             if (target == null || this.breeze.isInWater() || jumpCooldown > 0) {
                 return false;
             }
             
-            // Only jump if target is within reasonable range but not too close
             double distSqr = this.breeze.distanceToSqr(target);
-            return distSqr > 4.0D && distSqr < 256.0D; // Between 2 and 16 blocks
+            // Jump if target is far but within range (6-16 blocks) or path is blocked
+            if ((distSqr > 36.0D && distSqr < 256.0D) || // Between 6 and 16 blocks
+                this.breeze.getNavigation().createPath(target, 0) == null) {
+                isCharging = true;
+                chargeTime = CHARGE_DURATION;
+                this.breeze.entityData.set(DATA_IS_CHARGING, true);
+                return true;
+            }
+            return false;
         }
 
         @Override
@@ -231,25 +307,49 @@ public class BreezeEntity extends Monster {
             if (jumpCooldown > 0) {
                 jumpCooldown--;
             }
+            
+            if (isCharging) {
+                chargeTime--;
+                if (chargeTime <= 0) {
+                    performJump();
+                }
+            }
         }
 
-        @Override
-        public void start() {
+        private void performJump() {
             LivingEntity target = this.breeze.getTarget();
             if (target != null) {
                 // Calculate direction to target
                 Vec3 directionToTarget = target.position().subtract(this.breeze.position()).normalize();
-                
+
+                // Calculate distance to target
+                double distance = this.breeze.distanceTo(target);
+
+                // Adjust jump strength based on distance (stronger for longer jumps)
+                double adjustedStrength = JUMP_STRENGTH;
+                if (distance > 8.0D) {
+                    adjustedStrength *= 1.2D; // Boost for very long jumps
+                } else if (distance < 4.0D) {
+                    adjustedStrength *= 0.8D; // Reduce for short jumps
+                }
+
                 // Set motion for jump-dash
                 this.breeze.setDeltaMovement(
-                    directionToTarget.x * JUMP_STRENGTH,
+                    directionToTarget.x * adjustedStrength,
                     JUMP_HEIGHT,
-                    directionToTarget.z * JUMP_STRENGTH
+                    directionToTarget.z * adjustedStrength
                 );
-                
-                // Start cooldown
+
+                // Reset states
+                isCharging = false;
+                this.breeze.entityData.set(DATA_IS_CHARGING, false);
                 jumpCooldown = JUMP_COOLDOWN;
             }
+        }
+
+        @Override
+        public void start() {
+            // Initialization is now handled in canUse()
         }
     }
 }
