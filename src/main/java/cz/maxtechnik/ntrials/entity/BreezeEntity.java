@@ -35,7 +35,7 @@ public class BreezeEntity extends Monster {
     private float allowedHeightOffset = 0.4F;
     private int nextHeightOffsetUpdateTime;
     private int attackCooldown = 0;
-    private static final int ATTACK_COOLDOWN = 50; //set attack sooldown 2.5 seconds (50 ticks)
+    private static final int ATTACK_COOLDOWN = 40; //set attack sooldown 2 seconds (40 ticks)
 
     public BreezeEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -62,8 +62,8 @@ public class BreezeEntity extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0D) //set max health
-                .add(Attributes.ATTACK_DAMAGE, 2.0D) //set attack damage
-                .add(Attributes.MOVEMENT_SPEED, 0.5D) //set movemoment speed
+                .add(Attributes.ATTACK_DAMAGE, 4.0D) //set attack damage
+                .add(Attributes.MOVEMENT_SPEED, 0.6D) //set movemoment speed
                 .add(Attributes.FOLLOW_RANGE, 16.0D); //set follow range
     }
 
@@ -71,11 +71,12 @@ public class BreezeEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new BreezeAttackGoal(this));
-        this.goalSelector.addGoal(3, new BreezeKeepDistanceGoal(this));
-        this.goalSelector.addGoal(4, new CombatJumpGoal(this));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 16.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new BreezeChaseGoal(this));
+        this.goalSelector.addGoal(4, new BreezeKeepDistanceGoal(this));
+        this.goalSelector.addGoal(5, new CombatJumpGoal(this));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 16.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
@@ -217,6 +218,65 @@ public class BreezeEntity extends Monster {
         }
     }
 
+    static class BreezeChaseGoal extends Goal {
+        private final BreezeEntity breeze;
+        private static final double IDEAL_DISTANCE = 3.0D;
+        private static final double DISTANCE_TOLERANCE = 1.0D;
+        private static final double MOVE_SPEED = 1.0D;
+
+        public BreezeChaseGoal(BreezeEntity breeze) {
+            this.breeze = breeze;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = this.breeze.getTarget();
+            if (target == null) return false;
+
+            // Always try to chase when we have a target
+            return true;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = this.breeze.getTarget();
+            if (target == null) return;
+
+            double distanceToTarget = this.breeze.distanceTo(target);
+
+            // If we have line of sight, we can attack - maintain 3-block distance
+            if (this.breeze.hasLineOfSight(target)) {
+                Vec3 directionToTarget = target.position().subtract(this.breeze.position()).normalize();
+
+                if (Math.abs(distanceToTarget - IDEAL_DISTANCE) > DISTANCE_TOLERANCE) {
+                    // Too close or too far - adjust position
+                    if (distanceToTarget < IDEAL_DISTANCE) {
+                        // Move away to maintain distance
+                        this.breeze.getMoveControl().setWantedPosition(
+                            this.breeze.getX() - directionToTarget.x * MOVE_SPEED,
+                            this.breeze.getY(),
+                            this.breeze.getZ() - directionToTarget.z * MOVE_SPEED,
+                            1.0D
+                        );
+                    } else {
+                        // Move closer to get to attack range
+                        this.breeze.getMoveControl().setWantedPosition(
+                            this.breeze.getX() + directionToTarget.x * MOVE_SPEED,
+                            this.breeze.getY(),
+                            this.breeze.getZ() + directionToTarget.z * MOVE_SPEED,
+                            1.0D
+                        );
+                    }
+                }
+            } else {
+                // No line of sight - pathfind around obstacles to find attack position
+                // The navigation system will handle finding a path to the target
+                this.breeze.getNavigation().moveTo(target, MOVE_SPEED);
+            }
+        }
+    }
+
     static class BreezeKeepDistanceGoal extends Goal {
         private final BreezeEntity breeze;
         private static final double IDEAL_DISTANCE = 3.0D;
@@ -230,37 +290,13 @@ public class BreezeEntity extends Monster {
 
         @Override
         public boolean canUse() {
-            return this.breeze.getTarget() != null;
+            // This goal is now handled by BreezeChaseGoal
+            return false;
         }
 
         @Override
         public void tick() {
-            LivingEntity target = this.breeze.getTarget();
-            if (target == null) return;
-
-            double distanceToTarget = this.breeze.distanceTo(target);
-            Vec3 directionToTarget = target.position().subtract(this.breeze.position()).normalize();
-
-            if (Math.abs(distanceToTarget - IDEAL_DISTANCE) > DISTANCE_TOLERANCE) {
-                // Too close or too far - adjust position
-                if (distanceToTarget < IDEAL_DISTANCE) {
-                    // Move away
-                    this.breeze.getMoveControl().setWantedPosition(
-                        this.breeze.getX() - directionToTarget.x * MOVE_SPEED,
-                        this.breeze.getY(),
-                        this.breeze.getZ() - directionToTarget.z * MOVE_SPEED,
-                        1.0D
-                    );
-                } else {
-                    // Move closer
-                    this.breeze.getMoveControl().setWantedPosition(
-                        this.breeze.getX() + directionToTarget.x * MOVE_SPEED,
-                        this.breeze.getY(),
-                        this.breeze.getZ() + directionToTarget.z * MOVE_SPEED,
-                        1.0D
-                    );
-                }
-            }
+            // Not used anymore
         }
     }
 
