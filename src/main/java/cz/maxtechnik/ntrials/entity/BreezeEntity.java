@@ -33,7 +33,7 @@ public class BreezeEntity extends Monster {
     private float allowedHeightOffset = 0.4F;
     private int nextHeightOffsetUpdateTime;
     private int attackCooldown = 0;
-    private static final int ATTACK_COOLDOWN = 50; // 2.5 seconds (50 ticks)
+    private static final int ATTACK_COOLDOWN = 50; //set attack sooldown 2.5 seconds (50 ticks)
 
     public BreezeEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -48,10 +48,10 @@ public class BreezeEntity extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0D)
-                .add(Attributes.ATTACK_DAMAGE, 2.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.23D)
-                .add(Attributes.FOLLOW_RANGE, 16.0D);
+                .add(Attributes.MAX_HEALTH, 30.0D) //set max health
+                .add(Attributes.ATTACK_DAMAGE, 2.0D) //set attack damage
+                .add(Attributes.MOVEMENT_SPEED, 0.23D) //set movemoment speed
+                .add(Attributes.FOLLOW_RANGE, 16.0D); //set follow range
     }
 
     @Override
