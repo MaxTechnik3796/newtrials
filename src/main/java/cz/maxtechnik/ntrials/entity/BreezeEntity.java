@@ -63,7 +63,7 @@ public class BreezeEntity extends Monster {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0D) //set max health
                 .add(Attributes.ATTACK_DAMAGE, 2.0D) //set attack damage
-                .add(Attributes.MOVEMENT_SPEED, 3.0D) //set movemoment speed
+                .add(Attributes.MOVEMENT_SPEED, 0.5D) //set movemoment speed
                 .add(Attributes.FOLLOW_RANGE, 16.0D); //set follow range
     }
 
