@@ -18,9 +18,6 @@ import cz.maxtechnik.ntrials.NTrialsMod;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class NTrialsModEntities {
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,NTrialsMod.MODID);
-    //public static final RegistryObject<EntityType<BreezeEntity>> BREEZE = register("breeze",
-    //        EntityType.Builder.<BreezeEntity>of(BreezeEntity::new, MobCategory.MONSTER).setShouldReceiveVelocityUpdates(true).setTrackingRange(64).setUpdateInterval(3).setCustomClientFactory(BreezeEntity::new)
-    //                 .sized(0.6f, 1.8f));
     public static final RegistryObject<EntityType<BoggedEntity>> BOGGED = register("bogged",
             EntityType.Builder.<BoggedEntity>of(BoggedEntity::new, MobCategory.MONSTER).setShouldReceiveVelocityUpdates(true).setTrackingRange(64).setUpdateInterval(3).setCustomClientFactory(BoggedEntity::new)
                     .sized(0.6f, 1.8f));
@@ -31,13 +28,11 @@ public class NTrialsModEntities {
 
     @SubscribeEvent
     public static void init(FMLCommonSetupEvent event) {
-        //BreezeEntity.init();
         event.enqueueWork(BoggedEntity::init);
     }
 
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
-        //event.put(BREEZE.get(), BreezeEntity.createAttributes().build());
         event.put(BOGGED.get(),BoggedEntity.createAttributes().build());
     }
 }
