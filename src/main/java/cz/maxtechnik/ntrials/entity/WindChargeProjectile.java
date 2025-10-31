@@ -160,9 +160,12 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
             if (entity instanceof LivingEntity livingEntity) {
                 double distance = entity.distanceTo(this);
                 if (distance <= radius) {
-                    // Deal damage to the entity
-                    float damage = 6.0F; // Base damage amount
-                    entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+                    // Only deal damage if the projectile was shot by a Breeze
+                    if (this.getOwner() instanceof BreezeEntity) {
+                        // Deal damage to the entity
+                        float damage = 6.0F; // Base damage amount
+                        entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+                    }
 
 
                     Vec3 direction = entity.position().subtract(explosion_center).normalize();
