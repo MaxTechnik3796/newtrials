@@ -1,10 +1,8 @@
 package cz.maxtechnik.ntrials.init;
 
-import cz.maxtechnik.ntrials.client.model.BreezeWind;
-import cz.maxtechnik.ntrials.client.model.ModelBogged;
-import cz.maxtechnik.ntrials.client.renderer.*;
-import cz.maxtechnik.ntrials.entity.BreezeModel;
-import cz.maxtechnik.ntrials.entity.BreezeRenderer;
+import cz.maxtechnik.ntrials.client.model.*;
+import cz.maxtechnik.ntrials.client.renderer.entity.BoggedRenderer;
+import cz.maxtechnik.ntrials.client.renderer.entity.BreezeRenderer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -20,9 +18,9 @@ public class NTrialsModEntityRenderers{
 
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ModelBogged.LAYER_LOCATION, ModelBogged::createBodyLayer);
+        event.registerLayerDefinition(BoggedModel.LAYER_LOCATION, BoggedModel::createBodyLayer);
         event.registerLayerDefinition(BreezeModel.LAYER_LOCATION, BreezeModel::createBodyLayer);
-        event.registerLayerDefinition(BreezeWind.LAYER_LOCATION, BreezeWind::createBodyLayer);
+        event.registerLayerDefinition(BreezeWindModel.LAYER_LOCATION, BreezeWindModel::createBodyLayer);
     }
 }
 
