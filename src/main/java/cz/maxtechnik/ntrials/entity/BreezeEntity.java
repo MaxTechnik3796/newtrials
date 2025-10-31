@@ -58,7 +58,7 @@ public class BreezeEntity extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new BreezeAttackGoal(this));
-        this.goalSelector.addGoal(3, new RandomJumpGoal(this));
+        this.goalSelector.addGoal(3, new CombatJumpGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 16.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -202,42 +202,54 @@ public class BreezeEntity extends Monster {
         }
     }
 
-    static class RandomJumpGoal extends Goal {
+    static class CombatJumpGoal extends Goal {
         private final BreezeEntity breeze;
-        private int jumpDelay;
+        private int jumpCooldown = 0;
+        private static final int JUMP_COOLDOWN = 100; // 5 seconds (100 ticks)
+        private static final double JUMP_STRENGTH = 1.2D; // Strong enough for ~10 block distance
+        private static final double JUMP_HEIGHT = 0.6D;
 
-        public RandomJumpGoal(BreezeEntity breeze) {
+        public CombatJumpGoal(BreezeEntity breeze) {
             this.breeze = breeze;
-            this.setFlags(EnumSet.of(Goal.Flag.JUMP));
+            this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
         }
 
         @Override
         public boolean canUse() {
-            if (this.breeze.getTarget() != null || this.breeze.isInWater()) {
+            LivingEntity target = this.breeze.getTarget();
+            if (target == null || this.breeze.isInWater() || jumpCooldown > 0) {
                 return false;
             }
-            if (this.jumpDelay > 0) {
-                --this.jumpDelay;
-                return false;
+            
+            // Only jump if target is within reasonable range but not too close
+            double distSqr = this.breeze.distanceToSqr(target);
+            return distSqr > 4.0D && distSqr < 256.0D; // Between 2 and 16 blocks
+        }
+
+        @Override
+        public void tick() {
+            if (jumpCooldown > 0) {
+                jumpCooldown--;
             }
-            return true;
         }
 
         @Override
         public void start() {
-            // Random jump in a direction
-            double jumpStrength = 0.4D + this.breeze.getRandom().nextDouble() * 0.2D;
-            double jumpAngle = this.breeze.getRandom().nextDouble() * Math.PI * 2.0D;
-            
-            Vec3 motion = this.breeze.getDeltaMovement();
-            this.breeze.setDeltaMovement(
-                motion.x + Math.cos(jumpAngle) * jumpStrength,
-                0.5D, // Vertical jump component
-                motion.z + Math.sin(jumpAngle) * jumpStrength
-            );
-            
-            // Set random delay before next jump (20-60 ticks)
-            this.jumpDelay = 20 + this.breeze.getRandom().nextInt(40);
+            LivingEntity target = this.breeze.getTarget();
+            if (target != null) {
+                // Calculate direction to target
+                Vec3 directionToTarget = target.position().subtract(this.breeze.position()).normalize();
+                
+                // Set motion for jump-dash
+                this.breeze.setDeltaMovement(
+                    directionToTarget.x * JUMP_STRENGTH,
+                    JUMP_HEIGHT,
+                    directionToTarget.z * JUMP_STRENGTH
+                );
+                
+                // Start cooldown
+                jumpCooldown = JUMP_COOLDOWN;
+            }
         }
     }
 }
