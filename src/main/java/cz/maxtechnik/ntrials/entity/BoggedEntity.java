@@ -18,6 +18,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.RestrictSunGoal;
 import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.FleeSunGoal;
@@ -92,10 +93,17 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
                 .findFirst()
                 .map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)
                 .orElse(null));
+            this.goalSelector.removeGoal(this.goalSelector.getAvailableGoals().stream()
+                .filter(goal -> goal.getGoal() instanceof MeleeAttackGoal)
+                .findFirst()
+                .map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)
+                .orElse(null));
             ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
             if (itemstack.is(Items.BOW)) {
                 int attackInterval = 40; // 2 seconds (40 ticks)
                 this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0, attackInterval, 16.0F));
+            } else {
+                this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2, false));
             }
         }
     }
@@ -206,37 +214,46 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
                                        @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData,
                                        @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
         spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
-        
-        // Equip bow
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-        
+
+
+		this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+
+
         this.reassessWeaponGoal();
         this.populateDefaultEquipmentSlots(this.random, difficulty);
         this.populateDefaultEquipmentEnchantments(this.random, difficulty);
-        
+
         return spawnData;
     }
     
     @Override
     protected void dropCustomDeathLoot(@NotNull DamageSource source, int looting, boolean recentlyHit) {
         super.dropCustomDeathLoot(source, looting, recentlyHit);
-        
+
         // Drop 0-2 bones
         int boneCount = this.random.nextInt(3) + this.random.nextInt(1 + looting);
         for (int i = 0; i < boneCount; i++) {
             this.spawnAtLocation(Items.BONE);
         }
-        
-        // Drop 0-2 arrows
-        int arrowCount = this.random.nextInt(3) + this.random.nextInt(1 + looting);
-        for (int i = 0; i < arrowCount; i++) {
-            this.spawnAtLocation(Items.ARROW);
-        }
-        
-        // 2% chance to drop bow (possibly enchanted)
-        if (this.random.nextFloat() < 0.02F) {
-            ItemStack bow = new ItemStack(Items.BOW);
-            this.spawnAtLocation(bow);
+
+        // Drop 0-2 arrows if equipped with bow
+        ItemStack mainHand = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
+        if (mainHand.is(Items.BOW)) {
+            int arrowCount = this.random.nextInt(3) + this.random.nextInt(1 + looting);
+            for (int i = 0; i < arrowCount; i++) {
+                this.spawnAtLocation(Items.ARROW);
+            }
+
+            // 2% chance to drop bow (possibly enchanted)
+            if (this.random.nextFloat() < 0.02F) {
+                ItemStack bow = new ItemStack(Items.BOW);
+                this.spawnAtLocation(bow);
+            }
+        } else {
+            // Drop the melee weapon if equipped
+            if (!mainHand.isEmpty()) {
+                this.spawnAtLocation(mainHand);
+            }
         }
     }
     
