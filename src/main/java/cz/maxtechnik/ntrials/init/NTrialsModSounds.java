@@ -53,4 +53,10 @@ public class NTrialsModSounds{
     public static final RegistryObject<SoundEvent>ENTITY_BREEZE_SLIDE=REGISTER.register("entity.breeze.slide",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.slide")));
     public static final RegistryObject<SoundEvent>ENTITY_BREEZE_WHIRL=REGISTER.register("entity.breeze.whirl",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.whirl")));
     public static final RegistryObject<SoundEvent>ENTITY_BREEZE_WIND_BURST=REGISTER.register("entity.breeze.wind_burst",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.wind_burst")));
+
+    // Bogged sounds
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_AMBIENT=REGISTER.register("entity.bogged.ambient",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.ambient")));
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_DEATH=REGISTER.register("entity.bogged.death",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.death")));
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_HURT=REGISTER.register("entity.bogged.hurt",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.hurt")));
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_STEP=REGISTER.register("entity.bogged.step",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.step")));
 }

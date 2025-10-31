@@ -49,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import cz.maxtechnik.ntrials.init.NTrialsModEntities;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import java.util.Objects;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -115,21 +116,21 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.SKELETON_AMBIENT;
+        return NTrialsModSounds.ENTITY_BOGGED_AMBIENT.get();
     }
 
     @Override
     public SoundEvent getHurtSound(@NotNull DamageSource ds) {
-        return SoundEvents.SKELETON_HURT;
+        return NTrialsModSounds.ENTITY_BOGGED_HURT.get();
     }
 
     @Override
     public SoundEvent getDeathSound() {
-        return SoundEvents.SKELETON_DEATH;
+        return NTrialsModSounds.ENTITY_BOGGED_DEATH.get();
     }
     
     protected SoundEvent getStepSound() {
-        return SoundEvents.SKELETON_STEP;
+        return NTrialsModSounds.ENTITY_BOGGED_STEP.get();
     }
 
     public static void init() {
