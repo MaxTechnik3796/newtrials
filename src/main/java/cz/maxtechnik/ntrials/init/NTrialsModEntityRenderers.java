@@ -1,5 +1,6 @@
 package cz.maxtechnik.ntrials.init;
 
+import cz.maxtechnik.ntrials.client.model.BreezeWind;
 import cz.maxtechnik.ntrials.client.model.ModelBogged;
 import cz.maxtechnik.ntrials.client.renderer.*;
 import cz.maxtechnik.ntrials.entity.BreezeModel;
@@ -21,6 +22,7 @@ public class NTrialsModEntityRenderers{
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModelBogged.LAYER_LOCATION, ModelBogged::createBodyLayer);
         event.registerLayerDefinition(BreezeModel.LAYER_LOCATION, BreezeModel::createBodyLayer);
+        event.registerLayerDefinition(BreezeWind.LAYER_LOCATION, BreezeWind::createBodyLayer);
     }
 }
 
