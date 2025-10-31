@@ -83,7 +83,6 @@ public class ModelBogged<T extends Mob &RangedAttackMob> extends HumanoidModel<T
 
 		super.prepareMobModel(p_103793_, p_103794_, p_103795_, p_103796_);
 	}
-
 	@Override
 	public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		hat.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -93,17 +92,6 @@ public class ModelBogged<T extends Mob &RangedAttackMob> extends HumanoidModel<T
 		right_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 		left_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 		right_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-	}
-
-	public void _setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		this.hat.yRot = netHeadYaw / (180F / (float) Math.PI);
-		this.hat.xRot = headPitch / (180F / (float) Math.PI);
-		this.head.yRot = netHeadYaw / (180F / (float) Math.PI);
-		this.head.xRot = headPitch / (180F / (float) Math.PI);
-		this.right_arm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * limbSwingAmount;
-		this.left_leg.xRot = Mth.cos(limbSwing) * -1.0F * limbSwingAmount;
-		this.left_arm.xRot = Mth.cos(limbSwing * 0.6662F) * limbSwingAmount;
-		this.right_leg.xRot = Mth.cos(limbSwing) * 1.0F * limbSwingAmount;
 	}
 	@Override
 	public void setupAnim(@NotNull T p_103798_,float p_103799_,float p_103800_,float p_103801_,float p_103802_,float p_103803_) {
