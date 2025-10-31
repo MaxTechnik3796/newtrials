@@ -1,7 +1,11 @@
 package cz.maxtechnik.ntrials;
 
+import cz.maxtechnik.ntrials.entity.BreezeEntity;
+import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.item.WindChargeDispenserBehavior;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.fml.common.Mod;
@@ -136,6 +140,11 @@ public class NTrialsModEvents{
     public static void setupDispenserBehaviors(){
         // Register Wind Charge dispenser behavior
         DispenserBlock.registerBehavior(NTrialsModItems.WIND_CHARGE.get(), new WindChargeDispenserBehavior());
+    }
+
+    @SubscribeEvent
+    public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(NTrialsModEntityTypes.BREEZE.get(), BreezeEntity.createAttributes().build());
     }
 
     // Pro Minecraft 1.20.1 Forge zatím odstraníme waxování - bude třeba implementovat jinak

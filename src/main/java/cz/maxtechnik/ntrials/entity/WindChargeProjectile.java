@@ -117,7 +117,6 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                 NTrialsModSounds.WIND_BURST.get(), SoundSource.NEUTRAL, 0.8F, 1.2F);
 
-        // Enhanced gust particles - spawn on both sides for visibility
         // Main gust explosion - large radial particles
         if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             // Hlavní gust particles
@@ -158,22 +157,25 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         // Find and knockback entities
         List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(radius));
         for (Entity entity : entities) {
-            if (entity instanceof LivingEntity) {
+            if (entity instanceof LivingEntity livingEntity) {
                 double distance = entity.distanceTo(this);
                 if (distance <= radius) {
-                    // Calculate knockback direction
+                    // Only deal damage if the projectile was shot by a Breeze
+                    if (this.getOwner() instanceof BreezeEntity) {
+                        // Deal damage to the entity
+                        float damage = 6.0F; // Base damage amount
+                        entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+                    }
+
+
                     Vec3 direction = entity.position().subtract(explosion_center).normalize();
-                    // 1.5d strangth
+
                     double knockbackStrength = 0.7D * (1.0D - (distance / radius)); // Increased from 1.5D to 2.0D
 
-                    // Apply stronger upward knockback (like modern Minecraft wind charge)
                     Vec3 knockback = direction.scale(knockbackStrength);
 
-                    //0.2d
-                    // Enhanced vertical component - minimum 0.6D upward, stronger upward bias
                     double verticalKnockback = Math.max(knockback.y + 0.7D, 0.6D);
 
-                    // Reduce horizontal knockback slightly to emphasize upward movement
                     double horizontalMultiplier = 0.8D;
 
                     entity.setDeltaMovement(entity.getDeltaMovement().add(
