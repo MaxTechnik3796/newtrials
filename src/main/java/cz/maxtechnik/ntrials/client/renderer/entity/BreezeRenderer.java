@@ -1,29 +1,28 @@
-package cz.maxtechnik.ntrials.entity;
+package cz.maxtechnik.ntrials.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis; // Důležitý import
-import cz.maxtechnik.ntrials.client.model.BreezeWind;
-import net.minecraft.client.renderer.MultiBufferSource;
+import cz.maxtechnik.ntrials.client.model.BreezeModel;
+import cz.maxtechnik.ntrials.client.model.BreezeWindModel;
+import cz.maxtechnik.ntrials.entity.BreezeEntity;
 import net.minecraft.client.renderer.RenderType; // Důležitý import pro RenderType
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer; // Pro overlay
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity; // Pro getOverlayCoords
 import org.jetbrains.annotations.NotNull;
 
-public class BreezeRenderer extends MobRenderer<BreezeEntity, BreezeModel> {
+public class BreezeRenderer extends MobRenderer<BreezeEntity,BreezeModel> {
 	private static final ResourceLocation BREEZE_TEXTURE = ResourceLocation.fromNamespaceAndPath("ntrials", "textures/entities/breeze.png");
 	private static final ResourceLocation BREEZE_WIND_TEXTURE = ResourceLocation.fromNamespaceAndPath("ntrials", "textures/entities/breeze_wind.png");
 
-	private final BreezeWind<BreezeEntity> windModel;
+	private final BreezeWindModel<BreezeEntity> windModel;
 
 	public BreezeRenderer(EntityRendererProvider.Context context) {
 		// Používáme super konstruktor z MobRenderer.
 		super(context, new BreezeModel(context.bakeLayer(BreezeModel.LAYER_LOCATION)), 0.5F);
-		this.windModel = new BreezeWind<>(context.bakeLayer(BreezeWind.LAYER_LOCATION));
+		this.windModel = new BreezeWindModel<>(context.bakeLayer(BreezeWindModel.LAYER_LOCATION));
 	}
 
 	@Override

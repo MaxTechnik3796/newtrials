@@ -1,15 +1,14 @@
-# 🟩 Minecraft Mod – Backport of New Items (1.20.1)
+# 🟩 New Trials – Backport of Trial Chambers into 1.20.1
 
 This mod brings **new items and blocks from the latest Minecraft versions** into **Minecraft 1.20.1**, allowing players to enjoy fresh content while staying on their favorite version.
 
 ---
-
 ## ✨ Features
-- Added new blocks and items:
+- Added new blocks, items and entities:
   - **Copper Doors, Copper Bulbs & Copper Trapdoors**
+  - **Breeze & Bogged Mobs**
   - **Other blocks and items from the latest versions**
 - Preserves original mechanics and behavior, just like in vanilla Minecraft.
-- Fully compatible with Minecraft **1.20.1**.
 
 ---
 
@@ -20,10 +19,4 @@ This mod brings **new items and blocks from the latest Minecraft versions** into
 ---
 
 ## 📌 Notes
-- This mod focuses on **backporting vanilla features** – no extra fantasy content is added.
-- Compatible with most other mods, unless they also add their own versions of these blocks.
-
----
-
-## 🤝 Contributing
-Pull requests are welcome! If you’d like to suggest new features or report bugs, please open an issue.
+- This mod **doesn't just focus on backporting** vanilla features, it also adds additional content.
