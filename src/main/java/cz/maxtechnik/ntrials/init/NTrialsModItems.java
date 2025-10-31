@@ -15,8 +15,9 @@ import net.minecraftforge.registries.RegistryObject;
 public class NTrialsModItems{
     public static final DeferredRegister<Item>REGISTRY=DeferredRegister.create(ForgeRegistries.ITEMS,NTrialsMod.MODID);
 
-    public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntities.BOGGED,-1,-1,new Item.Properties()));
+    public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntities.BOGGED,-16738048,-9200555,new Item.Properties()));
 
+	//public static final RegistryObject<Item>
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
     public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
