@@ -38,4 +38,25 @@ public class NTrialsModSounds{
     public static final RegistryObject<SoundEvent>BLOCK_TRIAL_SPAWNER_SPAWN_ITEM=REGISTER.register("block.trial_spawner.spawn_item",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.trial_spawner.spawn_item")));
     public static final RegistryObject<SoundEvent>BLOCK_TRIAL_SPAWNER_SPAWN_ITEM_BEGIN=REGISTER.register("block.trial_spawner.spawn_item_begin",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.trial_spawner.spawn_item_begin")));
     public static final RegistryObject<SoundEvent>BLOCK_TRIAL_SPAWNER_STEP=REGISTER.register("block.trial_spawner.step",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.trial_spawner.step")));
+
+    // Breeze sounds
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_AMBIENT=REGISTER.register("entity.breeze.ambient",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.ambient")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_AMBIENT_CAVE=REGISTER.register("entity.breeze.ambient_cave",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.ambient_cave")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_CHARGE=REGISTER.register("entity.breeze.charge",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.charge")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_DEATH=REGISTER.register("entity.breeze.death",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.death")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_DEFLECT=REGISTER.register("entity.breeze.deflect",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.deflect")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_HURT=REGISTER.register("entity.breeze.hurt",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.hurt")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_INHALE=REGISTER.register("entity.breeze.inhale",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.inhale")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_JUMP=REGISTER.register("entity.breeze.jump",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.jump")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_LAND=REGISTER.register("entity.breeze.land",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.land")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_SHOOT=REGISTER.register("entity.breeze.shoot",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.shoot")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_SLIDE=REGISTER.register("entity.breeze.slide",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.slide")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_WHIRL=REGISTER.register("entity.breeze.whirl",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.whirl")));
+    public static final RegistryObject<SoundEvent>ENTITY_BREEZE_WIND_BURST=REGISTER.register("entity.breeze.wind_burst",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.breeze.wind_burst")));
+
+    // Bogged sounds
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_AMBIENT=REGISTER.register("entity.bogged.ambient",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.ambient")));
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_DEATH=REGISTER.register("entity.bogged.death",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.death")));
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_HURT=REGISTER.register("entity.bogged.hurt",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.hurt")));
+    public static final RegistryObject<SoundEvent>ENTITY_BOGGED_STEP=REGISTER.register("entity.bogged.step",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","entity.bogged.step")));
 }
