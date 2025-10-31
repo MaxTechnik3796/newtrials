@@ -101,5 +101,9 @@
 	"enchantment.ntrials.density": "Density",
 	"enchantment.ntrials.breach": "Breach",
 
-	"item.ntrials.bogged_spawn_egg": "Bogged Spawn Egg"
+	"entity.ntrials.breeze": "Breeze",
+	"entity.ntrials.bogged": "Bogged",
+
+	"item.ntrials.bogged_spawn_egg": "Bogged Spawn Egg",
+	"item.ntrials.breeze_spawn_egg": "Breeze Spawn Egg"
 }
