@@ -39,7 +39,7 @@ public class NTrialsMod{
     private void commonSetup(final FMLCommonSetupEvent event){
         LOGGER.info("NewTrials Common loading...");
         event.enqueueWork(NTrialsModEvents::setupOxidation);
-         event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
+		event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
         event.enqueueWork(NetworkHandler::registerPackets);
     }
     @SubscribeEvent
