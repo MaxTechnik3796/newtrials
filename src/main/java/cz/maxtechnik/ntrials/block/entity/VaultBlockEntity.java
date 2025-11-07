@@ -19,7 +19,6 @@ import java.util.UUID;
 
 public class VaultBlockEntity extends BlockEntity {
     private final Set<UUID> playersWhoOpened = new HashSet<>();
-    private final Map<UUID, Long> lastMessageTime = new HashMap<>();
 
     // Animace vault bloku
     private int animationTick = 0;
@@ -48,17 +47,7 @@ public class VaultBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    public boolean shouldShowMessage(UUID playerUuid, long currentTime) {
-        // Zobrazí zprávu pouze jednou za 5 sekund (5000ms)
-        Long lastTime = lastMessageTime.get(playerUuid);
-        if (lastTime == null || currentTime - lastTime > 5000) {
-            lastMessageTime.put(playerUuid, currentTime);
-            return true;
-        }
-        return false;
-    }
-
-    // Animace metody
+	// Animace metody
     public void startAnimation(List<ItemStack> loot) {
         this.isAnimating = true;
         this.animationTick = 0;
