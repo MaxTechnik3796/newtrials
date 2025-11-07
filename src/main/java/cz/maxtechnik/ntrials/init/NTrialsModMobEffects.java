@@ -10,8 +10,5 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class NTrialsModMobEffects{
     public static final DeferredRegister<MobEffect>REGISTER=DeferredRegister.create(Registries.MOB_EFFECT,NTrialsMod.MODID);
-    public static final RegistryObject<MobEffect>INFESTED=REGISTER.register("infested",InfestedMobEffect::new);
-    public static final RegistryObject<MobEffect>OOZING=REGISTER.register("oozing",OozingMobEffect::new);
-    public static final RegistryObject<MobEffect>WEAVING=REGISTER.register("weaving",WeavingMobEffect::new);
     public static final RegistryObject<MobEffect>TRIAL_OMEN=REGISTER.register("trial_omen",TrialOmenMobEffect::new);
 }
