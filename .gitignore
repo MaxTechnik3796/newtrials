@@ -7,3 +7,5 @@
 .gradle/
 /build/
 build
+/.eclipse/
+/.settings/
