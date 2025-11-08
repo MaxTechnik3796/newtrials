@@ -1,0 +1,10 @@
+{
+  "parent": "ntrials:block/template_vault",
+  "render_type": "cutout",
+  "textures": {
+    "bottom": "ntrials:block/vault_bottom_boss",
+    "front": "ntrials:block/vault_front_ejecting_boss",
+    "side": "ntrials:block/vault_side_on_boss",
+    "top": "ntrials:block/vault_top_boss"
+  }
+}

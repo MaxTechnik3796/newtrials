@@ -15,14 +15,18 @@ public class NTrialsModItems{
 
     public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BOGGED,-16738048,-9200555,new Item.Properties()));
     public static final RegistryObject<Item>BREEZE_SPAWN_EGG=REGISTRY.register("breeze_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE,-1,-1,new Item.Properties()));
+	//public static final RegistryObject<Item>BREEZE_BOSS_SPAWN_EGG=REGISTRY.register("breeze_boss_spawn_egg", () -> new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE_BOOS,-10066330,-6684673,new Item.Properties()));
 
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
     public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
+	public static final RegistryObject<Item>TRIAL_SPAWNER_BOSS=block(NTrialsModBlocks.TRIAL_SPAWNER_BOSS);
     public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
+	public static final RegistryObject<Item>VAULT_BOSS=block(NTrialsModBlocks.VAULT_BOSS);
 
     public static final RegistryObject<Item>TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
     public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
+	public static final RegistryObject<Item>BOSS_TRIAL_KEY=REGISTRY.register("boss_trial_key",BasicItem::new);
     public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
     public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
     public static final RegistryObject<Item>BREEZE_ROD=REGISTRY.register("breeze_rod",BasicItem::new);

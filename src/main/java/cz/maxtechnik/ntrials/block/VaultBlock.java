@@ -80,6 +80,7 @@ public class VaultBlock extends BaseEntityBlock {
         return state.setValue(FACING, rotated);
     }
     @SuppressWarnings("deprecation")
+	@Override
     public @NotNull BlockState mirror(BlockState state,Mirror mirrorIn){
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }

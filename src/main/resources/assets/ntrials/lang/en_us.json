@@ -7,6 +7,7 @@
 	"block.ntrials.heavy_core": "§dHeavy Core§r",
 	"item.ntrials.trial_key": "Trial Key",
 	"item.ntrials.ominous_trial_key": "Ominous Trial Key",
+	"item.ntrials.boss_trial_key": "Boss Trial Key",
 	"item.ntrials.mace": "§dMace§r",
 	"item.ntrials.mace_handle": "§dMace Handle§r",
 	"item.ntrials.copper_upgrade_smithing_template": "Smithing Template",
@@ -20,7 +21,9 @@
 	"item.ntrials.breeze_rod": "Breeze Rod",
 
 	"block.ntrials.trial_spawner": "Trial Spawner",
+	"block.ntrials.trial_spawner_boss": "Boss Trial Spawner",
 	"block.ntrials.vault": "Vault",
+	"block.ntrials.vault_boss": "Boss Vault",
 
 	"block.ntrials.tuff_bricks": "Tuff Bricks",
 	"block.ntrials.chiseled_tuff": "Chiseled Tuff",
@@ -101,9 +104,12 @@
 	"enchantment.ntrials.density": "Density",
 	"enchantment.ntrials.breach": "Breach",
 
-	"entity.ntrials.breeze": "Breeze",
 	"entity.ntrials.bogged": "Bogged",
+	"entity.ntrials.breeze": "Breeze",
+	"entity.ntrials.breeze_boss": "Boss Breeze",
+
 
 	"item.ntrials.bogged_spawn_egg": "Bogged Spawn Egg",
-	"item.ntrials.breeze_spawn_egg": "Breeze Spawn Egg"
+	"item.ntrials.breeze_spawn_egg": "Breeze Spawn Egg",
+	"item.ntrials.breeze_boss_spawn_egg": "Boss Breeze Spawn Egg"
 }

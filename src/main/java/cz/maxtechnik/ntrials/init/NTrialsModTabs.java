@@ -15,14 +15,19 @@ public class NTrialsModTabs{
 
         tabData.accept(NTrialsModItems.TRIAL_KEY.get());
         tabData.accept(NTrialsModItems.OMINOUS_TRIAL_KEY.get());
+		tabData.accept(NTrialsModItems.BOSS_TRIAL_KEY.get());
         tabData.accept(NTrialsModItems.OMINOUS_BOTTLE.get());
         tabData.accept(NTrialsModItems.COPPER_UPGRADE_SMITHING_TEMPLATE.get());
 
         tabData.accept(NTrialsModBlocks.TRIAL_SPAWNER.get().asItem());
         tabData.accept(NTrialsModBlocks.VAULT.get().asItem());
 
+		tabData.accept(NTrialsModItems.TRIAL_SPAWNER_BOSS.get());
+		tabData.accept(NTrialsModItems.VAULT_BOSS.get());
+
         tabData.accept(NTrialsModItems.BOGGED_SPAWN_EGG.get());
         tabData.accept(NTrialsModItems.BREEZE_SPAWN_EGG.get());
+		//tabData.accept(NTrialsModItems.BREEZE_BOSS_SPAWN_EGG.get());
 
         tabData.accept(NTrialsModItems.WIND_CHARGE.get());
         tabData.accept(NTrialsModItems.BREEZE_ROD.get());
