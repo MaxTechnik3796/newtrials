@@ -160,10 +160,14 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
             if (entity instanceof LivingEntity) {
                 double distance = entity.distanceTo(this);
                 if (distance <= radius) {
-                    // Only deal damage if the projectile was shot by a Breeze
+                    // Only deal damage if the projectile was shot by a Breeze or BreezeBoss
                     if (this.getOwner() instanceof BreezeEntity) {
                         // Deal damage to the entity
                         float damage = 6.0F; // Base damage amount
+                        entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+                    } else if (this.getOwner() instanceof cz.maxtechnik.ntrials.entity.BreezeBossEntity) {
+                        // Breeze Boss deals 1.5x damage (9.0F)
+                        float damage = 9.0F; // 1.5x base damage
                         entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
                     }
 

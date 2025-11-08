@@ -27,7 +27,7 @@ public class NTrialsModTabs{
 
         tabData.accept(NTrialsModItems.BOGGED_SPAWN_EGG.get());
         tabData.accept(NTrialsModItems.BREEZE_SPAWN_EGG.get());
-		//tabData.accept(NTrialsModItems.BREEZE_BOSS_SPAWN_EGG.get());
+		tabData.accept(NTrialsModItems.BREEZE_BOSS_SPAWN_EGG.get());
 
         tabData.accept(NTrialsModItems.WIND_CHARGE.get());
         tabData.accept(NTrialsModItems.BREEZE_ROD.get());

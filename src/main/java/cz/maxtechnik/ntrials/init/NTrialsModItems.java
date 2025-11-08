@@ -15,7 +15,7 @@ public class NTrialsModItems{
 
     public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BOGGED,-16738048,-9200555,new Item.Properties()));
     public static final RegistryObject<Item>BREEZE_SPAWN_EGG=REGISTRY.register("breeze_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE,-1,-1,new Item.Properties()));
-	//public static final RegistryObject<Item>BREEZE_BOSS_SPAWN_EGG=REGISTRY.register("breeze_boss_spawn_egg", () -> new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE_BOOS,-10066330,-6684673,new Item.Properties()));
+	public static final RegistryObject<Item>BREEZE_BOSS_SPAWN_EGG=REGISTRY.register("breeze_boss_spawn_egg", () -> new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE_BOSS,-1,-1,new Item.Properties()));
 
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);

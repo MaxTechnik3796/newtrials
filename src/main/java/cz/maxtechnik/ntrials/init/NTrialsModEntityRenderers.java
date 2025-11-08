@@ -3,6 +3,7 @@ package cz.maxtechnik.ntrials.init;
 import cz.maxtechnik.ntrials.client.model.*;
 import cz.maxtechnik.ntrials.client.renderer.entity.BoggedRenderer;
 import cz.maxtechnik.ntrials.client.renderer.entity.BreezeRenderer;
+import cz.maxtechnik.ntrials.client.renderer.entity.BreezeBossRenderer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -14,6 +15,7 @@ public class NTrialsModEntityRenderers{
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(NTrialsModEntityTypes.BOGGED.get(), BoggedRenderer::new);
         event.registerEntityRenderer(NTrialsModEntityTypes.BREEZE.get(), BreezeRenderer::new);
+        event.registerEntityRenderer(NTrialsModEntityTypes.BREEZE_BOSS.get(), BreezeBossRenderer::new);
     }
 
     @SubscribeEvent
@@ -21,6 +23,8 @@ public class NTrialsModEntityRenderers{
         event.registerLayerDefinition(BoggedModel.LAYER_LOCATION, BoggedModel::createBodyLayer);
         event.registerLayerDefinition(BreezeModel.LAYER_LOCATION, BreezeModel::createBodyLayer);
         event.registerLayerDefinition(BreezeWindModel.LAYER_LOCATION, BreezeWindModel::createBodyLayer);
+        event.registerLayerDefinition(BreezeBossModel.LAYER_LOCATION, BreezeBossModel::createBodyLayer);
+        event.registerLayerDefinition(BreezeWindBossModel.LAYER_LOCATION, BreezeWindBossModel::createBodyLayer);
     }
 }
 

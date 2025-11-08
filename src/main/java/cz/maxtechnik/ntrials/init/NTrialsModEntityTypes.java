@@ -35,6 +35,13 @@ public class NTrialsModEntityTypes {
                     .fireImmune()
                     .build("breeze"));
 
+    public static final RegistryObject<EntityType<BreezeBossEntity>> BREEZE_BOSS = REGISTRY.register("breeze_boss",
+            () -> EntityType.Builder.<BreezeBossEntity>of(BreezeBossEntity::new, MobCategory.MONSTER)
+                    .sized(1.5F, 3.5F) // 1.5x1.5 blocks wide, 3.5 blocks tall
+                    .clientTrackingRange(8)
+                    .fireImmune()
+                    .build("breeze_boss"));
+
     private static <T extends Entity> RegistryObject<EntityType<T>> register(String registryname, EntityType.Builder<T> entityTypeBuilder) {
         return REGISTRY.register(registryname, () -> (EntityType<T>) entityTypeBuilder.build(registryname));
     }
@@ -48,5 +55,6 @@ public class NTrialsModEntityTypes {
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(BOGGED.get(), BoggedEntity.createAttributes().build());
         event.put(BREEZE.get(), BreezeEntity.createAttributes().build());
+        event.put(BREEZE_BOSS.get(), BreezeBossEntity.createAttributes().build());
     }
 }
