@@ -47,6 +47,52 @@
 					]
 				}
 			}
+		},
+		{
+			"weight":1,
+			"element":{
+				"element_type":"minecraft:single_pool_element",
+				"location":"ntrials:lobby2",
+				"projection":"rigid",
+				"processors":{
+					"processors":[
+						{
+							"processor_type":"minecraft:block_ignore",
+							"blocks":[
+								{
+									"Name":"minecraft:structure_block"
+								},
+								{
+									"Name":"minecraft:structure_void"
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		{
+			"weight":1,
+			"element":{
+				"element_type":"minecraft:single_pool_element",
+				"location":"ntrials:lobby3",
+				"projection":"rigid",
+				"processors":{
+					"processors":[
+						{
+							"processor_type":"minecraft:block_ignore",
+							"blocks":[
+								{
+									"Name":"minecraft:structure_block"
+								},
+								{
+									"Name":"minecraft:structure_void"
+								}
+							]
+						}
+					]
+				}
+			}
 		}
 	]
 }
