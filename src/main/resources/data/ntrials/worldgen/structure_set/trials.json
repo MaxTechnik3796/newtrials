@@ -1,0 +1,14 @@
+{
+	"structures":[
+		{
+			"structure":"ntrials:trials",
+			"weight":1
+		}
+	],
+	"placement":{
+		"salt":1645146592,
+		"separation":24,
+		"spacing":64,
+		"type":"minecraft:random_spread"
+	}
+}
