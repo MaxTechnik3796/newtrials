@@ -52,6 +52,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     // Client-side only for detecting ominous state change
     private transient boolean wasOminous = false;
+    private transient cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState lastState = null;
 
     // Trial spawner wave settings
     private int maxWaves = 2; // Default number of waves
@@ -212,6 +213,21 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     wasOminous = false;
                 }
 
+                // Detect state change to WAITING_FOR_PLAYERS or ACTIVE (activation)
+                if (lastState != spawnerState && 
+                    (spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.WAITING_FOR_PLAYERS ||
+                     spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.ACTIVE)) {
+                    // Spawn particles that fly from center to 1 block distance
+                    spawnActivationParticles(ominous);
+                }
+                lastState = spawnerState;
+
+                // Detect ominous activation
+                if (ominous && !wasOminous) {
+                    // Spawn particles that fly from center to 1 block distance
+                    spawnActivationParticles(true);
+                }
+
                 // Ambient particles
                 if (spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.WAITING_FOR_PLAYERS ||
                         spawnerState == cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.ACTIVE) {
@@ -224,6 +240,38 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     }
                 }
             }
+        }
+    }
+
+    private void spawnActivationParticles(boolean ominous) {
+        if (level == null) {
+            return;
+        }
+
+        BlockPos center = worldPosition;
+        double centerX = center.getX() + 0.5;
+        double centerY = center.getY() + 0.5;
+        double centerZ = center.getZ() + 0.5;
+        
+        ParticleOptions particle = ominous ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+        int numParticles = 30;
+        
+        for (int i = 0; i < numParticles; i++) {
+            // Random direction from center
+            double angle = level.random.nextDouble() * 2 * Math.PI; // Horizontal angle
+            double verticalAngle = (level.random.nextDouble() - 0.5) * Math.PI * 0.5; // Vertical angle (-45 to 45 degrees)
+            
+            // Calculate direction vector
+            double dirX = Math.cos(angle) * Math.cos(verticalAngle);
+            double dirY = Math.sin(verticalAngle);
+            double dirZ = Math.sin(angle) * Math.cos(verticalAngle);
+            
+            // Spawn particle at center, moving outward to 1 block distance
+            double distance = 1.0;
+            double speed = 0.1 + level.random.nextDouble() * 0.1; // Random speed
+            
+            level.addParticle(particle, centerX, centerY, centerZ, 
+                    dirX * speed, dirY * speed, dirZ * speed);
         }
     }
 
@@ -628,13 +676,31 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         int playerCount = playersInRange.size();
 
-        // Calculate scaled mob count (default 3 mobs per wave * player count)
-        int baseMobsPerWave = 2; // Default value
-        int scaledMobsPerWave = baseMobsPerWave + playerCount;
-        int maxWavesCount = maxWaves + playerCount;
-        // Update mobs per wave for this trial
-        this.currentTrialMobsPerWave = scaledMobsPerWave;
-        this.maxWavesCount = maxWavesCount;
+        // Check if spawn entity is breeze
+        boolean isBreeze = spawnEntity != null && spawnEntity == cz.maxtechnik.ntrials.init.NTrialsModEntityTypes.BREEZE.get();
+        
+        if (isBreeze) {
+            // Breeze specific configuration
+            int baseMobsPerWave = 1; // simultaneous_mobs: 1
+            int baseMaxWaves = 1; // total_mobs: 1
+            int mobsAddedPerPlayer = 1; // simultaneous_mobs_added_per_player: 1
+            int wavesAddedPerPlayer = 2; // total_mobs_added_per_player: 2
+            
+            int scaledMobsPerWave = baseMobsPerWave + (playerCount * mobsAddedPerPlayer);
+            int maxWavesCount = baseMaxWaves + (playerCount * wavesAddedPerPlayer);
+            
+            this.currentTrialMobsPerWave = scaledMobsPerWave;
+            this.maxWavesCount = maxWavesCount;
+        } else {
+            // Default configuration for other mobs
+            int baseMobsPerWave = 2; // Default value
+            int scaledMobsPerWave = baseMobsPerWave + playerCount;
+            int maxWavesCount = maxWaves + playerCount;
+            // Update mobs per wave for this trial
+            this.currentTrialMobsPerWave = scaledMobsPerWave;
+            this.maxWavesCount = maxWavesCount;
+        }
+        
         this.playersCount = playerCount;
 
     }
@@ -732,12 +798,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int alive = spawnedEntities.size();
         if (alive == 0) {
             if (currentWave >= maxWavesCount) {
+                // All waves completed, finish trial
                 completeTrial();
             } else {
-                // Wave is complete, move to next wave (or refill if maxWavesCount is hit and refill is intended)
-                // Refill logic is currently combined with checking wave completion and uses currentWaveMobs as target count.
-                // Since the original refill logic is unconventional (refilling to target size *after* entities die in the same wave),
-                // we'll stick to the original refill logic which is below.
+                // Wave is complete, move to next wave and spawn it
+                currentWave++;
+                spawnWave();
             }
             return;
         }
