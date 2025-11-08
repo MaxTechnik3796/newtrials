@@ -18,7 +18,9 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>HEAVY_CORE=REGISTRY.register("heavy_core",HeavyCoreBlock::new);
 
     public static final RegistryObject<Block>TRIAL_SPAWNER=REGISTRY.register("trial_spawner",TrialSpawnerBlock::new);
+	public static final RegistryObject<Block>TRIAL_SPAWNER_BOSS=REGISTRY.register("trial_spawner_boss",TrialSpawnerBossBlock::new);
     public static final RegistryObject<Block>VAULT=REGISTRY.register("vault",VaultBlock::new);
+	public static final RegistryObject<Block>VAULT_BOSS=REGISTRY.register("vault_boss",VaultBossBlock::new);
 
 
 
