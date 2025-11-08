@@ -2,7 +2,10 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBossBlockEntity;
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -56,7 +59,13 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
 			return InteractionResult.sidedSuccess(level.isClientSide);
 		}
 
-		return InteractionResult.PASS;
+		// If clicked with something other than ominous key, show message and play reject sound
+		if (!level.isClientSide) {
+			player.displayClientMessage(Component.literal("Need Ominous Key"), true);
+			level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+		}
+
+		return InteractionResult.FAIL;
 	}
 
 	@Override
