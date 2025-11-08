@@ -71,6 +71,7 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
         return 1.0f;
     }
     @Override
+    @SuppressWarnings("deprecation")
     public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
         return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
     }
@@ -94,11 +95,13 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull FluidState getFluidState(BlockState state){
         return state.getValue(WATERLOGGED)?Fluids.WATER.getSource(false):super.getFluidState(state);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState state,@NotNull Direction facing,@NotNull BlockState facingState,@NotNull LevelAccessor world,@NotNull BlockPos currentPos,@NotNull BlockPos facingPos){
         if(state.getValue(WATERLOGGED)){
             world.scheduleTick(currentPos,Fluids.WATER,Fluids.WATER.getTickDelay(world));
@@ -109,6 +112,7 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
     //click functions
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
         ItemStack itemInHand=player.getItemInHand(hand);
         // Honeycomb interakcia - waxovanie (výmena za waxed verziu)

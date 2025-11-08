@@ -59,6 +59,7 @@ public class WaxedCopperGrateBlock extends Block implements SimpleWaterloggedBlo
         return 1.0f;
     }
     @Override
+    @SuppressWarnings("deprecation")
     public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
         return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
     }
@@ -76,11 +77,13 @@ public class WaxedCopperGrateBlock extends Block implements SimpleWaterloggedBlo
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull FluidState getFluidState(BlockState state){
         return state.getValue(WATERLOGGED)?Fluids.WATER.getSource(false):super.getFluidState(state);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState state,@NotNull Direction facing,@NotNull BlockState facingState,@NotNull LevelAccessor world,@NotNull BlockPos currentPos,@NotNull BlockPos facingPos){
         if(state.getValue(WATERLOGGED)){
             world.scheduleTick(currentPos,Fluids.WATER,Fluids.WATER.getTickDelay(world));
@@ -89,6 +92,7 @@ public class WaxedCopperGrateBlock extends Block implements SimpleWaterloggedBlo
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack itemInHand = player.getItemInHand(hand);
 

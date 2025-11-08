@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class CopperBulbBlock extends Block implements WeatheringCopper {
     private final WeatherState level;
@@ -77,6 +75,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, isMoving);
         if (!level.isClientSide) {
@@ -104,6 +103,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit){
         ItemStack itemInHand=player.getItemInHand(hand);
         // Honeycomb interakcia - waxovanie (výmena za waxed verziu)
@@ -177,6 +177,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     // Vanilla logika oxidácie
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
         if (!level.isClientSide) {

@@ -2,24 +2,18 @@ package cz.maxtechnik.ntrials.entity;
 
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
-import net.minecraft.core.BlockPos;
 import java.util.EnumSet;
 import net.minecraft.world.entity.ai.control.MoveControl;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
@@ -28,7 +22,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class BreezeEntity extends Monster {
@@ -296,10 +289,8 @@ public class BreezeEntity extends Monster {
     }
 
     static class BreezeKeepDistanceGoal extends Goal {
+        @SuppressWarnings("unused")
         private final BreezeEntity breeze;
-        private static final double IDEAL_DISTANCE = 3.0D;
-        private static final double DISTANCE_TOLERANCE = 1.0D;
-        private static final double MOVE_SPEED = 1.0D;
 
         public BreezeKeepDistanceGoal(BreezeEntity breeze) {
             this.breeze = breeze;

@@ -10,6 +10,7 @@ import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
 public class TuffStairBlock extends StairBlock{
+    @SuppressWarnings("deprecation")
     public TuffStairBlock(){
         super(Blocks.AIR.defaultBlockState(),Properties.of().sound(SoundType.TUFF).strength(1.5f,6).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
     }

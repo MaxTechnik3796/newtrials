@@ -3,9 +3,7 @@ package cz.maxtechnik.ntrials.event;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.item.MaceItem;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,12 +28,15 @@ public class MaceEventHandler {
 
 			ItemStack maceStack = player.getMainHandItem();
 
+			@SuppressWarnings("deprecation")
 			int windBurstLevel = EnchantmentHelper.getItemEnchantmentLevel(
 					NTrialsModEnchantments.WIND_BURST.get(), maceStack);
 
+			@SuppressWarnings("deprecation")
 			int densityLevel = EnchantmentHelper.getItemEnchantmentLevel(
 					NTrialsModEnchantments.DENSITY.get(), maceStack);
 
+			@SuppressWarnings("deprecation")
 			int breachLevel = EnchantmentHelper.getItemEnchantmentLevel(
 					NTrialsModEnchantments.BREACH.get(), maceStack);
 

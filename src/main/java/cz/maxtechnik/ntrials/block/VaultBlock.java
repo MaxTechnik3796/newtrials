@@ -76,8 +76,10 @@ public class VaultBlock extends BaseEntityBlock {
         return this.defaultBlockState().setValue(FACING,context.getHorizontalDirection().getOpposite());
     }
     public @NotNull BlockState rotate(BlockState state,Rotation rot){
-        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+        var rotated = rot.rotate(state.getValue(FACING));
+        return state.setValue(FACING, rotated);
     }
+    @SuppressWarnings("deprecation")
     public @NotNull BlockState mirror(BlockState state,Mirror mirrorIn){
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
@@ -281,14 +283,16 @@ public class VaultBlock extends BaseEntityBlock {
     private static void generateDisplayItems(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
         if (level instanceof ServerLevel serverLevel) {
             // Určí správnou loot table podle toho, zda je vault ominous nebo ne
-            String lootPath=vaultEntity.getLootTable().isEmpty() ? defaultLootNormal : vaultEntity.getLootTable();;
-            if (state.getValue(OMINOUS)) {
-                lootPath = vaultEntity.getLootTable().isEmpty() ? defaultLootOminous : vaultEntity.getLootTable();
+            String lootTableStr = vaultEntity.getLootTable();
+            String lootPath;
+            if (lootTableStr.isEmpty()) {
+                lootPath = state.getValue(OMINOUS) ? defaultLootOminous : defaultLootNormal;
+            } else {
+                lootPath = lootTableStr;
             }
             String modId=removeSuffix(lootPath);
             String path=removePrefix(lootPath);
             ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(modId,path);
-            System.out.println("DEBUG: Generuji display items pro vault na pozici " + pos + ", loot table: " + lootTableId);
 
             LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
 
@@ -299,14 +303,8 @@ public class VaultBlock extends BaseEntityBlock {
 
             List<ItemStack> displayLoot = lootTable.getRandomItems(params.create(LootContextParamSets.CHEST));
 
-            System.out.println("DEBUG: Vygenerováno " + displayLoot.size() + " itemů z loot table");
-            for (ItemStack stack : displayLoot) {
-                System.out.println("DEBUG: Item: " + stack.getItem().getDescriptionId() + " x" + stack.getCount());
-            }
-
             // Nastaví zobrazované itemy
             vaultEntity.setDisplayItems(displayLoot);
-            System.out.println("DEBUG: Display items nastaveny");
         }
     }
 
@@ -437,7 +435,6 @@ public class VaultBlock extends BaseEntityBlock {
         );
 
         List<Player> players = level.getEntitiesOfClass(Player.class, searchArea);
-        long currentTime = System.currentTimeMillis();
         int playerCount = players.size();
 
         if (playerCount == 0) {
@@ -474,7 +471,7 @@ public class VaultBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (!level.isClientSide && placer instanceof Player player) {
+        if (!level.isClientSide && placer instanceof Player) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
