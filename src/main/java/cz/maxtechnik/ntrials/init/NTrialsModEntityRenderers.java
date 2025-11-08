@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 public class NTrialsModEntityRenderers{
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(NTrialsModEntities.BOGGED.get(), BoggedRenderer::new);
+        event.registerEntityRenderer(NTrialsModEntityTypes.BOGGED.get(), BoggedRenderer::new);
         event.registerEntityRenderer(NTrialsModEntityTypes.BREEZE.get(), BreezeRenderer::new);
     }
 

@@ -1,6 +1,5 @@
 package cz.maxtechnik.ntrials.block.entity;
 
-import cz.maxtechnik.ntrials.block.VaultBlock;
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
@@ -13,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -21,14 +19,10 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random; // For client-side randomness if needed, but level.random is available
 import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -68,7 +62,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private int currentWave = 0; // Current wave number (0 = not started)
     private int currentWaveMobs = 0; // Number of alive mobs in current wave
     private boolean trialActive = false; // Whether trial is currently active
-    private long lastPlayerCheckTime = 0; // Last time we checked for players
 
     // Loot table settings
     private String normalLootTable = "ntrials:chests/spawner"; // Default loot table for normal state
@@ -114,7 +107,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                             currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, false), 3);
                     this.setOminous(false);
                     this.shouldResetOminousOnCooldownEnd = false;
-                    System.out.println("Trial Spawner at " + getBlockPos() + " switched back to normal mode 10 ticks before cooldown end");
                     updateBlockState(); // Update state to WAITING_FOR_PLAYERS if ready
                 }
             }
@@ -188,7 +180,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (level != null && level.isClientSide) {
             BlockState state = level.getBlockState(worldPosition);
-            if (state.getBlock() instanceof cz.maxtechnik.ntrials.block.TrialSpawnerBlock spawnerBlock) {
+            if (state.getBlock() instanceof cz.maxtechnik.ntrials.block.TrialSpawnerBlock) {
                 boolean ominous = state.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
                 cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState spawnerState = state.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE);
 
@@ -281,7 +273,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Load spawn entity
         if (tag.contains("SpawnEntity")) {
             String entityTypeId = tag.getString("SpawnEntity");
-            ResourceLocation entityLocation = new ResourceLocation(entityTypeId);
+            ResourceLocation entityLocation = ResourceLocation.parse(entityTypeId);
             this.spawnEntity = ForgeRegistries.ENTITY_TYPES.getValue(entityLocation);
         } else {
             this.spawnEntity = null;
@@ -508,17 +500,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         List<net.minecraft.world.entity.player.Player> players = level.getEntitiesOfClass(
                 net.minecraft.world.entity.player.Player.class, searchArea);
 
-        // FOR TESTING IN SINGLE PLAYER - Include entities with "player" tag as fake players
-        // Comment out or remove this section when not needed for testing
-		/*
-        List<net.minecraft.world.entity.Entity> entitiesWithPlayerTag = level.getEntitiesOfClass(
-                net.minecraft.world.entity.Entity.class, searchArea,
-                entity -> entity.getTags().contains("player"));
-        int fakePlayerCount = entitiesWithPlayerTag.size();
-		*/
-        int fakePlayerCount = 0; // Set to 0 when not testing, or uncomment above section for testing
-
-        int playerCount = players.size() + fakePlayerCount;
+        int playerCount = players.size();
 
         // Check if any player has Bad Omen effect and activate ominous mode
         boolean hasSurvivalPlayer = false;
@@ -539,14 +521,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
 
         // Set ominous state on the block if any player had Bad Omen
-        BlockState currentState_now = level.getBlockState(getBlockPos());
-        if (hasPlayerWithBadOmen && !currentState_now.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
+        if (hasPlayerWithBadOmen) {
             BlockState currentState = level.getBlockState(getBlockPos());
             if (!currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
                 level.setBlock(getBlockPos(),
                         currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, true), 3);
                 this.setOminous(true);
-                System.out.println("Trial Spawner at " + getBlockPos() + " switched to ominous mode due to Bad Omen");
 
                 // Play ominous activation sound
                 level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE.get(),
@@ -559,7 +539,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             if (this.cooldownTime > 0) {
                 this.cooldownTime = 0;
                 this.shouldResetOminousOnCooldownEnd = false; // Cancel scheduled reset
-                System.out.println("Bad Omen overrides cooldown - cancelling cooldown and starting ominous trial immediately");
             }
         }
 
@@ -616,12 +595,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE) != newState) {
             level.setBlock(getBlockPos(), currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.STATE, newState), 3);
-            System.out.println("Block state changed to: " + newState);
         }
     }
 
     private void startTrial() {
-        System.out.println("Starting trial at " + getBlockPos());
         trialActive = true;
         currentWave = 1;
         spawnedEntities.clear();
@@ -649,17 +626,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         List<net.minecraft.world.entity.player.Player> playersInRange = level.getEntitiesOfClass(
                 net.minecraft.world.entity.player.Player.class, scanArea);
 
-        // FOR TESTING IN SINGLE PLAYER - Include entities with "player" tag as fake players
-        // Comment out or remove this section when not needed for testing
-        /*
-        List<net.minecraft.world.entity.Entity> entitiesWithPlayerTag = level.getEntitiesOfClass(
-                net.minecraft.world.entity.Entity.class, scanArea,
-                entity -> entity.getTags().contains("player"));
-        int fakePlayerCount = entitiesWithPlayerTag.size();
-        */
-        int fakePlayerCount = 0; // Set to 0 when not testing, or uncomment above section for testing
-
-        int playerCount = playersInRange.size() + fakePlayerCount;
+        int playerCount = playersInRange.size();
 
         // Calculate scaled mob count (default 3 mobs per wave * player count)
         int baseMobsPerWave = 2; // Default value
@@ -670,12 +637,9 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.maxWavesCount = maxWavesCount;
         this.playersCount = playerCount;
 
-        System.out.println("Found " + playerCount + " players in 16 block radius. Scaling mobs per wave from " +
-                baseMobsPerWave + " to " + scaledMobsPerWave);
     }
 
     private void stopTrial() {
-        System.out.println("Stopping trial at " + getBlockPos());
         trialActive = false;
         currentWave = 0;
         currentWaveMobs = 0;
@@ -693,8 +657,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Check if block state is ominous
         BlockState currentState = level.getBlockState(getBlockPos());
         boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
-
-        System.out.println("Spawning wave " + currentWave + "/" + maxWavesCount + " with " + currentTrialMobsPerWave + " mobs at " + getBlockPos() + " (Ominous: " + isOminousBlock + ")");
 
         // Play spawn sound at the beginning of wave
         level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(),
@@ -714,7 +676,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                         if (isOminousBlock) {
                             equipOminousMob(mob);
                         }
-                        mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
+                        @SuppressWarnings({"deprecation", "unused"})
+                        var ignored = mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
                                 level.getCurrentDifficultyAt(spawnPos),
                                 net.minecraft.world.entity.MobSpawnType.SPAWNER,
                                 null, null);
@@ -724,9 +687,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     spawnedEntities.add(entity.getUUID());
 
                     spawnSpawnParticles(getBlockPos(), isOminousBlock);
-
-                    System.out.println("Spawned " + entity.getType().getDescriptionId() + " at " + spawnPos +
-                            (isOminousBlock ? " [OMINOUS]" : ""));
                 }
             }
         }
@@ -756,9 +716,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (level == null) return false;
 
         // Check if the position and the block above are air/passable
+        @SuppressWarnings("deprecation")
+        boolean isSolid = level.getBlockState(pos.below()).isSolid();
         return level.getBlockState(pos).isAir() &&
                 level.getBlockState(pos.above()).isAir() &&
-                level.getBlockState(pos.below()).isSolid();
+                isSolid;
     }
 
     private void checkWaveCompletion() {
@@ -801,7 +763,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                                 if (isOminousBlock) {
                                     equipOminousMob(mob);
                                 }
-                                mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
+                                @SuppressWarnings({"deprecation", "unused"})
+                                var ignored = mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level,
                                         level.getCurrentDifficultyAt(spawnPos),
                                         net.minecraft.world.entity.MobSpawnType.SPAWNER,
                                         null, null);
@@ -810,23 +773,16 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                             spawnedEntities.add(entity.getUUID());
 
                             spawnSpawnParticles(getBlockPos(), isOminousBlock);
-
-                            System.out.println("Refilled " + entity.getType().getDescriptionId() + " at " + spawnPos +
-                                    (isOminousBlock ? " [OMINOUS]" : ""));
                         }
                     }
                 }
-                System.out.println("Refilled " + needed + " mobs (batch). Current wave: " + currentWave + "/" + maxWavesCount);
             } else {
                 // Final phase: no refill, no wave increment
-                System.out.println("Final phase: " + needed + " mobs killed, no refill. Wave remains " + currentWave + "/" + maxWavesCount);
             }
         }
     }
 
     private void completeTrial() {
-        System.out.println("Trial completed at " + getBlockPos());
-
         // Start the timer instead of generating loot immediately
         completeTrialTimer = 20; // 20 ticks delay
     }
@@ -846,13 +802,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
 
         String lootTableId = isOminousBlock ? ominousLootTable : normalLootTable;
-        ResourceLocation lootTableLocation = new ResourceLocation(lootTableId);
+        ResourceLocation lootTableLocation = ResourceLocation.parse(lootTableId);
 
         LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
 
         if (lootTable == LootTable.EMPTY) {
-            System.out.println("Warning: Loot table " + lootTableId + " not found, using default");
-            lootTableLocation = new ResourceLocation(normalLootTable);
+            lootTableLocation = ResourceLocation.parse(normalLootTable);
             lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
         }
 
@@ -865,9 +820,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         // Generate all loot items based on player count
         int lootMultiplier = Math.max(1, playersCount);
         List<ItemStack> allLootItems = new ArrayList<>();
-
-        System.out.println("Generating loot from table " + lootTableId + " with multiplier " + lootMultiplier +
-                " (Ominous: " + isOminousBlock + ")");
 
         for (int i = 0; i < lootMultiplier; i++) {
             List<ItemStack> lootItems = lootTable.getRandomItems(lootParams);
@@ -904,8 +856,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
         }
-
-        System.out.println("Started loot animation with " + lootItems.size() + " items");
     }
 
     private void tickLootAnimation() {
@@ -959,9 +909,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         currentLootDropIndex++;
         setChanged();
-
-        System.out.println("Dropped loot item " + currentLootDropIndex + "/" + pendingLootItems.size() +
-                ": " + itemToDrop.getDisplayName().getString());
     }
 
     private void stopLootAnimation() {
@@ -984,8 +931,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             // Cooldown state is set in completeTrialTimer logic after generateLootReward completes
             updateBlockState();
         }
-
-        System.out.println("Stopped loot animation");
     }
 
     // Getters for animation state (for client rendering)
@@ -1141,8 +1086,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         // Add some enchantments randomly
         addRandomEnchantments(mob);
-
-        System.out.println("Equipped ominous mob with random gear");
     }
 
     private void addRandomEnchantments(net.minecraft.world.entity.Mob mob) {
@@ -1236,7 +1179,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         cloud.setParticle(ParticleTypes.ENTITY_EFFECT);
 
         level.addFreshEntity(cloud);
-        System.out.println("Spawned ominous area effect: " + ForgeRegistries.MOB_EFFECTS.getKey(selectedEffect) + " at " + effectPos);
     }
 
     private BlockPos findEffectPosition() {
@@ -1254,9 +1196,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             // Check a few blocks up and down for space
             for (int yOffset = -2; yOffset <= 3; yOffset++) {
                 BlockPos pos = new BlockPos(x, y + yOffset, z);
+                @SuppressWarnings("deprecation")
+                boolean isSolid = level.getBlockState(pos.below()).isSolid();
                 if (level.getBlockState(pos).isAir() &&
                         level.getBlockState(pos.above()).isAir() &&
-                        level.getBlockState(pos.below()).isSolid()) { // Solid below
+                        isSolid) { // Solid below
                     return pos;
                 }
             }

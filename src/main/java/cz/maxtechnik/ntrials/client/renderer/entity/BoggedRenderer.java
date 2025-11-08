@@ -16,7 +16,7 @@ public class BoggedRenderer extends HumanoidMobRenderer<BoggedEntity,HumanoidMod
 
 	public BoggedRenderer(EntityRendererProvider.Context context){
 		super(context, new BoggedModel<>(context.bakeLayer(BoggedModel.LAYER_LOCATION)), 0.5f);
-		this.addLayer(new HumanoidArmorLayer<>(this,new HumanoidModel(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),new HumanoidModel(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),context.getModelManager()));
+		this.addLayer(new HumanoidArmorLayer<>(this,new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),context.getModelManager()));
 
 	}
 

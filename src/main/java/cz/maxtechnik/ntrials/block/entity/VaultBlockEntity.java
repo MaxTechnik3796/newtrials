@@ -10,10 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -93,20 +91,17 @@ public class VaultBlockEntity extends BlockEntity {
 
     // Metody pro rotující zobrazované itemy
     public void setDisplayItems(List<ItemStack> items) {
-        System.out.println("DEBUG: VaultBlockEntity.setDisplayItems volána s " + items.size() + " itemy");
         this.displayItems = new ArrayList<>(items);
         this.currentDisplayItemIndex = 0;
         this.displayItemSwitchTick = 0;
         setChanged();
         // Synchronizace na client
         if (level != null && !level.isClientSide) {
-            System.out.println("DEBUG: Posílám update packet na client");
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
         }
     }
 
     public void clearDisplayItems() {
-        System.out.println("DEBUG: VaultBlockEntity.clearDisplayItems volána");
         this.displayItems.clear();
         this.currentDisplayItemIndex = 0;
         this.displayItemSwitchTick = 0;

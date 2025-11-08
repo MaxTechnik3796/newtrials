@@ -11,8 +11,6 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 
 public class MaceItem extends SwordItem {
     private static final float MIN_FALL_DISTANCE = 1.5f;

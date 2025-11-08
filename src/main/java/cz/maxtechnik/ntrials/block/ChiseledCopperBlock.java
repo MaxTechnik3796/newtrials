@@ -41,6 +41,7 @@ public class ChiseledCopperBlock extends Block implements WeatheringCopper{
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull InteractionResult use(@NotNull BlockState state,@NotNull Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
         ItemStack itemInHand=player.getItemInHand(hand);
         // Honeycomb interakcia - waxovanie (výmena za waxed verziu)

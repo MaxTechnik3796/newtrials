@@ -56,11 +56,13 @@ public class HeavyCoreBlock extends Block implements SimpleWaterloggedBlock{
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull FluidState getFluidState(BlockState state){
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false):super.getFluidState(state);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull BlockState updateShape(BlockState state,@NotNull Direction facing,@NotNull BlockState facingState,@NotNull LevelAccessor world,@NotNull BlockPos currentPos,@NotNull BlockPos facingPos){
         if (state.getValue(WATERLOGGED)){
             world.scheduleTick(currentPos,Fluids.WATER,Fluids.WATER.getTickDelay(world));
