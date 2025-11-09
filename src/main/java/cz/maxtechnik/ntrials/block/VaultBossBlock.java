@@ -139,10 +139,10 @@ public class VaultBossBlock extends BaseEntityBlock {
     private static void serverTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
         long gameTime = level.getGameTime();
         if (!level.isClientSide && gameTime % 10 == 0) addSmokeParticles(level, pos);
-        if (!level.isClientSide && state.getValue(STATE) == VaultBlock.VaultState.ACTIVE && gameTime % 20 == 0) addFireParticles(level, pos, state);
+        if (!level.isClientSide && state.getValue(STATE) == VaultBlock.VaultState.ACTIVE && gameTime % 20 == 0) addFireParticles(level, pos);
         
         VaultBlock.VaultState vaultState = state.getValue(STATE);
-        if (vaultState == VaultBlock.VaultState.ACTIVE && !vaultEntity.hasDisplayItems()) generateDisplayItems(level, pos, state, vaultEntity);
+        if (vaultState == VaultBlock.VaultState.ACTIVE && !vaultEntity.hasDisplayItems()) generateDisplayItems(level, pos, vaultEntity);
         if (vaultState != VaultBlock.VaultState.ACTIVE && vaultEntity.hasDisplayItems()) vaultEntity.clearDisplayItems();
         if (vaultState == VaultBlock.VaultState.ACTIVE) vaultEntity.tickDisplayItem();
         
@@ -154,14 +154,9 @@ public class VaultBossBlock extends BaseEntityBlock {
     private static void clientTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
         if (state.getValue(STATE) == VaultBlock.VaultState.ACTIVE) vaultEntity.tickDisplayItem();
     }
-    // Odstraní prefix z textu (před :)
-    public static String removePrefix(String text) { int index = text.indexOf(':'); return (index != -1) ? text.substring(index + 1) : text; }
-    
-    // Odstraní suffix z textu (za :)
-    public static String removeSuffix(String text) { int index = text.indexOf(':'); return (index != -1) ? text.substring(0, index) : ""; }
 
     // Vygeneruje zobrazované itemy z loot table
-    private static void generateDisplayItems(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
+    private static void generateDisplayItems(Level level, BlockPos pos, VaultBlockEntity vaultEntity) {
         if (!(level instanceof ServerLevel serverLevel)) return;
         String lootTableStr = vaultEntity.getLootTable();
         String lootPath = lootTableStr.isEmpty() ? DEFAULT_LOOT_NORMAL : lootTableStr;
@@ -184,7 +179,7 @@ public class VaultBossBlock extends BaseEntityBlock {
     }
 
     // Přidá ohnivé částice
-    private static void addFireParticles(Level level, BlockPos pos, BlockState state) {
+    private static void addFireParticles(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel serverLevel)) return;
         RandomSource random = level.random;
         for (int i = 0; i < 1 + random.nextInt(2); i++) {
