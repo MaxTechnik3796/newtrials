@@ -11,11 +11,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
+import org.jetbrains.annotations.NotNull;
 
 public class WindChargeDispenserBehavior extends DefaultDispenseItemBehavior {
 
     @Override
-    public ItemStack execute(BlockSource blockSource, ItemStack itemStack) {
+    public @NotNull ItemStack execute(BlockSource blockSource, @NotNull ItemStack itemStack) {
         Level level = blockSource.getLevel();
         BlockPos pos = blockSource.getPos();
         Direction direction = blockSource.getBlockState().getValue(DispenserBlock.FACING);

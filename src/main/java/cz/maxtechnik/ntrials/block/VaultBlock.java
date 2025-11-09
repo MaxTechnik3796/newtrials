@@ -42,7 +42,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
 import java.util.List;
 import java.util.Objects;
-
+@SuppressWarnings("deprecation")
 public class VaultBlock extends BaseEntityBlock {
     private static final String DEFAULT_LOOT_NORMAL = "ntrials:chests/reward";
     private static final String DEFAULT_LOOT_OMINOUS = "ntrials:chests/reward_ominous";
@@ -76,7 +76,6 @@ public class VaultBlock extends BaseEntityBlock {
         var rotated = rot.rotate(state.getValue(FACING));
         return state.setValue(FACING, rotated);
     }
-    @SuppressWarnings("deprecation")
 	@Override
     public @NotNull BlockState mirror(BlockState state,Mirror mirrorIn){
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
@@ -163,14 +162,6 @@ public class VaultBlock extends BaseEntityBlock {
     private static void clientTick(Level level, BlockPos pos, BlockState state, VaultBlockEntity vaultEntity) {
         if (state.getValue(STATE) == VaultState.ACTIVE) vaultEntity.tickDisplayItem();
     }
-    // Odstraní prefix z textu (před :)
-    public static String removePrefix(String text) { int index = text.indexOf(':'); return (index != -1) ? text.substring(index + 1) : text; }
-    
-    // Odstraní suffix z textu (za :)
-    public static String removeSuffix(String text) { int index = text.indexOf(':'); return (index != -1) ? text.substring(0, index) : ""; }
-
-
-
 
 
     // Vygeneruje zobrazované itemy z loot table

@@ -137,7 +137,7 @@ public class VaultBlockEntity extends BlockEntity {
     
     // Vrátí update tag pro synchronizaci
     @Override
-    public CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
+    public @NotNull CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
     
     // Zpracuje update tag od klienta
     @Override

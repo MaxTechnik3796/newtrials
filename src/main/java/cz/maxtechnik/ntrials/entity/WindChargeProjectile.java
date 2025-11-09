@@ -18,6 +18,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     }
 
     @Override
-    protected Item getDefaultItem() {
+    protected @NotNull Item getDefaultItem() {
         return NTrialsModItems.WIND_CHARGE.get();
     }
 
@@ -54,12 +55,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
 
         // Check for explosion conditions on server side only
         if (!this.level().isClientSide) {
-            boolean shouldExplode = false;
-
-            // Explode after maximum lifetime
-            if (this.tickCount >= MAX_LIFETIME) {
-                shouldExplode = true;
-            }
+            boolean shouldExplode = this.tickCount >= MAX_LIFETIME;
 
             // Explode if projectile is moving very slowly (almost stopped)
             if (this.getDeltaMovement().lengthSqr() < 0.01D) {
@@ -90,7 +86,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     }
 
     @Override
-    protected void onHit(HitResult hitResult) {
+    protected void onHit(@NotNull HitResult hitResult) {
         super.onHit(hitResult);
         this.createWindExplosion();
         if (!this.level().isClientSide) {
@@ -99,7 +95,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         this.createWindExplosion();
         if (!this.level().isClientSide) {
@@ -125,7 +121,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
                 double distance = 0.5D + this.random.nextDouble() * 2.0D;
 
                 double offsetX = Math.cos(angle) * distance;
-                double offsetY = (this.random.nextDouble() - 0.5D) * 1.0D;
+                double offsetY = (this.random.nextDouble() - 0.5D);
                 double offsetZ = Math.sin(angle) * distance;
 
                 double velocityX = offsetX * 0.3D;
@@ -194,7 +190,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

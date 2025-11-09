@@ -28,14 +28,14 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     private static final int SPAWN_DELAY = 60;
     private static final int LOOT_DROP_INTERVAL = 10;
     private static final int COMPLETE_TRIAL_DELAY = 20;
-    private static final int BASE_BOSS_HP = 60;
-    private static final double HP_MULTIPLIER_PER_PLAYER = 1.2;
+    private static final int BASE_BOSS_HP = 120;
+    private static final double HP_MULTIPLIER_PER_PLAYER = 1.4;
     
     private boolean isActivated = false;
     private boolean isKeyActivated = false;
     private int spawnTimer = -1;
     private UUID spawnedBossUUID = null;
-    private Set<UUID> playersInRange = new HashSet<>();
+    private final Set<UUID> playersInRange = new HashSet<>();
     private int bossHP = BASE_BOSS_HP;
     
     private boolean isLootAnimating = false;
@@ -108,7 +108,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     }
     
     // Aktivuje spawner pomocí klíče
-    public void activateWithKey(Player player) {
+    public void activateWithKey() {
         if (!isKeyActivated && level != null && !level.isClientSide && isActivated) {
             isKeyActivated = true;
             spawnTimer = SPAWN_DELAY;
@@ -279,7 +279,15 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (level == null || level.isClientSide()) return;
         BlockState currentState = level.getBlockState(getBlockPos());
         if (!(currentState.getBlock() instanceof TrialSpawnerBossBlock)) return;
-        
+
+        TrialSpawnerBlock.TrialSpawnerState newState = getTrialSpawnerState();
+
+        if (currentState.getValue(TrialSpawnerBossBlock.STATE) != newState) {
+            level.setBlock(getBlockPos(), currentState.setValue(TrialSpawnerBossBlock.STATE, newState), 3);
+        }
+    }
+
+    private TrialSpawnerBlock.@NotNull TrialSpawnerState getTrialSpawnerState() {
         TrialSpawnerBlock.TrialSpawnerState newState;
         if (this.completeTrialTimer > 0 || this.isLootAnimating || (this.pendingLootItems != null && !this.pendingLootItems.isEmpty())) {
             newState = TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
@@ -290,12 +298,9 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         } else {
             newState = TrialSpawnerBlock.TrialSpawnerState.INACTIVE;
         }
-        
-        if (currentState.getValue(TrialSpawnerBossBlock.STATE) != newState) {
-            level.setBlock(getBlockPos(), currentState.setValue(TrialSpawnerBossBlock.STATE, newState), 3);
-        }
+        return newState;
     }
-    
+
     // Uloží data do NBT
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {

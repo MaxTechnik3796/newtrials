@@ -41,7 +41,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
 import java.util.List;
 import java.util.Objects;
-
+@SuppressWarnings("deprecation")
 public class VaultBossBlock extends BaseEntityBlock {
     private static final String DEFAULT_LOOT_NORMAL = "ntrials:chests/reward";
     private static final int UNLOCKING_DURATION = 10;

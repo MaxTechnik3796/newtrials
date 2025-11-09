@@ -30,7 +30,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-
+@SuppressWarnings("deprecation")
 public class TrialSpawnerBlock extends BaseEntityBlock{
     public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
     public static final EnumProperty<TrialSpawnerState>STATE=EnumProperty.create("trial_spawner_state",TrialSpawnerState.class);

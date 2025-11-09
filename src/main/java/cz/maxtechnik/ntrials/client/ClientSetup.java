@@ -23,15 +23,15 @@ public class ClientSetup {
         public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(
                 NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
-                VaultBlockEntityRenderer::new
+                    context1 -> new VaultBlockEntityRenderer()
             );
             event.registerBlockEntityRenderer(
                 NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(),
-                TrialSpawnerBlockEntityRenderer::new
+                    context -> new TrialSpawnerBlockEntityRenderer()
             );
             event.registerBlockEntityRenderer(
                 NTrialsModBlockEntities.TRIAL_SPAWNER_BOSS_BLOCK_ENTITY.get(),
-                TrialSpawnerBossBlockEntityRenderer::new
+                    context -> new TrialSpawnerBossBlockEntityRenderer()
             );
         }
 

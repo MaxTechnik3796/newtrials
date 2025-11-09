@@ -19,10 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-
-
-//main class
-
+import org.jetbrains.annotations.NotNull;
+@SuppressWarnings("deprecation")
 public class WaxedCopperBulbBlock extends Block{
     private final WeatheringCopper.WeatherState weatheringLevel;
     public static final BooleanProperty LIT=BooleanProperty.create("lit");
@@ -38,18 +36,17 @@ public class WaxedCopperBulbBlock extends Block{
         builder.add(POWERED);
     }
     @Override
-    public boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
         return true;
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
         return state.getValue(LIT) ? 15 : 0;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+    public void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);
@@ -66,18 +63,12 @@ public class WaxedCopperBulbBlock extends Block{
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         if (state.getValue(LIT)) {
-            switch (this.weatheringLevel) {
-                case UNAFFECTED:
-                    return 15;
-                case EXPOSED:
-                    return 12;
-                case WEATHERED:
-                    return 8;
-                case OXIDIZED:
-                    return 4;
-                default:
-                    return 0;
-            }
+            return switch (this.weatheringLevel) {
+                case UNAFFECTED -> 15;
+                case EXPOSED -> 12;
+                case WEATHERED -> 8;
+                case OXIDIZED -> 4;
+            };
         }
         else {
             return 0;
@@ -85,8 +76,7 @@ public class WaxedCopperBulbBlock extends Block{
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean isMoving) {
+    public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @NotNull BlockPos neighborPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, isMoving);
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);
@@ -106,8 +96,7 @@ public class WaxedCopperBulbBlock extends Block{
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack itemInHand = player.getItemInHand(hand);
 
         // Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)

@@ -27,7 +27,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
+@SuppressWarnings("deprecation")
 public class TrialSpawnerBossBlock extends BaseEntityBlock {
     public static final EnumProperty<TrialSpawnerBlock.TrialSpawnerState> STATE = EnumProperty.create("trial_spawner_state", TrialSpawnerBlock.TrialSpawnerState.class);
     
@@ -43,7 +43,7 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
             if (!level.isClientSide) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
                 if (blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner && bossSpawner.isActivated() && !bossSpawner.isKeyActivated()) {
-                    bossSpawner.activateWithKey(player);
+                    bossSpawner.activateWithKey();
                     if (!player.getAbilities().instabuild) itemStack.shrink(1);
                     return InteractionResult.SUCCESS;
                 }
