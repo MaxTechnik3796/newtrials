@@ -25,4 +25,5 @@ public class NTrialsModBlockEntities {
     public static void register(IEventBus eventBus) {
         REGISTRY.register(eventBus);
     }
+
 }
