@@ -38,5 +38,4 @@ public class TrialSpawnerSyncPacket {
 
 	// Gettery pro přístup k datům (pokud potřebuješ)
 	public BlockPos getPos() { return pos; }
-	public String getEntityTypeId() { return entityTypeId; }
 }

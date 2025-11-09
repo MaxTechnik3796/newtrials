@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
-
+@SuppressWarnings("deprecation")
 public class TuffSlabBlock extends SlabBlock{
     public TuffSlabBlock(){
         super(Properties.of().sound(SoundType.TUFF).strength(1.5f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));

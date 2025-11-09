@@ -21,7 +21,7 @@ import cz.maxtechnik.ntrials.NTrialsModEvents;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
-
+@SuppressWarnings("deprecation")
 public class WaxedCopperDoorBlock extends DoorBlock {
 
     public WaxedCopperDoorBlock(BlockBehaviour.Properties props){

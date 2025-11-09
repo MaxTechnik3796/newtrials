@@ -7,7 +7,6 @@ import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,7 +20,7 @@ public class TrialSpawnerBossBlockEntityRenderer implements BlockEntityRenderer<
     private final EntityRenderDispatcher entityRenderer;
     private static final Map<EntityType<?>, Entity> CACHED_ENTITIES = new HashMap<>();
 
-    public TrialSpawnerBossBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public TrialSpawnerBossBlockEntityRenderer() {
         this.entityRenderer = Minecraft.getInstance().getEntityRenderDispatcher();
     }
 
@@ -98,11 +97,6 @@ public class TrialSpawnerBossBlockEntityRenderer implements BlockEntityRenderer<
     @Override
     public int getViewDistance() {
         return 80;
-    }
-
-    // Clear cache when needed (called on world unload)
-    public static void clearCache() {
-        CACHED_ENTITIES.clear();
     }
 }
 

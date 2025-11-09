@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -31,12 +32,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.entity.AreaEffectCloud;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
+import java.util.*;
+@SuppressWarnings("deprecation")
 public class TrialSpawnerBlockEntity extends BlockEntity {
     
     private static final int COOLDOWN_OMINOUS_RESET_TICK = 10;
@@ -105,6 +103,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (this.cooldownTime > 0) {
             this.cooldownTime--;
             if (this.cooldownTime == COOLDOWN_OMINOUS_RESET_TICK && this.shouldResetOminousOnCooldownEnd) {
+                assert level != null;
                 BlockState currentState = level.getBlockState(getBlockPos());
                 if (currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
                     level.setBlock(getBlockPos(), currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, false), 3);
@@ -127,10 +126,13 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         
         if (isLootAnimating) tickLootAnimation();
         
-        if (this.tickCount % 100 == 0 && !level.isClientSide() && hasSpawnEntity() && !trialActive && cooldownTime == 0) {
-            boolean isOminousBlock = level.getBlockState(getBlockPos()).getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
-            level.playSound(null, getBlockPos(), isOminousBlock ? NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS.get() : NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT.get(),
-                SoundSource.BLOCKS, isOminousBlock ? 0.8f : 0.6f, 1.0f);
+        if (this.tickCount % 100 == 0) {
+            assert level != null;
+            if (!level.isClientSide() && hasSpawnEntity() && !trialActive && cooldownTime == 0) {
+                boolean isOminousBlock = level.getBlockState(getBlockPos()).getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
+                level.playSound(null, getBlockPos(), isOminousBlock ? NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS.get() : NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT.get(),
+                        SoundSource.BLOCKS, isOminousBlock ? 0.8f : 0.6f, 1.0f);
+            }
         }
         
         if (this.tickCount % 40 == 0) checkAndManageTrial();
@@ -138,6 +140,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             syncToClients();
             hasBeenSynced = true;
         }
+        assert level != null;
         if (!level.isClientSide() && isOminous() && trialActive && this.tickCount % 600 == 0) spawnRandomOminousEffect();
     }
     
@@ -273,13 +276,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         for (UUID uuid : this.detectedPlayers) playersTag.putBoolean(uuid.toString(), true);
         tag.put("DetectedPlayers", playersTag);
     }
-    
-    // Vrátí seznam detekovaných hráčů
-    public Set<UUID> getDetectedPlayers() { return detectedPlayers; }
-    
-    // Vrátí zbývající čas cooldownu
-    public int getCooldownTime() { return cooldownTime; }
-    
+
     // Nastaví čas cooldownu
     public void setCooldownTime(int cooldownTime) { this.cooldownTime = cooldownTime; setChanged(); }
     
@@ -288,10 +285,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     
     // Nastaví ominous stav
     public void setOminous(boolean ominous) { this.isOminous = ominous; setChanged(); }
-    
-    // Vrátí počet ticků od začátku
-    public int getTickCount() { return tickCount; }
-    
+
     // Vrátí počet client ticků
     public int getClientTickCount() { return clientTickCount; }
     
@@ -316,43 +310,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     
     // Zkontroluje zda má spawner nastavenou entitu
     public boolean hasSpawnEntity() { return this.spawnEntity != null; }
-    
-    // Přidá hráče do seznamu detekovaných
-    public void addDetectedPlayer(UUID playerId) { this.detectedPlayers.add(playerId); setChanged(); }
-    
-    // Odebere hráče ze seznamu detekovaných
-    public void removeDetectedPlayer(UUID playerId) { this.detectedPlayers.remove(playerId); setChanged(); }
-    
-    // Vymaže všechny detekované hráče
-    public void clearDetectedPlayers() { this.detectedPlayers.clear(); setChanged(); }
-    
-    // Vrátí maximální počet vln
-    public int getMaxWaves() { return maxWaves; }
-    
-    // Nastaví maximální počet vln
-    public void setMaxWaves(int maxWaves) { this.maxWaves = Math.max(1, maxWaves); setChanged(); }
-    
-    // Nastaví loot tabulku pro normální stav
-    public void setNormalLootTable(String lootTable) { this.normalLootTable = lootTable; setChanged(); }
-    
-    // Nastaví loot tabulku pro ominous stav
-    public void setOminousLootTable(String lootTable) { this.ominousLootTable = lootTable; setChanged(); }
-    
-    // Vrátí počet mobů na vlnu
-    public int getMobsPerWave() { return mobsPerWave; }
-    
-    // Nastaví počet mobů na vlnu
-    public void setMobsPerWave(int mobsPerWave) { this.mobsPerWave = Math.max(1, mobsPerWave); setChanged(); }
-    
-    // Vrátí aktuální vlnu
-    public int getCurrentWave() { return currentWave; }
-    
-    // Zkontroluje zda je trial aktivní
-    public boolean isTrialActive() { return trialActive; }
-    
-    // Vrátí počet spawnutých entit
-    public int getSpawnedEntitiesCount() { return spawnedEntities.size(); }
-    
+
     // Kontroluje hráče a spravuje trial
     private void checkAndManageTrial() {
         if (level == null || level.isClientSide() || !hasSpawnEntity()) return;
@@ -476,19 +434,17 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         
         for (int i = 0; i < currentTrialMobsPerWave; i++) {
             BlockPos spawnPos = findSpawnPosition();
-            if (spawnPos != null) {
-                net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
-                if (entity != null) {
-                    entity.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-                    if (entity instanceof net.minecraft.world.entity.Mob mob) {
-                        if (isOminousBlock) equipOminousMob(mob);
-                        @SuppressWarnings({"deprecation", "unused"})
-                        var ignored = mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
-                    }
-                    level.addFreshEntity(entity);
-                    spawnedEntities.add(entity.getUUID());
-                    spawnSpawnParticles(getBlockPos(), isOminousBlock);
+            net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
+            if (entity != null) {
+                entity.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                if (entity instanceof net.minecraft.world.entity.Mob mob) {
+                    if (isOminousBlock) equipOminousMob(mob);
+                    @SuppressWarnings({"deprecation", "unused"})
+                    var ignored = mob.finalizeSpawn((ServerLevel) level, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
                 }
+                level.addFreshEntity(entity);
+                spawnedEntities.add(entity.getUUID());
+                spawnSpawnParticles(getBlockPos(), isOminousBlock);
             }
         }
     }
@@ -496,6 +452,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     // Najde validní pozici pro spawn
     private BlockPos findSpawnPosition() {
         for (int attempts = 0; attempts < 10; attempts++) {
+            assert level != null;
             int x = getBlockPos().getX() + (level.random.nextInt(7) - 3);
             int z = getBlockPos().getZ() + (level.random.nextInt(7) - 3);
             int y = getBlockPos().getY();
@@ -510,7 +467,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     // Zkontroluje zda je pozice validní pro spawn
     private boolean isValidSpawnPosition(BlockPos pos) {
         if (level == null) return false;
-        @SuppressWarnings("deprecation")
         boolean isSolid = level.getBlockState(pos.below()).isSolid();
         return level.getBlockState(pos).isAir() && level.getBlockState(pos.above()).isAir() && isSolid;
     }
@@ -518,6 +474,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     // Zkontroluje dokončení vlny a spawnuje další pokud je potřeba
     private void checkWaveCompletion() {
         spawnedEntities.removeIf(uuid -> {
+            assert level != null;
             net.minecraft.world.entity.Entity entity = ((net.minecraft.server.level.ServerLevel) level).getEntity(uuid);
             return entity == null || !entity.isAlive();
         });
@@ -535,19 +492,17 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
             for (int i = 0; i < needed; i++) {
                 BlockPos spawnPos = findSpawnPosition();
-                if (spawnPos != null) {
-                    net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
-                    if (entity != null) {
-                        entity.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-                        if (entity instanceof net.minecraft.world.entity.Mob mob) {
-                            if (isOminousBlock) equipOminousMob(mob);
-                            @SuppressWarnings({"deprecation", "unused"})
-                            var ignored = mob.finalizeSpawn((net.minecraft.server.level.ServerLevel) level, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
-                        }
-                        level.addFreshEntity(entity);
-                        spawnedEntities.add(entity.getUUID());
-                        spawnSpawnParticles(getBlockPos(), isOminousBlock);
+                net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
+                if (entity != null) {
+                    entity.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                    if (entity instanceof net.minecraft.world.entity.Mob mob) {
+                        if (isOminousBlock) equipOminousMob(mob);
+                        @SuppressWarnings({"deprecation", "unused"})
+                        var ignored = mob.finalizeSpawn((ServerLevel) level, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
                     }
+                    level.addFreshEntity(entity);
+                    spawnedEntities.add(entity.getUUID());
+                    spawnSpawnParticles(getBlockPos(), isOminousBlock);
                 }
             }
         }
@@ -589,6 +544,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.currentLootDropIndex = 0;
         this.pendingLootItems = new ArrayList<>(lootItems);
         setChanged();
+        assert level != null;
         level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OPEN_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN_ITEM_BEGIN.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
         if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
@@ -624,28 +580,17 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.currentLootDropIndex = 0;
         this.pendingLootItems.clear();
         setChanged();
+        assert level != null;
         level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_CLOSE_SHUTTER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             updateBlockState();
         }
     }
-    
-    // Zkontroluje zda probíhá animace lootu
-    public boolean isLootAnimating() { return isLootAnimating; }
-    
-    // Vrátí tick animace lootu
-    public int getLootAnimationTick() { return lootAnimationTick; }
-    
-    // Vrátí index aktuálního itemu v animaci
-    public int getCurrentLootDropIndex() { return currentLootDropIndex; }
-    
-    // Vrátí celkový počet loot itemů
-    public int getTotalLootItems() { return pendingLootItems.size(); }
-    
+
     // Vrátí update tag pro synchronizaci
     @Override
-    public CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
+    public @NotNull CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
     
     // Zpracuje update tag od klienta
     @Override
@@ -669,15 +614,15 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     
     // Vybaví ominous moba brněním, zbraněmi a enchanty
     private void equipOminousMob(net.minecraft.world.entity.Mob mob) {
-        if (level == null || level.random == null) return;
+        if (level == null) return;
         
         float currentHealth = mob.getMaxHealth();
-        mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(currentHealth * 1.5f);
+        Objects.requireNonNull(mob.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(currentHealth * 1.5f);
         mob.setHealth(mob.getMaxHealth());
         
         if (mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE) != null) {
-            double currentDamage = mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE).getBaseValue();
-            mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE).setBaseValue(currentDamage * 1.25);
+            double currentDamage = Objects.requireNonNull(mob.getAttribute(Attributes.ATTACK_DAMAGE)).getBaseValue();
+            Objects.requireNonNull(mob.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(currentDamage * 1.25);
         }
         
         net.minecraft.util.RandomSource random = level.random;
@@ -704,7 +649,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     
     // Přidá náhodné enchanty na vybavení moba
     private void addRandomEnchantments(net.minecraft.world.entity.Mob mob) {
-        if (level == null || level.random == null) return;
+        if (level == null) return;
         net.minecraft.util.RandomSource random = level.random;
         if (random.nextFloat() >= 0.4f) return;
         
@@ -761,6 +706,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private BlockPos findEffectPosition() {
         double radius = 10.0;
         for (int attempts = 0; attempts < 20; attempts++) {
+            assert level != null;
             double dx = (level.random.nextDouble() - 0.5) * 2 * radius;
             double dz = (level.random.nextDouble() - 0.5) * 2 * radius;
             if (Math.sqrt(dx * dx + dz * dz) > radius) continue;
@@ -769,7 +715,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             int y = getBlockPos().getY();
             for (int yOffset = -2; yOffset <= 3; yOffset++) {
                 BlockPos pos = new BlockPos(x, y + yOffset, z);
-                @SuppressWarnings("deprecation")
                 boolean isSolid = level.getBlockState(pos.below()).isSolid();
                 if (level.getBlockState(pos).isAir() && level.getBlockState(pos.above()).isAir() && isSolid) return pos;
             }
