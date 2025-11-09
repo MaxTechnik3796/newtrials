@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
-
+@SuppressWarnings("deprecation")
 public class WaxedCopperTrapdoorBlock extends TrapDoorBlock {
     public WaxedCopperTrapdoorBlock(Properties props){
         super(props,BlockSetType.OAK);

@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-
+@SuppressWarnings("deprecation")
 public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopper{
     private final WeatherState level;
 

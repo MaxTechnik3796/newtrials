@@ -5,6 +5,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class GustParticle extends TextureSheetParticle {
@@ -40,7 +41,7 @@ public class GustParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
@@ -59,18 +60,13 @@ public class GustParticle extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<SimpleParticleType> {
-        private final SpriteSet sprite;
-
-        public Provider(SpriteSet spriteSet) {
-            this.sprite = spriteSet;
-        }
+        public record Provider(SpriteSet sprite) implements ParticleProvider<SimpleParticleType> {
 
         @Override
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            GustParticle gustParticle = new GustParticle(level, x, y, z, xSpeed, ySpeed, zSpeed);
-            gustParticle.pickSprite(this.sprite);
-            return gustParticle;
+            public Particle createParticle(@NotNull SimpleParticleType particleType, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+                GustParticle gustParticle = new GustParticle(level, x, y, z, xSpeed, ySpeed, zSpeed);
+                gustParticle.pickSprite(this.sprite);
+                return gustParticle;
+            }
         }
-    }
 }

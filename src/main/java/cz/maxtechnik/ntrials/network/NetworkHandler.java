@@ -33,7 +33,7 @@ public class NetworkHandler {
 	// Oddělená metoda – vrací BiConsumer přímo (ne Supplier!)
 	private static BiConsumer<TrialSpawnerSyncPacket, Supplier<NetworkEvent.Context>> clientConsumer() {
 		return DistExecutor.unsafeRunForDist(
-				() -> () -> ClientPacketHandlers::handleTrialSpawnerSync,  // CLIENT
+				() -> () -> (packet1, contextSupplier) -> ClientPacketHandlers.handleTrialSpawnerSync(contextSupplier),  // CLIENT
 				() -> () -> (packet, ctx) -> ctx.get().setPacketHandled(true)  // SERVER
 		);
 	}

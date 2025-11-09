@@ -7,22 +7,22 @@ import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class VaultBlockEntityRenderer implements BlockEntityRenderer<VaultBlockEntity> {
 
-    public VaultBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public VaultBlockEntityRenderer() {
     }
 
     @Override
-    public void render(VaultBlockEntity vaultEntity, float partialTick, PoseStack poseStack,
-                      MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(VaultBlockEntity vaultEntity, float partialTick, @NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 
         Level level = vaultEntity.getLevel();
         if (level == null) {

@@ -23,13 +23,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class BreezeBossEntity extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_IS_CHARGING = SynchedEntityData.defineId(BreezeBossEntity.class, EntityDataSerializers.BOOLEAN);
     private float allowedHeightOffset = 0.4F;
     private int nextHeightOffsetUpdateTime;
     private int attackCooldown = 0;
-    private static final int ATTACK_COOLDOWN = 40; //set attack cooldown 2 seconds (40 ticks)
+    private static final int ATTACK_COOLDOWN = 30; //set attack cooldown 2 seconds (40 ticks)
     private int meleeAttackCooldown = 0;
     private static final int MELEE_ATTACK_COOLDOWN = 20; // 1 second cooldown for melee attack
 
@@ -41,7 +42,7 @@ public class BreezeBossEntity extends Monster {
     }
 
     @Override
-    protected PathNavigation createNavigation(Level level) {
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
         flyingpathnavigation.setCanOpenDoors(false);
         flyingpathnavigation.setCanFloat(true);
@@ -68,7 +69,7 @@ public class BreezeBossEntity extends Monster {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new BreezeBossAttackGoal(this));
         this.goalSelector.addGoal(3, new BreezeBossChaseGoal(this));
-        this.goalSelector.addGoal(4, new BreezeBossKeepDistanceGoal(this));
+        this.goalSelector.addGoal(4, new BreezeBossKeepDistanceGoal());
         this.goalSelector.addGoal(5, new BreezeBossCombatJumpGoal(this));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 16.0F));
@@ -100,9 +101,9 @@ public class BreezeBossEntity extends Monster {
             
             // Additional gust particles
             if (this.random.nextFloat() < 0.1F) {
-                double d0 = this.getX() + (this.random.nextDouble() - 0.5D) * 1.0D;
+                double d0 = this.getX() + (this.random.nextDouble() - 0.5D);
                 double d1 = this.getY() + 0.5D;
-                double d2 = this.getZ() + (this.random.nextDouble() - 0.5D) * 1.0D;
+                double d2 = this.getZ() + (this.random.nextDouble() - 0.5D);
                 this.level().addParticle(NTrialsModParticles.GUST.get(), d0, d1, d2, 0.0D, 0.1D, 0.0D);
             }
         }
@@ -134,7 +135,7 @@ public class BreezeBossEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+    public boolean doHurtTarget(net.minecraft.world.entity.@NotNull Entity target) {
         if (target instanceof LivingEntity livingTarget) {
             // Melee attack like blaze - 6 hert (12 damage)
             float damage = 12.0F;
@@ -170,7 +171,7 @@ public class BreezeBossEntity extends Monster {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
         return false; // Immune to fall damage
     }
 
@@ -189,12 +190,12 @@ public class BreezeBossEntity extends Monster {
     }
 
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
+    protected @NotNull SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
         return NTrialsModSounds.ENTITY_BREEZE_HURT.get();
     }
 
     @Override
-    protected SoundEvent getDeathSound() {
+    protected @NotNull SoundEvent getDeathSound() {
         return NTrialsModSounds.ENTITY_BREEZE_DEATH.get();
     }
 
@@ -213,14 +214,14 @@ public class BreezeBossEntity extends Monster {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("AttackCooldown", this.attackCooldown);
         compound.putInt("MeleeAttackCooldown", this.meleeAttackCooldown);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.attackCooldown = compound.getInt("AttackCooldown");
         this.meleeAttackCooldown = compound.getInt("MeleeAttackCooldown");
@@ -278,10 +279,9 @@ public class BreezeBossEntity extends Monster {
         @Override
         public boolean canUse() {
             LivingEntity target = this.breeze.getTarget();
-            if (target == null) return false;
+            return target != null;
 
             // Always try to chase when we have a target
-            return true;
         }
 
         @Override
@@ -324,11 +324,8 @@ public class BreezeBossEntity extends Monster {
     }
 
     static class BreezeBossKeepDistanceGoal extends Goal {
-        @SuppressWarnings("unused")
-        private final BreezeBossEntity breeze;
 
-        public BreezeBossKeepDistanceGoal(BreezeBossEntity breeze) {
-            this.breeze = breeze;
+        public BreezeBossKeepDistanceGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 

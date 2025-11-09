@@ -16,7 +16,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import cz.maxtechnik.ntrials.NTrialsModEvents;
-
+import org.jetbrains.annotations.NotNull;
+@SuppressWarnings("deprecation")
 public class WaxedCopperBlock extends Block {
 
     public WaxedCopperBlock(BlockBehaviour.Properties props) {
@@ -24,8 +25,7 @@ public class WaxedCopperBlock extends Block {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack itemInHand = player.getItemInHand(hand);
         
         // Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)
