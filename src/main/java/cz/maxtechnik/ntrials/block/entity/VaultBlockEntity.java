@@ -16,36 +16,34 @@ import java.util.Set;
 import java.util.UUID;
 
 public class VaultBlockEntity extends BlockEntity {
+    private static final int DISPLAY_ITEM_SWITCH_INTERVAL = 20;
+    private static final float ITEM_ROTATION_SPEED = 2.0f;
+    
     private final Set<UUID> playersWhoOpened = new HashSet<>();
-
-    // Animace vault bloku
+    
     private int animationTick = 0;
     private boolean isAnimating = false;
     private List<ItemStack> pendingLoot = new ArrayList<>();
     private int lootDropIndex = 0;
-
-    // Rotující itemy pro zobrazení
+    
     private List<ItemStack> displayItems = new ArrayList<>();
     private int currentDisplayItemIndex = 0;
     private int displayItemSwitchTick = 0;
     private float itemRotation = 0.0f;
     private String vaultTag = "";
     private String lootTable = "";
-
+    
     public VaultBlockEntity(BlockPos pos, BlockState blockState) {
         super(cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(), pos, blockState);
     }
-
-    public boolean hasPlayerOpened(UUID playerUuid) {
-        return playersWhoOpened.contains(playerUuid);
-    }
-
-    public void addPlayerWhoOpened(UUID playerUuid) {
-        playersWhoOpened.add(playerUuid);
-        setChanged();
-    }
-
-	// Animace metody
+    
+    // Zkontroluje zda hráč otevřel vault
+    public boolean hasPlayerOpened(UUID playerUuid) { return playersWhoOpened.contains(playerUuid); }
+    
+    // Přidá hráče který otevřel vault
+    public void addPlayerWhoOpened(UUID playerUuid) { playersWhoOpened.add(playerUuid); setChanged(); }
+    
+    // Spustí animaci otevírání
     public void startAnimation(List<ItemStack> loot) {
         this.isAnimating = true;
         this.animationTick = 0;
@@ -53,34 +51,26 @@ public class VaultBlockEntity extends BlockEntity {
         this.lootDropIndex = 0;
         setChanged();
     }
-
-    public void tickAnimation() {
-        if (isAnimating) {
-            animationTick++;
-        }
-    }
-
-    public int getAnimationTick() {
-        return animationTick;
-    }
-
-    public boolean isAnimating() {
-        return isAnimating;
-    }
-
-    public List<ItemStack> getPendingLoot() {
-        return pendingLoot;
-    }
-
-    public int getLootDropIndex() {
-        return lootDropIndex;
-    }
-
-    public void incrementLootDropIndex() {
-        lootDropIndex++;
-        setChanged();
-    }
-
+    
+    // Tick animace
+    public void tickAnimation() { if (isAnimating) animationTick++; }
+    
+    // Vrátí tick animace
+    public int getAnimationTick() { return animationTick; }
+    
+    // Zkontroluje zda probíhá animace
+    public boolean isAnimating() { return isAnimating; }
+    
+    // Vrátí pending loot
+    public List<ItemStack> getPendingLoot() { return pendingLoot; }
+    
+    // Vrátí index dropu lootu
+    public int getLootDropIndex() { return lootDropIndex; }
+    
+    // Zvýší index dropu lootu
+    public void incrementLootDropIndex() { lootDropIndex++; setChanged(); }
+    
+    // Zastaví animaci
     public void stopAnimation() {
         this.isAnimating = false;
         this.animationTick = 0;
@@ -88,120 +78,87 @@ public class VaultBlockEntity extends BlockEntity {
         this.lootDropIndex = 0;
         setChanged();
     }
-
-    // Metody pro rotující zobrazované itemy
+    
+    // Nastaví zobrazované itemy
     public void setDisplayItems(List<ItemStack> items) {
         this.displayItems = new ArrayList<>(items);
         this.currentDisplayItemIndex = 0;
         this.displayItemSwitchTick = 0;
         setChanged();
-        // Synchronizace na client
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-        }
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
     }
-
+    
+    // Vymaže zobrazované itemy
     public void clearDisplayItems() {
         this.displayItems.clear();
         this.currentDisplayItemIndex = 0;
         this.displayItemSwitchTick = 0;
         setChanged();
-        // Synchronizace na client
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-        }
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
     }
-
+    
+    // Tick rotace zobrazovaných itemů
     public void tickDisplayItem() {
         if (!displayItems.isEmpty()) {
-            // Rotace itemu
-            itemRotation += 2.0f; // 2 stupně za tick
-            if (itemRotation >= 360.0f) {
-                itemRotation = 0.0f;
-            }
-
-            // Střídání itemů každých 10 ticků (0.5 sekundy)
+            itemRotation += ITEM_ROTATION_SPEED;
+            if (itemRotation >= 360.0f) itemRotation = 0.0f;
             displayItemSwitchTick++;
-            if (displayItemSwitchTick >= 20) {
+            if (displayItemSwitchTick >= DISPLAY_ITEM_SWITCH_INTERVAL) {
                 displayItemSwitchTick = 0;
                 int oldIndex = currentDisplayItemIndex;
                 currentDisplayItemIndex = (currentDisplayItemIndex + 1) % displayItems.size();
-
-                // Synchronizace změny indexu na client (pouze když se index skutečně změní)
                 if (oldIndex != currentDisplayItemIndex && level != null && !level.isClientSide) {
                     level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                 }
             }
         }
     }
-
-    public ItemStack getCurrentDisplayItem() {
-        if (displayItems.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-        return displayItems.get(currentDisplayItemIndex);
-    }
-
-    public float getItemRotation() {
-        return itemRotation;
-    }
-
-    public boolean hasDisplayItems() {
-        return !displayItems.isEmpty();
-    }
-
-    public String getVaultTag() {
-        return vaultTag;
-    }
-
-    public void setVaultTag(String tag) {
-        this.vaultTag = tag;
-        setChanged();
-    }
-
-    public String getLootTable() {
-        return lootTable;
-    }
-
-    public void setLootTable(String lootTable) {
-        this.lootTable = lootTable;
-        setChanged();
-    }
-
-    // Synchronizace dat mezi serverem a clientem
+    
+    // Vrátí aktuální zobrazovaný item
+    public ItemStack getCurrentDisplayItem() { return displayItems.isEmpty() ? ItemStack.EMPTY : displayItems.get(currentDisplayItemIndex); }
+    
+    // Vrátí rotaci itemu
+    public float getItemRotation() { return itemRotation; }
+    
+    // Zkontroluje zda má zobrazované itemy
+    public boolean hasDisplayItems() { return !displayItems.isEmpty(); }
+    
+    // Vrátí tag vaultu
+    public String getVaultTag() { return vaultTag; }
+    
+    // Nastaví tag vaultu
+    public void setVaultTag(String tag) { this.vaultTag = tag; setChanged(); }
+    
+    // Vrátí loot tabulku
+    public String getLootTable() { return lootTable; }
+    
+    // Nastaví loot tabulku
+    public void setLootTable(String lootTable) { this.lootTable = lootTable; setChanged(); }
+    
+    // Vrátí update tag pro synchronizaci
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        this.saveAdditional(tag);
-        return tag;
-    }
-
+    public CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
+    
+    // Zpracuje update tag od klienta
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        super.handleUpdateTag(tag);
-        this.load(tag);
-    }
-
+    public void handleUpdateTag(CompoundTag tag) { super.handleUpdateTag(tag); this.load(tag); }
+    
+    // Vrátí update packet pro síťovou synchronizaci
     @Override
     public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
         return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
-
+    
+    // Uloží data do NBT
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         ListTag playersTag = new ListTag();
-        for (UUID uuid : playersWhoOpened) {
-            playersTag.add(StringTag.valueOf(uuid.toString()));
-        }
+        for (UUID uuid : playersWhoOpened) playersTag.add(StringTag.valueOf(uuid.toString()));
         tag.put("PlayersWhoOpened", playersTag);
-
-        // Uložení animace
         tag.putBoolean("IsAnimating", isAnimating);
         tag.putInt("AnimationTick", animationTick);
         tag.putInt("LootDropIndex", lootDropIndex);
-
-        // Uložení zobrazovaných itemů
         ListTag displayItemsTag = new ListTag();
         for (ItemStack stack : displayItems) {
             CompoundTag itemTag = new CompoundTag();
@@ -214,34 +171,22 @@ public class VaultBlockEntity extends BlockEntity {
         tag.putString("VaultTag", vaultTag);
         tag.putString("LootTable", lootTable);
     }
-
+    
+    // Načte data z NBT
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         playersWhoOpened.clear();
-        ListTag playersTag = tag.getList("PlayersWhoOpened", 8); // 8 = StringTag
+        ListTag playersTag = tag.getList("PlayersWhoOpened", 8);
         for (int i = 0; i < playersTag.size(); i++) {
-            try {
-                UUID uuid = UUID.fromString(playersTag.getString(i));
-                playersWhoOpened.add(uuid);
-            } catch (IllegalArgumentException e) {
-                // Invalid UUID, skip
-            }
+            try { playersWhoOpened.add(UUID.fromString(playersTag.getString(i))); } catch (IllegalArgumentException ignored) {}
         }
-
-        // Načtení animace
         this.isAnimating = tag.getBoolean("IsAnimating");
         this.animationTick = tag.getInt("AnimationTick");
         this.lootDropIndex = tag.getInt("LootDropIndex");
-
-        // Načtení zobrazovaných itemů
         this.displayItems.clear();
-        ListTag displayItemsTag = tag.getList("DisplayItems", 10); // 10 = CompoundTag
-        for (int i = 0; i < displayItemsTag.size(); i++) {
-            CompoundTag itemTag = displayItemsTag.getCompound(i);
-            ItemStack stack = ItemStack.of(itemTag);
-            displayItems.add(stack);
-        }
+        ListTag displayItemsTag = tag.getList("DisplayItems", 10);
+        for (int i = 0; i < displayItemsTag.size(); i++) displayItems.add(ItemStack.of(displayItemsTag.getCompound(i)));
         this.currentDisplayItemIndex = tag.getInt("CurrentDisplayItemIndex");
         this.itemRotation = tag.getFloat("ItemRotation");
         this.vaultTag = tag.getString("VaultTag");
