@@ -3,6 +3,7 @@ package cz.maxtechnik.ntrials.init;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -47,8 +48,11 @@ public class TrialsMapTrade implements VillagerTrades.ItemListing {
         ItemStack mapStack = MapItem.create(serverLevel, structurePos.getX(), structurePos.getZ(), (byte) 2, true, true);
         MapItem.renderBiomePreviewMap(serverLevel, mapStack);
         
-        // Add target decoration pointing to trials structure
-        MapItemSavedData.addTargetDecoration(mapStack, structurePos, "+", MapDecoration.Type.TARGET_POINT);
+        // Set custom name for the map
+        mapStack.setHoverName(Component.translatable("item.ntrials.trials_explorer_map"));
+        
+        // Add target decoration pointing to trials structure with custom icon
+        MapItemSavedData.addTargetDecoration(mapStack, structurePos, "trials", MapDecoration.Type.TARGET_POINT);
 
         return new MerchantOffer(
             new ItemStack(Items.EMERALD, this.emeraldCost),
