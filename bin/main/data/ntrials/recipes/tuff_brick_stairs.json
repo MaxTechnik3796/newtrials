@@ -1,0 +1,18 @@
+{
+  "type":"minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "ntrials:tuff_bricks"
+    }
+  },
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "result": {
+    "count": 4,
+    "item": "ntrials:tuff_brick_stairs"
+  }
+}
