@@ -21,7 +21,7 @@ public class ModEvents {
     public static void registerTrades(VillagerTradesEvent event) {
         
         if (event.getType() == VillagerProfession.CARTOGRAPHER) {
-
+			event.getTrades().get(1).add(new TrialsMapTrade(5, 12, 1));
             event.getTrades().get(3).add(new BasicItemListing(new ItemStack(Items.EMERALD,5),new ItemStack(Items.MAP,1),new ItemStack(Items.STICK,1),1,10,0.05F));
         }
     }
