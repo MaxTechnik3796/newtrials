@@ -111,5 +111,10 @@
 
 	"item.ntrials.bogged_spawn_egg": "Bogged Spawn Egg",
 	"item.ntrials.breeze_spawn_egg": "Breeze Spawn Egg",
-	"item.ntrials.breeze_boss_spawn_egg": "Boss Breeze Spawn Egg"
+
+	"item.ntrials.breeze_boss_spawn_egg": "Boss Breeze Spawn Egg",
+
+	"item.ntrials.trials_explorer_map": "Trials Explorer Map"
+
+
 }
