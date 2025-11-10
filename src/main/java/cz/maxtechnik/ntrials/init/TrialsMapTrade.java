@@ -16,6 +16,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TrialsMapTrade implements VillagerTrades.ItemListing {
@@ -34,7 +35,7 @@ public class TrialsMapTrade implements VillagerTrades.ItemListing {
 
     @Nullable
     @Override
-    public MerchantOffer getOffer(Entity trader, net.minecraft.util.RandomSource random) {
+    public MerchantOffer getOffer(Entity trader, net.minecraft.util.@NotNull RandomSource random) {
         if (!(trader.level() instanceof ServerLevel serverLevel)) {
             return null;
         }
