@@ -11,4 +11,5 @@ public class Config{
     static final ForgeConfigSpec SPEC=BUILDER.build();
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event){}
+
 }
