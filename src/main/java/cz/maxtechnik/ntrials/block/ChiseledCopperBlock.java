@@ -20,7 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import cz.maxtechnik.ntrials.NTrialsModEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.NotNull;
-
+@SuppressWarnings("deprecation")
 public class ChiseledCopperBlock extends Block implements WeatheringCopper{
     private final WeatherState level;
 
@@ -92,16 +92,16 @@ public class ChiseledCopperBlock extends Block implements WeatheringCopper{
     @Override
     public void randomTick(@NotNull BlockState state,@NotNull ServerLevel serverLevel,@NotNull BlockPos pos,@NotNull RandomSource random){
         // Používame vanilla Minecraft logiku pro oxidáciu
-        this.changeOverTime(state,serverLevel,pos,random);
+        this.changeOverTime(serverLevel,pos,random);
     }
     // Implementujeme vlastní changeOverTime metódu s vanilla logikou
-    private void changeOverTime(BlockState state,ServerLevel level,BlockPos pos,RandomSource random){
+    private void changeOverTime(ServerLevel level, BlockPos pos, RandomSource random){
         // Vanilla oxidácia má pravděpodobnosť približne 1/17.6 na každý random tick
         if(random.nextFloat()< 0.05688889f){
-            this.tryOxidize(state,level,pos,random);
+            this.tryOxidize(level,pos,random);
         }
     }
-    private void tryOxidize(BlockState state,ServerLevel level,BlockPos pos,RandomSource random){
+    private void tryOxidize(ServerLevel level, BlockPos pos, RandomSource random){
         int nearbyOxidizedBlocks=0;
         // Kontrolujeme 4x4x4 oblasť okolo bloku (vanilla logika)
         for(BlockPos nearbyPos:BlockPos.betweenClosed(pos.offset(-2,-2,-2),pos.offset(2,2,2))){

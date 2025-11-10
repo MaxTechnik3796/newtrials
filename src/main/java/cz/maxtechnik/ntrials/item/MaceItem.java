@@ -11,8 +11,7 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import org.jetbrains.annotations.NotNull;
 
 public class MaceItem extends SwordItem {
     private static final float MIN_FALL_DISTANCE = 1.5f;
@@ -23,7 +22,7 @@ public class MaceItem extends SwordItem {
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if (attacker instanceof Player player) {
             // Zkontroluj výšku pádu
             float fallDistance = player.fallDistance;
@@ -34,7 +33,7 @@ public class MaceItem extends SwordItem {
 
             // Efekty při pádu z výšky - BEZ aplikování dodatečného damage
             if (fallDistance > MIN_FALL_DISTANCE) {
-                float bonusDamage = (fallDistance - MIN_FALL_DISTANCE) * 1.0f;
+                float bonusDamage = (fallDistance - MIN_FALL_DISTANCE);
                 if (fallSpeed > 0.2) {
                     bonusDamage += (float) (fallSpeed * 5.0);
                 }
@@ -51,10 +50,6 @@ public class MaceItem extends SwordItem {
                         // Úder ve vzduchu
                         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                             NTrialsModSounds.MACE_SMASH_AIR.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
-                    } else {
-                        // Běžný úder na zemi
-                        //player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                         //   NTrialsModSounds.MACE_SMASH_GROUND.get(), SoundSource.PLAYERS, 1.0f, 1.0f + (bonusDamage / 20.0f));
                     }
 
                     // Knockback efekt
@@ -68,8 +63,6 @@ public class MaceItem extends SwordItem {
 
                 // Reset fall distance po útoku
                 player.fallDistance = 0;
-            } else {
-                // base attack
             }
         }
 

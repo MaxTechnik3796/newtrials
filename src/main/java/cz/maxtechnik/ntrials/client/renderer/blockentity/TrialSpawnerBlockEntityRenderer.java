@@ -6,10 +6,7 @@ import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -22,7 +19,7 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
     private final EntityRenderDispatcher entityRenderer;
     private static final Map<EntityType<?>, Entity> CACHED_ENTITIES = new HashMap<>();
 
-    public TrialSpawnerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public TrialSpawnerBlockEntityRenderer() {
         this.entityRenderer = Minecraft.getInstance().getEntityRenderDispatcher();
     }
 
@@ -47,7 +44,6 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
         // Get or create cached entity for this type
         Entity entity = getOrCreateEntity(entityType, level);
         if (entity == null) {
-            System.out.println("Failed to create entity: " + entityType.getDescriptionId());
             return;
         }
 
@@ -64,8 +60,7 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
 
 
 
-        // Make the entity much bigger for testing
-        float scale = 0.3F; // Full size for now
+        float scale = 0.3F;
         poseStack.scale(scale, scale, scale);
 
         // Set entity properties for proper rendering
@@ -82,7 +77,6 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
             this.entityRenderer.render(entity, 0.0, 0.0, 0.0, 0.0F, partialTick, poseStack, bufferSource, 15728880); // Full brightness
         } catch (Exception e) {
             // If rendering fails, remove from cache and skip
-            System.out.println("Failed to render entity: " + e.getMessage());
             CACHED_ENTITIES.remove(entityType);
         }
 
@@ -113,10 +107,5 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
     @Override
     public int getViewDistance() {
         return 80;
-    }
-
-    // Clear cache when needed (called on world unload)
-    public static void clearCache() {
-        CACHED_ENTITIES.clear();
     }
 }

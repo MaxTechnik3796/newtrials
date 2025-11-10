@@ -1,6 +1,5 @@
 package cz.maxtechnik.ntrials.entity;
 
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.network.PlayMessages;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -40,7 +39,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.core.BlockPos;
@@ -48,15 +46,14 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import cz.maxtechnik.ntrials.init.NTrialsModEntities;
+import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
-import java.util.Objects;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 
 public class BoggedEntity extends Monster implements RangedAttackMob {
     public BoggedEntity(PlayMessages.SpawnEntity packet, Level world) {
-        this(NTrialsModEntities.BOGGED.get(), world);
+        this(NTrialsModEntityTypes.BOGGED.get(), world);
     }
 
     public BoggedEntity(EntityType<BoggedEntity> type, Level world) {
@@ -99,6 +96,7 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
                 .findFirst()
                 .map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)
                 .orElse(null));
+            @SuppressWarnings("deprecation")
             ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
             if (itemstack.is(Items.BOW)) {
                 int attackInterval = 40; // 2 seconds (40 ticks)
@@ -161,6 +159,7 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
     @Override
     protected boolean isSunBurnTick() {
         if (this.level().isDay() && !this.level().isClientSide) {
+            @SuppressWarnings("deprecation")
             float brightness = this.getLightLevelDependentMagicValue();
             BlockPos blockpos = BlockPos.containing(this.getX(), this.getEyeY(), this.getZ());
             boolean isUnderSky = this.level().canSeeSky(blockpos);
@@ -174,6 +173,7 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
     @Override
     public void performRangedAttack(@NotNull LivingEntity target, float distanceFactor) {
         // Get bow from main hand
+        @SuppressWarnings("deprecation")
         ItemStack bow = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
         
         // Get arrow projectile
@@ -211,6 +211,7 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
     
     @Override
     @Nullable
+    @SuppressWarnings("deprecation")
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty,
                                        @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData,
                                        @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
@@ -238,6 +239,7 @@ public class BoggedEntity extends Monster implements RangedAttackMob {
         }
 
         // Drop 0-2 arrows if equipped with bow
+        @SuppressWarnings("deprecation")
         ItemStack mainHand = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
         if (mainHand.is(Items.BOW)) {
             int arrowCount = this.random.nextInt(3) + this.random.nextInt(1 + looting);

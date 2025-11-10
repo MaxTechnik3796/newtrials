@@ -1,15 +1,11 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
-import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -34,10 +30,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-
+@SuppressWarnings("deprecation")
 public class TrialSpawnerBlock extends BaseEntityBlock{
     public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
     public static final EnumProperty<TrialSpawnerState>STATE=EnumProperty.create("trial_spawner_state",TrialSpawnerState.class);

@@ -8,8 +8,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +24,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import cz.maxtechnik.ntrials.NTrialsModEvents;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
-
+@SuppressWarnings("deprecation")
 public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
     private final WeatherState level;
 
@@ -64,12 +62,11 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                     if(state.getValue(HALF) == DoubleBlockHalf.LOWER){
                         // Jsme dolní díl, druhý díl je nahoře
                         otherPos = pos.above();
-                        otherState = level.getBlockState(otherPos);
                     } else {
                         // Jsme horní díl, druhý díl je dole
                         otherPos = pos.below();
-                        otherState = level.getBlockState(otherPos);
                     }
+                    otherState = level.getBlockState(otherPos);
 
                     // Zkontrolujeme, že druhý díl je stejný typ dveří
                     if(otherState.getBlock() == this){
@@ -126,12 +123,11 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper {
                     if(state.getValue(HALF) == DoubleBlockHalf.LOWER){
                         // Jsme dolní díl, druhý díl je nahoře
                         otherPos = pos.above();
-                        otherState = level.getBlockState(otherPos);
                     } else {
                         // Jsme horní díl, druhý díl je dole
                         otherPos = pos.below();
-                        otherState = level.getBlockState(otherPos);
                     }
+                    otherState = level.getBlockState(otherPos);
 
                     // Zkontrolujeme, že druhý díl je stejný typ dveří
                     if(otherState.getBlock() == this){

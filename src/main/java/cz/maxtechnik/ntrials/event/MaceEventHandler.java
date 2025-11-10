@@ -3,9 +3,7 @@ package cz.maxtechnik.ntrials.event;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
 import cz.maxtechnik.ntrials.init.NTrialsModParticles;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import cz.maxtechnik.ntrials.item.MaceItem;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,12 +28,15 @@ public class MaceEventHandler {
 
 			ItemStack maceStack = player.getMainHandItem();
 
+			@SuppressWarnings("deprecation")
 			int windBurstLevel = EnchantmentHelper.getItemEnchantmentLevel(
 					NTrialsModEnchantments.WIND_BURST.get(), maceStack);
 
+			@SuppressWarnings("deprecation")
 			int densityLevel = EnchantmentHelper.getItemEnchantmentLevel(
 					NTrialsModEnchantments.DENSITY.get(), maceStack);
 
+			@SuppressWarnings("deprecation")
 			int breachLevel = EnchantmentHelper.getItemEnchantmentLevel(
 					NTrialsModEnchantments.BREACH.get(), maceStack);
 
@@ -57,11 +58,11 @@ public class MaceEventHandler {
                     bonusDamage = Math.min(bonusDamage, 25.0f);
 
 					if (densityLevel > 0) {
-						bonusDamage += ((densityLevel * 0.5) * fallDistance);
+						bonusDamage += (float) ((densityLevel * 0.5) * fallDistance);
 					}
 
 					if (breachLevel > 0) {
-						LivingEntity target = (LivingEntity) event.getEntity();
+						LivingEntity target = event.getEntity();
 						float armorValue = target.getArmorValue();
 						float armorToughness = (float) target.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS);
 
@@ -86,7 +87,7 @@ public class MaceEventHandler {
 							double distance = 0.5D + player.getRandom().nextDouble() * 2.0D;
 
 							double offsetX = Math.cos(angle) * distance;
-							double offsetY = (player.getRandom().nextDouble() - 0.5D) * 1.0D;
+							double offsetY = (player.getRandom().nextDouble() - 0.5D);
 							double offsetZ = Math.sin(angle) * distance;
 
 							double velocityX = offsetX * 0.3D;

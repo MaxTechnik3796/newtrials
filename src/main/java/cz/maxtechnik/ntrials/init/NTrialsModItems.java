@@ -1,10 +1,8 @@
 package cz.maxtechnik.ntrials.init;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.block.*;
 import cz.maxtechnik.ntrials.item.*;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -15,16 +13,20 @@ import net.minecraftforge.registries.RegistryObject;
 public class NTrialsModItems{
     public static final DeferredRegister<Item>REGISTRY=DeferredRegister.create(ForgeRegistries.ITEMS,NTrialsMod.MODID);
 
-    public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntities.BOGGED,-16738048,-9200555,new Item.Properties()));
+    public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BOGGED,-16738048,-9200555,new Item.Properties()));
     public static final RegistryObject<Item>BREEZE_SPAWN_EGG=REGISTRY.register("breeze_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE,-1,-1,new Item.Properties()));
+	public static final RegistryObject<Item>BREEZE_BOSS_SPAWN_EGG=REGISTRY.register("breeze_boss_spawn_egg", () -> new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE_BOSS,-1,-1,new Item.Properties()));
 
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
     public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
+	public static final RegistryObject<Item>TRIAL_SPAWNER_BOSS=block(NTrialsModBlocks.TRIAL_SPAWNER_BOSS);
     public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
+	public static final RegistryObject<Item>VAULT_BOSS=block(NTrialsModBlocks.VAULT_BOSS);
 
     public static final RegistryObject<Item>TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
     public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
+	public static final RegistryObject<Item>BOSS_TRIAL_KEY=REGISTRY.register("boss_trial_key",BasicItem::new);
     public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
     public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
     public static final RegistryObject<Item>BREEZE_ROD=REGISTRY.register("breeze_rod",BasicItem::new);
@@ -100,11 +102,6 @@ public class NTrialsModItems{
     private static RegistryObject<Item>block(RegistryObject<Block>block){
         assert block.getId()!=null;
         return REGISTRY.register(block.getId().getPath(),()->new BlockItem(block.get(),new Item.Properties()));
-    }
-
-    private static RegistryObject<Item>doubleBlock(RegistryObject<Block>block){
-        assert block.getId()!=null;
-        return REGISTRY.register(block.getId().getPath(),()->new DoubleHighBlockItem(block.get(),new Item.Properties()));
     }
 
 }

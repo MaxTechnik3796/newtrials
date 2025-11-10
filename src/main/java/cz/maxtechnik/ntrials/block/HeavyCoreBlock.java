@@ -20,7 +20,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
-
+@SuppressWarnings("deprecation")
 public class HeavyCoreBlock extends Block implements SimpleWaterloggedBlock{
     public static final BooleanProperty WATERLOGGED=BlockStateProperties.WATERLOGGED;
     public HeavyCoreBlock(){
@@ -36,7 +36,7 @@ public class HeavyCoreBlock extends Block implements SimpleWaterloggedBlock{
         return 0;
     }
     @Override
-    public VoxelShape getVisualShape(@NotNull BlockState state,@NotNull BlockGetter world,@NotNull BlockPos pos,@NotNull CollisionContext context){
+    public @NotNull VoxelShape getVisualShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context){
         return Shapes.empty();
     }
     @Override

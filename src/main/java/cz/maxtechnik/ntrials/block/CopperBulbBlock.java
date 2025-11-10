@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-
+@SuppressWarnings("deprecation")
 public class CopperBulbBlock extends Block implements WeatheringCopper {
     private final WeatherState level;
     public static final BooleanProperty LIT=BooleanProperty.create("lit");
@@ -42,12 +40,12 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     }
 
     @Override
-    public boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
         return true;
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
         return state.getValue(LIT) ? 15 : 0;
     }
 
@@ -77,7 +75,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean isMoving) {
+    public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @NotNull BlockPos neighborPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, isMoving);
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);
@@ -177,7 +175,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper {
     // Vanilla logika oxidácie
 
     @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+    public void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);

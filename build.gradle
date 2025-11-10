@@ -31,6 +31,7 @@ minecraft {
 
         server{
             property'forge.enabledGameTestNamespaces',mod_id
+            workingDirectory project.file('run-server')
             args'--nogui'
         }
         gameTestServer{

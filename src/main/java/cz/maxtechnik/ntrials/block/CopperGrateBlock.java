@@ -35,7 +35,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-
+@SuppressWarnings("deprecation")
 public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, WeatheringCopper {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private final WeatherState level;
@@ -99,7 +99,7 @@ public class CopperGrateBlock extends Block implements SimpleWaterloggedBlock, W
     }
 
     @Override
-    public BlockState updateShape(BlockState state,@NotNull Direction facing,@NotNull BlockState facingState,@NotNull LevelAccessor world,@NotNull BlockPos currentPos,@NotNull BlockPos facingPos){
+    public @NotNull BlockState updateShape(BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor world, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos){
         if(state.getValue(WATERLOGGED)){
             world.scheduleTick(currentPos,Fluids.WATER,Fluids.WATER.getTickDelay(world));
         }
