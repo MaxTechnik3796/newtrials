@@ -29,7 +29,7 @@ public class NTrialsModEvents{
     @SubscribeEvent
     public static void registerTrades(VillagerTradesEvent event){
         if(event.getType().equals(VillagerProfession.CARTOGRAPHER)){
-			event.getTrades().get(3).add(new TrialsMapTrade(12,12,5));
+			event.getTrades().get(3).add(new TrialsMapTrade(12,12,10));
         }
     }
 	public record TrialsMapTrade(int emeraldCost,int maxUses,int villagerXp)implements VillagerTrades.ItemListing{
