@@ -343,9 +343,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                 this.setOminous(true);
                 level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             }
-            if (this.cooldownTime > 0) {
+            if (this.cooldownTime > 0 && !this.shouldResetOminousOnCooldownEnd) {
                 this.cooldownTime = 0;
-                this.shouldResetOminousOnCooldownEnd = false;
             }
         }
         
