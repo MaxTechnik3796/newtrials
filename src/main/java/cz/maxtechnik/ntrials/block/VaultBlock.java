@@ -155,7 +155,7 @@ public class VaultBlock extends BaseEntityBlock {
         if (vaultState == VaultState.ACTIVE) vaultEntity.tickDisplayItem();
         
         if (vaultEntity.isAnimating()) handleVaultAnimation(level, pos, state, vaultEntity);
-        else if (gameTime % 15 == 0) checkNearbyPlayers(level, pos, vaultEntity, state);
+        else if (gameTime % 10 == 0) checkNearbyPlayers(level, pos, vaultEntity, state);
     }
     
     // Client tick - pouze rotace itemů
