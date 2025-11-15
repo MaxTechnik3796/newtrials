@@ -15,12 +15,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-
+@SuppressWarnings("removal")
 @Mod(NTrialsMod.MODID)
 public class NTrialsMod{
     public static final String MODID="ntrials";
     public static final Logger LOGGER=LogUtils.getLogger();
-    @SuppressWarnings("removal")
     public NTrialsMod(){
         IEventBus modEventBus=FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
