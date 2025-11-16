@@ -51,7 +51,7 @@ public class VaultBossBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<VaultBlock.VaultState> STATE = EnumProperty.create("vault_state", VaultBlock.VaultState.class);
     public VaultBossBlock(){
-        super(Properties.of().sound(SoundType.METAL).strength(1000F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
+        super(Properties.of().sound(SoundType.METAL).strength(2F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(STATE,VaultBlock.VaultState.INACTIVE));
     }
     @Override

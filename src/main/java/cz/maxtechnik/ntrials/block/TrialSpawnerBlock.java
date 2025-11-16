@@ -36,7 +36,7 @@ public class TrialSpawnerBlock extends BaseEntityBlock{
     public static final EnumProperty<TrialSpawnerState>STATE=EnumProperty.create("trial_spawner_state",TrialSpawnerState.class);
 
     public TrialSpawnerBlock(){
-        super(Properties.of().sound(SoundType.METAL).strength(1000F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
+        super(Properties.of().sound(SoundType.METAL).strength(2F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
         this.registerDefaultState(this.stateDefinition.any().setValue(OMINOUS,false).setValue(STATE,TrialSpawnerState.INACTIVE));
     }
 

@@ -54,7 +54,7 @@ public class VaultBlock extends BaseEntityBlock {
     public static final BooleanProperty OMINOUS = BooleanProperty.create("ominous");
     public static final EnumProperty<VaultState> STATE = EnumProperty.create("vault_state", VaultState.class);
     public VaultBlock(){
-        super(Properties.of().sound(SoundType.METAL).strength(1000F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
+        super(Properties.of().sound(SoundType.METAL).strength(2F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(OMINOUS,false).setValue(STATE,VaultState.INACTIVE));
     }
     public enum VaultState implements net.minecraft.util.StringRepresentable {
