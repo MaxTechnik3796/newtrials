@@ -448,7 +448,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
     }
     
-    // Najde validní pozici pro spawn
+    // Najde validní pozici pro spawne
     private BlockPos findSpawnPosition() {
         for (int attempts = 0; attempts < 10; attempts++) {
             assert level != null;
