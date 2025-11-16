@@ -36,14 +36,6 @@
       {
         "name":"ntrials:block/vault/eject1",
         "stream":false
-      },
-      {
-        "name":"ntrials:block/vault/eject2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/vault/eject3",
-        "stream":false
       }
     ]
   },
@@ -95,6 +87,14 @@
       }
     ]
   },
+  "mace.smash_ground_heavy":{
+    "sounds":[
+      {
+        "name":"ntrials:mace/smash_ground_heavy",
+        "stream":false
+      }
+    ]
+  },
   "mace.smash_ground":{
     "sounds":[
       {
@@ -107,26 +107,6 @@
       },
       {
         "name":"ntrials:mace/smash_ground3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:mace/smash_ground4",
-        "stream":false
-      }
-    ]
-  },
-  "mace.smash_ground_heavy":{
-    "sounds":[
-      {
-        "name":"ntrials:mace/smash_ground_heavy",
-        "stream":false
-      }
-    ]
-  },
-  "block.trial_spawner.about_to_spawn_item":{
-    "sounds":[
-      {
-        "name":"ntrials:block/spawner/about_to_spawn_item",
         "stream":false
       }
     ]
@@ -144,14 +124,6 @@
       {
         "name":"ntrials:block/spawner/ambient3",
         "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/ambient4",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/ambient5",
-        "stream":false
       }
     ]
   },
@@ -167,30 +139,6 @@
       },
       {
         "name":"ntrials:block/spawner/ambient_ominous3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/ambient_ominous4",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/ambient_ominous5",
-        "stream":false
-      }
-    ]
-  },
-  "block.trial_spawner.break":{
-    "sounds":[
-      {
-        "name":"ntrials:block/spawner/break1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/break2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/break3",
         "stream":false
       }
     ]
@@ -211,10 +159,6 @@
       },
       {
         "name":"ntrials:block/spawner/detect_player2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/detect_player3",
         "stream":false
       }
     ]
@@ -243,22 +187,6 @@
       }
     ]
   },
-  "block.trial_spawner.place":{
-    "sounds":[
-      {
-        "name":"ntrials:block/spawner/place1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/place2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/place3",
-        "stream":false
-      }
-    ]
-  },
   "block.trial_spawner.spawn":{
     "sounds":[
       {
@@ -271,26 +199,6 @@
       },
       {
         "name":"ntrials:block/spawner/spawn3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/spawn4",
-        "stream":false
-      }
-    ]
-  },
-  "block.trial_spawner.spawn_item":{
-    "sounds":[
-      {
-        "name":"ntrials:block/spawner/spawn_item1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/spawn_item2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/spawn_item3",
         "stream":false
       }
     ]
@@ -311,30 +219,6 @@
       }
     ]
   },
-  "block.trial_spawner.step":{
-    "sounds":[
-      {
-        "name":"ntrials:block/spawner/step1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/step2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/step3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/step4",
-        "stream":false
-      },
-      {
-        "name":"ntrials:block/spawner/step5",
-        "stream":false
-      }
-    ]
-  },
   "entity.bogged.ambient":{
     "sounds":[
       {
@@ -347,10 +231,6 @@
       },
       {
         "name":"ntrials:bogged/ambient3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:bogged/ambient4",
         "stream":false
       }
     ]
@@ -376,10 +256,6 @@
       {
         "name":"ntrials:bogged/hurt3",
         "stream":false
-      },
-      {
-        "name":"ntrials:bogged/hurt4",
-        "stream":false
       }
     ]
   },
@@ -395,10 +271,6 @@
       },
       {
         "name":"ntrials:bogged/step3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:bogged/step4",
         "stream":false
       }
     ]
@@ -416,10 +288,6 @@
       {
         "name":"ntrials:breeze/idle3",
         "stream":false
-      },
-      {
-        "name":"ntrials:breeze/idle4",
-        "stream":false
       }
     ]
   },
@@ -435,26 +303,6 @@
       },
       {
         "name":"ntrials:breeze/idle_air3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/idle_air4",
-        "stream":false
-      }
-    ]
-  },
-  "entity.breeze.charge":{
-    "sounds":[
-      {
-        "name":"ntrials:breeze/charge1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/charge2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/charge3",
         "stream":false
       }
     ]
@@ -527,66 +375,10 @@
       }
     ]
   },
-  "entity.breeze.land":{
-    "sounds":[
-      {
-        "name":"ntrials:breeze/land1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/land2",
-        "stream":false
-      }
-    ]
-  },
   "entity.breeze.shoot":{
     "sounds":[
       {
         "name":"ntrials:breeze/shoot",
-        "stream":false
-      }
-    ]
-  },
-  "entity.breeze.slide":{
-    "sounds":[
-      {
-        "name":"ntrials:breeze/slide1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/slide2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/slide3",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/slide4",
-        "stream":false
-      }
-    ]
-  },
-  "entity.breeze.whirl":{
-    "sounds":[
-      {
-        "name":"ntrials:breeze/whirl",
-        "stream":false
-      }
-    ]
-  },
-  "entity.breeze.wind_burst":{
-    "sounds":[
-      {
-        "name":"ntrials:breeze/wind_burst1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/wind_burst2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:breeze/wind_burst3",
         "stream":false
       }
     ]
