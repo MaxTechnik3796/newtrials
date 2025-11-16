@@ -14,6 +14,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -150,6 +158,9 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         }
 
 
+        // Activate blocks in radius 2.0 blocks
+        this.activateBlocksInRadius(explosion_center, 2.0F);
+
         // Find and knockback entities
         List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(radius));
         for (Entity entity : entities) {
@@ -184,6 +195,52 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
                         knockback.z * horizontalMultiplier
                     ));
                     entity.hurtMarked = true;
+                }
+            }
+        }
+    }
+
+    private void activateBlocksInRadius(Vec3 center, float radius) {
+        // Iterate through all blocks in the radius
+        for (double x = -radius; x <= radius; x += 2.0D) {
+            for (double y = -radius; y <= radius; y += 2.0D) {
+                for (double z = -radius; z <= radius; z += 2.0D) {
+                    // Check if block is within radius (using double calculations)
+                    double distance = Math.sqrt(x * x + y * y + z * z);
+                    if (distance <= radius) {
+                        double blockX = center.x + x;
+                        double blockY = center.y + y;
+                        double blockZ = center.z + z;
+
+                        BlockPos blockPos = new BlockPos((int) Math.floor(blockX), (int) Math.floor(blockY), (int) Math.floor(blockZ));
+                        BlockState blockState = this.level().getBlockState(blockPos);
+                        Block block = blockState.getBlock();
+
+                        // Activate buttons
+                        if (block instanceof ButtonBlock) {
+                            this.level().blockEvent(blockPos, block, 1, 0);
+                        }
+                        // Activate levers
+                        else if (block instanceof LeverBlock) {
+                            BlockState newState = blockState.cycle(LeverBlock.POWERED);
+                            this.level().setBlock(blockPos, newState, 3);
+                        }
+                        // Activate doors (but not iron doors)
+                        else if (block instanceof DoorBlock && block != Blocks.IRON_DOOR) {
+                            BlockState newState = blockState.cycle(DoorBlock.OPEN);
+                            this.level().setBlock(blockPos, newState, 3);
+                        }
+                        // Activate trap doors (but not iron trap doors)
+                        else if (block instanceof TrapDoorBlock && block != Blocks.IRON_TRAPDOOR) {
+                            BlockState newState = blockState.cycle(TrapDoorBlock.OPEN);
+                            this.level().setBlock(blockPos, newState, 3);
+                        }
+                        // Activate pressure plates
+                        else if (block instanceof PressurePlateBlock) {
+                            BlockState newState = blockState.cycle(PressurePlateBlock.POWERED);
+                            this.level().setBlock(blockPos, newState, 3);
+                        }
+                    }
                 }
             }
         }
