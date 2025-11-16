@@ -21,7 +21,6 @@ public class NTrialsModSounds{
 
     // Mace sounds
     public static final RegistryObject<SoundEvent>MACE_SMASH_AIR=REGISTER.register("mace.smash_air",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","mace.smash_air")));
-    public static final RegistryObject<SoundEvent>MACE_SMASH_GROUND=REGISTER.register("mace.smash_ground",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","mace.smash_ground")));
     public static final RegistryObject<SoundEvent>MACE_SMASH_GROUND_HEAVY=REGISTER.register("mace.smash_ground_heavy",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","mace.smash_ground_heavy")));
 
     public static final RegistryObject<SoundEvent>BLOCK_TRIAL_SPAWNER_AMBIENT=REGISTER.register("block.trial_spawner.ambient",()->SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("ntrials","block.trial_spawner.ambient")));

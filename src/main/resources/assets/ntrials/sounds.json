@@ -95,22 +95,6 @@
       }
     ]
   },
-  "mace.smash_ground":{
-    "sounds":[
-      {
-        "name":"ntrials:mace/smash_ground1",
-        "stream":false
-      },
-      {
-        "name":"ntrials:mace/smash_ground2",
-        "stream":false
-      },
-      {
-        "name":"ntrials:mace/smash_ground3",
-        "stream":false
-      }
-    ]
-  },
   "block.trial_spawner.ambient":{
     "sounds":[
       {
