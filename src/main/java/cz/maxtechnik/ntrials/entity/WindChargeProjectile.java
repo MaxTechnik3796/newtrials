@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
@@ -33,6 +34,7 @@ import java.util.List;
 public class WindChargeProjectile extends ThrowableItemProjectile {
     private int tickCount = 0;
     private static final int MAX_LIFETIME = 100; // 5 seconds (20 ticks per second)
+    private boolean hasExploded = false;
 
     public WindChargeProjectile(EntityType<? extends WindChargeProjectile> entityType, Level level) {
         super(entityType, level);
@@ -112,6 +114,10 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
     }
 
     private void createWindExplosion() {
+        // Prevent double-activation if multiple hit events fire
+        if (this.hasExploded) return;
+        this.hasExploded = true;
+
         Vec3 center = this.position();
         Vec3 explosion_center = new Vec3(center.x, center.y - 0.5D, center.z);
 
@@ -158,88 +164,107 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         }
 
 
-        // Activate blocks in radius 2.0 blocks
-        this.activateBlocksInRadius(explosion_center);
+        // Server-side: activate blocks and affect entities only once
+        if (!this.level().isClientSide) {
+            // Activate blocks and redstone in 5x5x5 area
+            this.activateBlocksInRadius(explosion_center);
 
-        // Find and knockback entities
-        List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(radius));
-        for (Entity entity : entities) {
-            if (entity instanceof LivingEntity) {
-                double distance = entity.distanceTo(this);
-                if (distance <= radius) {
-                    // Only deal damage if the projectile was shot by a Breeze or BreezeBoss
-                    if (this.getOwner() instanceof BreezeEntity) {
-                        // Deal damage to the entity
-                        float damage = 6.0F; // Base damage amount
-                        entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
-                    } else if (this.getOwner() instanceof cz.maxtechnik.ntrials.entity.BreezeBossEntity) {
-                        // Breeze Boss deals 1.5x damage (9.0F)
-                        float damage = 9.0F; // 1.5x base damage
-                        entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+            // Find and knockback entities
+            List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(radius));
+            for (Entity entity : entities) {
+                if (entity instanceof LivingEntity) {
+                    double distance = entity.distanceTo(this);
+                    if (distance <= radius) {
+                        // Only deal damage if the projectile was shot by a Breeze or BreezeBoss
+                        if (this.getOwner() instanceof BreezeEntity) {
+                            float damage = 6.0F; // Base damage amount
+                            entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+                        } else if (this.getOwner() instanceof cz.maxtechnik.ntrials.entity.BreezeBossEntity) {
+                            float damage = 9.0F; // 1.5x base damage
+                            entity.hurt(this.damageSources().explosion(this, this.getOwner()), damage);
+                        }
+
+                        Vec3 direction = entity.position().subtract(explosion_center).normalize();
+
+                        double knockbackStrength = 0.7D * (1.0D - (distance / radius));
+
+                        Vec3 knockback = direction.scale(knockbackStrength);
+
+                        double verticalKnockback = Math.max(knockback.y + 0.7D, 0.6D);
+
+                        double horizontalMultiplier = 0.8D;
+
+                        entity.setDeltaMovement(entity.getDeltaMovement().add(
+                            knockback.x * horizontalMultiplier,
+                            verticalKnockback,
+                            knockback.z * horizontalMultiplier
+                        ));
+                        entity.hurtMarked = true;
                     }
-
-
-                    Vec3 direction = entity.position().subtract(explosion_center).normalize();
-
-                    double knockbackStrength = 0.7D * (1.0D - (distance / radius)); // Increased from 1.5D to 2.0D
-
-                    Vec3 knockback = direction.scale(knockbackStrength);
-
-                    double verticalKnockback = Math.max(knockback.y + 0.7D, 0.6D);
-
-                    double horizontalMultiplier = 0.8D;
-
-                    entity.setDeltaMovement(entity.getDeltaMovement().add(
-                        knockback.x * horizontalMultiplier,
-                        verticalKnockback,
-                        knockback.z * horizontalMultiplier
-                    ));
-                    entity.hurtMarked = true;
                 }
             }
         }
     }
 
     private void activateBlocksInRadius(Vec3 center) {
-        // Iterate through all blocks in the radius
-        for (double x = -(float) 2.0; x <= (float) 2.0; x += 2.0D) {
-            for (double y = -(float) 2.0; y <= (float) 2.0; y += 2.0D) {
-                for (double z = -(float) 2.0; z <= (float) 2.0; z += 2.0D) {
-                    // Check if block is within radius (using double calculations)
-                    double distance = Math.sqrt(x * x + y * y + z * z);
-                    if (distance <= (float) 2.0) {
-                        double blockX = center.x + x;
-                        double blockY = center.y + y;
-                        double blockZ = center.z + z;
+        // Iterate through all blocks in a 2-block radius from center (5x5x5 area)
+        double centerX = center.x;
+        double centerY = center.y;
+        double centerZ = center.z;
+        
+        for (double offsetX = -2.0D; offsetX <= 2.0D; offsetX += 1.0D) {
+            for (double offsetY = -2.0D; offsetY <= 2.0D; offsetY += 1.0D) {
+                for (double offsetZ = -2.0D; offsetZ <= 2.0D; offsetZ += 1.0D) {
+                    double x = centerX + offsetX;
+                    double y = centerY + offsetY;
+                    double z = centerZ + offsetZ;
+                    
+                    BlockPos blockPos = new BlockPos((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+                    BlockState blockState = this.level().getBlockState(blockPos);
+                    Block block = blockState.getBlock();
 
-                        BlockPos blockPos = new BlockPos((int) Math.floor(blockX), (int) Math.floor(blockY), (int) Math.floor(blockZ));
-                        BlockState blockState = this.level().getBlockState(blockPos);
-                        Block block = blockState.getBlock();
+                    // Activate buttons
+                    if (block instanceof ButtonBlock) {
+                        this.level().blockEvent(blockPos, block, 1, 0);
+                    }
+                    // Activate levers
+                    else if (block instanceof LeverBlock) {
+                        BlockState newState = blockState.cycle(LeverBlock.POWERED);
+                        this.level().setBlock(blockPos, newState, 3);
+                    }
+                    // Activate doors (but not iron doors)
+                    else if (block instanceof DoorBlock && block != Blocks.IRON_DOOR) {
+                        BlockState newState = blockState.cycle(DoorBlock.OPEN);
+                        this.level().setBlock(blockPos, newState, 3);
+                    }
+                    // Activate trap doors (but not iron trap doors)
+                    else if (block instanceof TrapDoorBlock && block != Blocks.IRON_TRAPDOOR) {
+                        BlockState newState = blockState.cycle(TrapDoorBlock.OPEN);
+                        this.level().setBlock(blockPos, newState, 3);
+                    }
+                    // Activate pressure plates
+                    else if (block instanceof PressurePlateBlock) {
+                        BlockState newState = blockState.cycle(PressurePlateBlock.POWERED);
+                        this.level().setBlock(blockPos, newState, 3);
+                    }
 
-                        // Activate buttons
-                        if (block instanceof ButtonBlock) {
-                            this.level().blockEvent(blockPos, block, 1, 0);
+                    // If it's redstone wire, set it to fully powered and notify neighbors
+                    try {
+                        if (block == Blocks.REDSTONE_WIRE || block instanceof RedStoneWireBlock) {
+                            // Try to set POWER to 15 if possible
+                            try {
+                                BlockState newState = blockState.setValue(RedStoneWireBlock.POWER, Integer.valueOf(15));
+                                this.level().setBlock(blockPos, newState, 3);
+                            } catch (Exception ignored) {
+                                // If property not available for some reason, just request neighbor update
+                                this.level().updateNeighborsAt(blockPos, block);
+                            }
+                        } else {
+                            // For other blocks we already changed above; ensure redstone updates by notifying neighbors
+                            this.level().updateNeighborsAt(blockPos, block);
                         }
-                        // Activate levers
-                        else if (block instanceof LeverBlock) {
-                            BlockState newState = blockState.cycle(LeverBlock.POWERED);
-                            this.level().setBlock(blockPos, newState, 3);
-                        }
-                        // Activate doors (but not iron doors)
-                        else if (block instanceof DoorBlock && block != Blocks.IRON_DOOR) {
-                            BlockState newState = blockState.cycle(DoorBlock.OPEN);
-                            this.level().setBlock(blockPos, newState, 3);
-                        }
-                        // Activate trap doors (but not iron trap doors)
-                        else if (block instanceof TrapDoorBlock && block != Blocks.IRON_TRAPDOOR) {
-                            BlockState newState = blockState.cycle(TrapDoorBlock.OPEN);
-                            this.level().setBlock(blockPos, newState, 3);
-                        }
-                        // Activate pressure plates
-                        else if (block instanceof PressurePlateBlock) {
-                            BlockState newState = blockState.cycle(PressurePlateBlock.POWERED);
-                            this.level().setBlock(blockPos, newState, 3);
-                        }
+                    } catch (Exception ignored) {
+                        // Safety: don't crash if any unexpected block operations fail
                     }
                 }
             }
