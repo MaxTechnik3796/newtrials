@@ -159,7 +159,7 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
 
 
         // Activate blocks in radius 2.0 blocks
-        this.activateBlocksInRadius(explosion_center, 2.0F);
+        this.activateBlocksInRadius(explosion_center);
 
         // Find and knockback entities
         List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(radius));
@@ -200,14 +200,14 @@ public class WindChargeProjectile extends ThrowableItemProjectile {
         }
     }
 
-    private void activateBlocksInRadius(Vec3 center, float radius) {
+    private void activateBlocksInRadius(Vec3 center) {
         // Iterate through all blocks in the radius
-        for (double x = -radius; x <= radius; x += 2.0D) {
-            for (double y = -radius; y <= radius; y += 2.0D) {
-                for (double z = -radius; z <= radius; z += 2.0D) {
+        for (double x = -(float) 2.0; x <= (float) 2.0; x += 2.0D) {
+            for (double y = -(float) 2.0; y <= (float) 2.0; y += 2.0D) {
+                for (double z = -(float) 2.0; z <= (float) 2.0; z += 2.0D) {
                     // Check if block is within radius (using double calculations)
                     double distance = Math.sqrt(x * x + y * y + z * z);
-                    if (distance <= radius) {
+                    if (distance <= (float) 2.0) {
                         double blockX = center.x + x;
                         double blockY = center.y + y;
                         double blockZ = center.z + z;
