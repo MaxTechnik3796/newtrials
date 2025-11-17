@@ -10,3 +10,4 @@ build
 /.eclipse/
 /.settings/
 /run-server/
+/desktop.ini
