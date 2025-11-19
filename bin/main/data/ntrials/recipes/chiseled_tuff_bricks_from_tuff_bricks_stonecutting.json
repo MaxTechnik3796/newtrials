@@ -1,8 +1,0 @@
-{
-	"type":"minecraft:stonecutting",
-	"count":1,
-	"ingredient":{
-		"item":"ntrials:tuff_bricks"
-	},
-	"result":"ntrials:chiseled_tuff_bricks"
-}
