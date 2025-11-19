@@ -33,7 +33,7 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
     public static final EnumProperty<TrialSpawnerBlock.TrialSpawnerState> STATE = EnumProperty.create("trial_spawner_state", TrialSpawnerBlock.TrialSpawnerState.class);
 
     public TrialSpawnerBossBlock() {
-        super(Properties.of().sound(SoundType.METAL).strength(45F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
+        super(Properties.of().sound(SoundType.METAL).strength(45F, 999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
         this.registerDefaultState(this.stateDefinition.any().setValue(STATE, TrialSpawnerBlock.TrialSpawnerState.INACTIVE));
     }
 
@@ -46,57 +46,77 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner) {
 
-                // Kontrola cooldownu - platí pro všechny, má přednost
+                // 1. KONTROLA COOLDOWNU
                 if (bossSpawner.getCooldownTimer() > 0) {
-                    player.displayClientMessage(Component.literal("Trial Spawner is cooling down. Please wait: " + formatTime(bossSpawner.getCooldownTimer())), true);
+                    if (bossSpawner.hasPlayerReceivedReward(player.getUUID())) {
+                        // Hráč už má odměnu + je cooldown
+                        player.displayClientMessage(Component.literal("Cooldown: (" + formatTime(bossSpawner.getCooldownTimer()) + "). Boss already defeated. Find another Trial Chamber."), true);
+                    } else {
+                        // Hráč ještě nemá odměnu, ale musí čekat na cooldown
+                        player.displayClientMessage(Component.literal("Cooldown: " + formatTime(bossSpawner.getCooldownTimer())), true);
+                    }
                     level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     return InteractionResult.FAIL;
                 }
 
-                // Kontrola, zda hráč již obdržel odměnu (trvalá kontrola - platí pro všechny kliknutí)
+                // 2. KONTROLA ODMĚNY (pokud není cooldown)
                 if (bossSpawner.hasPlayerReceivedReward(player.getUUID())) {
                     player.displayClientMessage(Component.literal("Boss already defeated. Find another Trial Chamber."), true);
                     level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     return InteractionResult.FAIL;
                 }
 
+                // 3. LOGIKA INTERAKCE S KLÍČEM VS BEZ KLÍČE
                 if (isHoldingKey) {
+                    // --- Hráč DRŽÍ KLÍČ ---
                     if (bossSpawner.isActivated() && !bossSpawner.isKeyActivated()) {
                         bossSpawner.activateWithKey();
                         if (!player.getAbilities().instabuild) itemStack.shrink(1);
                         return InteractionResult.SUCCESS;
                     }
+                    // Pokud hráč drží klíč, ale spawner nejde aktivovat (špatný stav),
+                    // vrátíme FAIL, ale nevypisujeme zprávu ani nehrajeme zvuk.
+
+                } else {
+                    // --- Hráč NEDRŽÍ KLÍČ ---
+                    // Pouze v tomto případě vypíšeme, že potřebuje klíč a přehrajeme zvuk.
+                    player.displayClientMessage(Component.literal("Need Ominous Key"), true);
+                    level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
+                return InteractionResult.FAIL;
             }
         }
 
-        // Zpráva o neúspěchu pouze při kliknutí rukou (bez klíče)
-        if (!level.isClientSide && !isHoldingKey) {
-            player.displayClientMessage(Component.literal("Need Ominous Key"), true);
-            level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-        }
         return InteractionResult.FAIL;
     }
 
     @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) { return new TrialSpawnerBossBlockEntity(pos, state); }
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new TrialSpawnerBossBlockEntity(pos, state);
+    }
 
     @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+        return RenderShape.MODEL;
+    }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         return createTickerHelper(blockEntityType, NTrialsModBlockEntities.TRIAL_SPAWNER_BOSS_BLOCK_ENTITY.get(),
-                level.isClientSide ? (level1, pos, state1, blockEntity) -> ((TrialSpawnerBossBlockEntity) blockEntity).clientTick()
-                        : (level1, pos, state1, blockEntity) -> ((TrialSpawnerBossBlockEntity) blockEntity).tick());
+                level.isClientSide ? (level1, pos, state1, blockEntity) -> blockEntity.clientTick()
+                        : (level1, pos, state1, blockEntity) -> blockEntity.tick());
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(STATE); }
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(STATE);
+    }
 
     @Override
-    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos) { return 0; }
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos) {
+        return 0;
+    }
 
     // Pomocná metoda pro formátování času
     private String formatTime(int ticks) {
