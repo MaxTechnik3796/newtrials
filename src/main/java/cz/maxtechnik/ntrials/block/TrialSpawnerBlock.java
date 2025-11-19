@@ -28,34 +28,36 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-@SuppressWarnings("deprecation")
-public class TrialSpawnerBlock extends BaseEntityBlock{
-    public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
-    public static final EnumProperty<TrialSpawnerState>STATE=EnumProperty.create("trial_spawner_state",TrialSpawnerState.class);
 
-    public TrialSpawnerBlock(){
-        super(Properties.of().sound(SoundType.METAL).strength(45F,999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs,br,bp)->false).noLootTable().pushReaction(PushReaction.BLOCK));
-        this.registerDefaultState(this.stateDefinition.any().setValue(OMINOUS,false).setValue(STATE,TrialSpawnerState.INACTIVE));
+@SuppressWarnings("deprecation")
+public class TrialSpawnerBlock extends BaseEntityBlock {
+    public static final BooleanProperty OMINOUS = BooleanProperty.create("ominous");
+    public static final EnumProperty<TrialSpawnerState> STATE = EnumProperty.create("trial_spawner_state", TrialSpawnerState.class);
+
+    public TrialSpawnerBlock() {
+        super(Properties.of().sound(SoundType.METAL).strength(45F, 999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
+        this.registerDefaultState(this.stateDefinition.any().setValue(OMINOUS, false).setValue(STATE, TrialSpawnerState.INACTIVE));
     }
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
 
-        if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
-            if (!level.isClientSide) {
-                BlockEntity blockEntity = level.getBlockEntity(pos);
-                if (blockEntity instanceof TrialSpawnerBlockEntity trialSpawner) {
+        if (blockEntity instanceof TrialSpawnerBlockEntity trialSpawner) {
+            // 1. Logika pro Spawn Egg (zachována)
+            if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
+                if (!level.isClientSide) {
                     EntityType<?> entityType = spawnEggItem.getType(itemStack.getTag());
                     trialSpawner.setSpawnEntity(entityType);
 
-                    // Synchronize to all players in range
                     if (level instanceof ServerLevel serverLevel) {
                         TrialSpawnerSyncPacket packet = new TrialSpawnerSyncPacket(pos, entityType);
                         NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() ->
-                            serverLevel.getChunkAt(pos)), packet);
+                                serverLevel.getChunkAt(pos)), packet);
                     }
 
                     if (!player.isCreative()) {
@@ -64,8 +66,23 @@ public class TrialSpawnerBlock extends BaseEntityBlock{
 
                     return InteractionResult.SUCCESS;
                 }
+                return InteractionResult.sidedSuccess(true);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+
+            // 2. Logika pro zobrazení cooldownu (NOVÉ)
+            if (trialSpawner.getCooldownTime() > 0) {
+                if (!level.isClientSide) {
+                    int totalSeconds = trialSpawner.getCooldownTime() / 20;
+                    long minutes = (totalSeconds % 3600) / 60;
+                    long seconds = totalSeconds % 60;
+
+                    String timeString = String.format("%02d:%02d", minutes, seconds);
+                    // True = action bar (text nad inventářem), False = chat
+                    player.displayClientMessage(Component.literal("Cooldown " + timeString), true);
+                }
+                // Zabrání další interakci, ale nepřehraje zvuk bloku (jen máchnutí rukou)
+                return InteractionResult.SUCCESS;
+            }
         }
 
         return InteractionResult.PASS;
@@ -85,32 +102,35 @@ public class TrialSpawnerBlock extends BaseEntityBlock{
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         return createTickerHelper(blockEntityType, NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(),
                 level.isClientSide()
-                    ? (level1, pos, state1, blockEntity) -> blockEntity.clientTick()
-                    : (level1, pos, state1, blockEntity) -> blockEntity.tick());
+                        ? (level1, pos, state1, blockEntity) -> blockEntity.clientTick()
+                        : (level1, pos, state1, blockEntity) -> blockEntity.tick());
     }
 
     public enum TrialSpawnerState implements net.minecraft.util.StringRepresentable {
         INACTIVE("inactive"),
         COOLDOWN("cooldown"),
         EJECTING_REWARD("ejecting_reward"),
-        WAITING_FOR_REWARD_EJECTION("waiting_for_reward_ejection"),
         ACTIVE("active"),
         WAITING_FOR_PLAYERS("waiting_for_players");
         private final String name;
-        TrialSpawnerState(String name){
-            this.name=name;
+
+        TrialSpawnerState(String name) {
+            this.name = name;
         }
+
         @Override
-        public @NotNull String getSerializedName(){
+        public @NotNull String getSerializedName() {
             return this.name;
         }
     }
+
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){
-        builder.add(OMINOUS,STATE);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(OMINOUS, STATE);
     }
+
     @Override
-    public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos) {
         return 0;
     }
 }
