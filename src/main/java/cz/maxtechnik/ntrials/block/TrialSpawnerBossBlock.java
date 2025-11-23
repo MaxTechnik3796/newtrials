@@ -42,7 +42,7 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
         ItemStack itemStack = player.getItemInHand(hand);
         boolean isHoldingKey = itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.OMINOUS_TRIAL_KEY.get();
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner) {
 

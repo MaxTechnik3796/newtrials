@@ -8,6 +8,8 @@ This mod brings **new items and blocks from the latest Minecraft versions** into
   - **Copper Doors, Copper Bulbs & Copper Trapdoors**
   - **Breeze & Bogged Mobs**
   - **Other blocks and items from the latest versions**
+  - **Cartographer map function**
+  - **Breeze Boss & Larger structure**
 - Preserves original mechanics and behavior, just like in vanilla Minecraft.
 
 ---
