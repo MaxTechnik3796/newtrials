@@ -84,6 +84,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     private String normalLootTable = "ntrials:chests/spawner";
     private String ominousLootTable = "ntrials:chests/spawner_ominous";
+    private String vaultTag = "";
 
     private boolean isLootAnimating = false;
     private int lootAnimationTick = 0;
@@ -221,8 +222,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             for (int i = 0; i < lootItemsTag.size(); i++) this.pendingLootItems.add(ItemStack.of(lootItemsTag.getCompound(i)));
         }
         if (tag.contains("SpawnEntity")) {
-            ResourceLocation entityLocation = ResourceLocation.parse(tag.getString("SpawnEntity"));
-            this.spawnEntity = ForgeRegistries.ENTITY_TYPES.getValue(entityLocation);
+            try {
+                ResourceLocation entityLocation = ResourceLocation.parse(tag.getString("SpawnEntity"));
+                this.spawnEntity = ForgeRegistries.ENTITY_TYPES.getValue(entityLocation);
+            } catch (Exception ignored) {
+                this.spawnEntity = null;
+            }
         } else this.spawnEntity = null;
         if (tag.contains("SpawnedEntities")) {
             this.spawnedEntities.clear();
@@ -239,6 +244,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             }
         }
         if (level != null && !level.isClientSide() && this.spawnEntity != null) syncToClients();
+        if (tag.contains("VaultTag")) this.vaultTag = tag.getString("VaultTag");
     }
 
     // Uloží data do NBT při ukládání světa
@@ -276,6 +282,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         CompoundTag playersTag = new CompoundTag();
         for (UUID uuid : this.detectedPlayers) playersTag.putBoolean(uuid.toString(), true);
         tag.put("DetectedPlayers", playersTag);
+        tag.putString("VaultTag", vaultTag);
     }
 
     // Nastaví čas cooldownu
@@ -304,6 +311,21 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         setChanged();
         syncToClients();
     }
+
+    // Nastaví vlastní normal loot table (z ItemStack tagu při položení)
+    public void setNormalLootTable(String lootTable) {
+        if (lootTable != null) this.normalLootTable = lootTable;
+        setChanged();
+    }
+
+    // Nastaví vlastní ominous loot table (z ItemStack tagu při položení)
+    public void setOminousLootTable(String lootTable) {
+        if (lootTable != null) this.ominousLootTable = lootTable;
+        setChanged();
+    }
+
+    public String getVaultTag() { return vaultTag; }
+    public void setVaultTag(String tag) { this.vaultTag = tag == null ? "" : tag; setChanged(); }
 
     // Synchronizuje data s klienty
     private void syncToClients() {
@@ -522,9 +544,14 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (isOminousBlock) this.shouldResetOminousOnCooldownEnd = true;
 
         String lootTableId = isOminousBlock ? ominousLootTable : normalLootTable;
-        ResourceLocation lootTableLocation = ResourceLocation.parse(lootTableId);
-        LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
-        if (lootTable == LootTable.EMPTY) {
+        ResourceLocation lootTableLocation;
+        LootTable lootTable;
+        try {
+            lootTableLocation = ResourceLocation.parse(lootTableId);
+            lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
+            if (lootTable == LootTable.EMPTY) throw new IllegalArgumentException("empty loot table");
+        } catch (Exception e) {
+            // Fallback to default normal loot table if there is any issue parsing/using the provided table
             lootTableLocation = ResourceLocation.parse(normalLootTable);
             lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
         }

@@ -169,8 +169,16 @@ public class VaultBlock extends BaseEntityBlock {
         if (!(level instanceof ServerLevel serverLevel)) return;
         String lootTableStr = vaultEntity.getLootTable();
         String lootPath = lootTableStr.isEmpty() ? (state.getValue(OMINOUS) ? DEFAULT_LOOT_OMINOUS : DEFAULT_LOOT_NORMAL) : lootTableStr;
-        ResourceLocation lootTableId = ResourceLocation.parse(lootPath);
-        LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+        ResourceLocation lootTableId;
+        LootTable lootTable;
+        try {
+            lootTableId = ResourceLocation.parse(lootPath);
+            lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+        } catch (Exception ex) {
+            // Bad loot path -> fallback to default to avoid crashing on invalid tag input
+            lootTableId = ResourceLocation.parse(state.getValue(OMINOUS) ? DEFAULT_LOOT_OMINOUS : DEFAULT_LOOT_NORMAL);
+            lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+        }
         LootParams params = new LootParams.Builder(serverLevel).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos)).withLuck(0.0f).create(LootContextParamSets.CHEST);
         vaultEntity.setDisplayItems(lootTable.getRandomItems(params));
     }
@@ -273,15 +281,20 @@ public class VaultBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (!level.isClientSide && placer instanceof Player) {
-            CompoundTag tag = stack.getTag();
-            if (tag != null) {
-                BlockEntity blockEntity = level.getBlockEntity(pos);
-                if (blockEntity instanceof VaultBlockEntity vaultEntity) {
-                    if (tag.contains("vault_tag")) vaultEntity.setVaultTag(tag.getString("vault_tag"));
-                    if (tag.contains("loot_table")) vaultEntity.setLootTable(tag.getString("loot_table"));
-                }
-            }
+            if (!level.isClientSide) {
+                CompoundTag tag = stack.getTagElement("BlockEntityTag");
+                if (tag == null) tag = stack.getTag();
+                    if (tag != null) {
+                        BlockEntity blockEntity = level.getBlockEntity(pos);
+                        if (blockEntity instanceof VaultBlockEntity vaultEntity) {
+                            if (tag.contains("vault_tag")) vaultEntity.setVaultTag(tag.getString("vault_tag"));
+                            if (tag.contains("loot_table")) {
+                                // Sanitize / validate loot table string - avoid parse exceptions later
+                                String loot = tag.getString("loot_table");
+                                if (loot != null && !loot.isEmpty()) vaultEntity.setLootTable(loot);
+                            }
+                        }
+                    }
         }
     }
 
