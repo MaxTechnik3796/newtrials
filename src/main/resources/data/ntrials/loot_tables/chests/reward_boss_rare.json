@@ -62,6 +62,20 @@
 					"name":"minecraft:book",
 					"weight":2
 				},
+                {
+                    "type":"minecraft:item",
+                    "functions":[
+                        {
+                            "add":false,
+                            "enchantments":{
+                            "ntrials:wind_burst":1.0
+                        },
+                        "function":"minecraft:set_enchantments"
+                }
+                ],
+                "name":"minecraft:book",
+                "weight":2
+              },
 				{
 					"type":"minecraft:item",
 					"name":"minecraft:diamond_block"
