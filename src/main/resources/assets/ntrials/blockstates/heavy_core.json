@@ -1,7 +1,7 @@
 {
-	"variants":{
-		"":{
-			"model":"ntrials:block/heavy_core"
-		}
-	}
+  "variants": {
+    "": {
+      "model": "ntrials:block/heavy_core"
+    }
+  }
 }

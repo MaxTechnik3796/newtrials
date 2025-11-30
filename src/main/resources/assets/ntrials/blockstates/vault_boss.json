@@ -1,64 +1,64 @@
 {
-	"variants":{
-		"facing=east,vault_state=active":{
-			"model":"ntrials:block/vault_active_boss",
-			"y":90
+	"variants": {
+		"facing=east,vault_state=active": {
+			"model": "ntrials:block/vault_active_boss",
+			"y": 90
 		},
-		"facing=east,vault_state=ejecting":{
-			"model":"ntrials:block/vault_ejecting_reward_boss",
-			"y":90
+		"facing=east,vault_state=ejecting": {
+			"model": "ntrials:block/vault_ejecting_reward_boss",
+			"y": 90
 		},
-		"facing=east,vault_state=inactive":{
-			"model":"ntrials:block/vault_boss",
-			"y":90
+		"facing=east,vault_state=inactive": {
+			"model": "ntrials:block/vault_boss",
+			"y": 90
 		},
-		"facing=east,vault_state=unlocking":{
-			"model":"ntrials:block/vault_unlocking_boss",
-			"y":90
+		"facing=east,vault_state=unlocking": {
+			"model": "ntrials:block/vault_unlocking_boss",
+			"y": 90
 		},
-		"facing=north,vault_state=active":{
-			"model":"ntrials:block/vault_active_boss"
+		"facing=north,vault_state=active": {
+			"model": "ntrials:block/vault_active_boss"
 		},
-		"facing=north,vault_state=ejecting":{
-			"model":"ntrials:block/vault_ejecting_reward_boss"
+		"facing=north,vault_state=ejecting": {
+			"model": "ntrials:block/vault_ejecting_reward_boss"
 		},
-		"facing=north,vault_state=inactive":{
-			"model":"ntrials:block/vault_boss"
+		"facing=north,vault_state=inactive": {
+			"model": "ntrials:block/vault_boss"
 		},
-		"facing=north,vault_state=unlocking":{
-			"model":"ntrials:block/vault_unlocking_boss"
+		"facing=north,vault_state=unlocking": {
+			"model": "ntrials:block/vault_unlocking_boss"
 		},
-		"facing=south,vault_state=active":{
-			"model":"ntrials:block/vault_active_boss",
-			"y":180
+		"facing=south,vault_state=active": {
+			"model": "ntrials:block/vault_active_boss",
+			"y": 180
 		},
-		"facing=south,vault_state=ejecting":{
-			"model":"ntrials:block/vault_ejecting_reward_boss",
-			"y":180
+		"facing=south,vault_state=ejecting": {
+			"model": "ntrials:block/vault_ejecting_reward_boss",
+			"y": 180
 		},
-		"facing=south,vault_state=inactive":{
-			"model":"ntrials:block/vault_boss",
-			"y":180
+		"facing=south,vault_state=inactive": {
+			"model": "ntrials:block/vault_boss",
+			"y": 180
 		},
-		"facing=south,vault_state=unlocking":{
-			"model":"ntrials:block/vault_unlocking_boss",
-			"y":180
+		"facing=south,vault_state=unlocking": {
+			"model": "ntrials:block/vault_unlocking_boss",
+			"y": 180
 		},
-		"facing=west,vault_state=active":{
-			"model":"ntrials:block/vault_active_boss",
-			"y":270
+		"facing=west,vault_state=active": {
+			"model": "ntrials:block/vault_active_boss",
+			"y": 270
 		},
-		"facing=west,vault_state=ejecting":{
-			"model":"ntrials:block/vault_ejecting_reward_boss",
-			"y":270
+		"facing=west,vault_state=ejecting": {
+			"model": "ntrials:block/vault_ejecting_reward_boss",
+			"y": 270
 		},
-		"facing=west,vault_state=inactive":{
-			"model":"ntrials:block/vault_boss",
-			"y":270
+		"facing=west,vault_state=inactive": {
+			"model": "ntrials:block/vault_boss",
+			"y": 270
 		},
-		"facing=west,vault_state=unlocking":{
-			"model":"ntrials:block/vault_unlocking_boss",
-			"y":270
+		"facing=west,vault_state=unlocking": {
+			"model": "ntrials:block/vault_unlocking_boss",
+			"y": 270
 		}
 	}
 }

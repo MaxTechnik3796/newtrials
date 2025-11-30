@@ -1,7 +1,7 @@
 {
-	"variants":{
-		"":{
-			"model":"ntrials:block/exposed_chiseled_copper"
-		}
-	}
+  "variants": {
+    "": {
+      "model": "ntrials:block/exposed_chiseled_copper"
+    }
+  }
 }

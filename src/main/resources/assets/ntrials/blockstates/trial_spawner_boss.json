@@ -1,22 +1,22 @@
 {
-	"variants":{
-		"trial_spawner_state=active":{
-			"model":"ntrials:block/trial_spawner_active_boss"
+	"variants": {
+		"trial_spawner_state=active": {
+			"model": "ntrials:block/trial_spawner_active_boss"
 		},
-		"trial_spawner_state=cooldown":{
-			"model":"ntrials:block/trial_spawner_inactive_boss"
+		"trial_spawner_state=cooldown": {
+			"model": "ntrials:block/trial_spawner_inactive_boss"
 		},
-		"trial_spawner_state=ejecting_reward":{
-			"model":"ntrials:block/trial_spawner_ejecting_reward_boss"
+		"trial_spawner_state=ejecting_reward": {
+			"model": "ntrials:block/trial_spawner_ejecting_reward_boss"
 		},
-		"trial_spawner_state=inactive":{
-			"model":"ntrials:block/trial_spawner_inactive_boss"
+		"trial_spawner_state=inactive": {
+			"model": "ntrials:block/trial_spawner_inactive_boss"
 		},
-		"trial_spawner_state=waiting_for_players":{
-			"model":"ntrials:block/trial_spawner_active_boss"
+		"trial_spawner_state=waiting_for_players": {
+			"model": "ntrials:block/trial_spawner_active_boss"
 		},
-		"trial_spawner_state=waiting_for_reward_ejection":{
-			"model":"ntrials:block/trial_spawner_active_boss"
+		"trial_spawner_state=waiting_for_reward_ejection": {
+			"model": "ntrials:block/trial_spawner_active_boss"
 		}
 	}
 }

@@ -1,8 +1,8 @@
 {
-	"parent":"minecraft:block/slab",
-	"textures":{
-		"bottom":"ntrials:block/polished_tuff",
-		"side":"ntrials:block/polished_tuff",
-		"top":"ntrials:block/polished_tuff"
-	}
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "ntrials:block/polished_tuff",
+    "side": "ntrials:block/polished_tuff",
+    "top": "ntrials:block/polished_tuff"
+  }
 }

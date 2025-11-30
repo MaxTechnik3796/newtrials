@@ -1,8 +1,8 @@
 {
-	"textures":[
-		"ntrials:small_gust_0",
-		"ntrials:small_gust_1",
-		"ntrials:small_gust_2",
-		"ntrials:small_gust_3"
-	]
+  "textures": [
+    "ntrials:small_gust_0",
+    "ntrials:small_gust_1",
+    "ntrials:small_gust_2",
+    "ntrials:small_gust_3"
+  ]
 }

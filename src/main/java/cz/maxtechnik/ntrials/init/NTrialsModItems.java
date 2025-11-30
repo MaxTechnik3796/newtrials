@@ -9,80 +9,99 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
 public class NTrialsModItems{
-	public static final DeferredRegister<Item> REGISTRY=DeferredRegister.create(ForgeRegistries.ITEMS,NTrialsMod.MODID);
-	public static final RegistryObject<Item> BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BOGGED,-16738048,-9200555,new Item.Properties()));
-	public static final RegistryObject<Item> BREEZE_SPAWN_EGG=REGISTRY.register("breeze_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE,-1,-1,new Item.Properties()));
-	public static final RegistryObject<Item> BREEZE_BOSS_SPAWN_EGG=REGISTRY.register("breeze_boss_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE_BOSS,-1,-1,new Item.Properties()));
-	public static final RegistryObject<Item> HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
-	public static final RegistryObject<Item> TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
-	public static final RegistryObject<Item> TRIAL_SPAWNER_BOSS=block(NTrialsModBlocks.TRIAL_SPAWNER_BOSS);
-	public static final RegistryObject<Item> VAULT=block(NTrialsModBlocks.VAULT);
-	public static final RegistryObject<Item> VAULT_BOSS=block(NTrialsModBlocks.VAULT_BOSS);
-	public static final RegistryObject<Item> TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
-	public static final RegistryObject<Item> OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
-	public static final RegistryObject<Item> BOSS_TRIAL_KEY=REGISTRY.register("boss_trial_key",BasicItem::new);
-	public static final RegistryObject<Item> WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
-	public static final RegistryObject<Item> MACE=REGISTRY.register("mace",MaceItem::new);
-	public static final RegistryObject<Item> BREEZE_ROD=REGISTRY.register("breeze_rod",BasicItem::new);
-	public static final RegistryObject<Item> MACE_HANDLE=REGISTRY.register("mace_handle",BasicItem::new);
-	public static final RegistryObject<Item> OMINOUS_BOTTLE=REGISTRY.register("ominous_bottle",OminousBottleItem::new);
-	public static final RegistryObject<Item> COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",CopperUpgradeSmithingTemplateItem::new);
-	public static final RegistryObject<Item> TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
-	public static final RegistryObject<Item> CHISELED_TUFF=block(NTrialsModBlocks.CHISELED_TUFF);
-	public static final RegistryObject<Item> CHISELED_TUFF_BRICKS=block(NTrialsModBlocks.CHISELED_TUFF_BRICKS);
-	public static final RegistryObject<Item> POLISHED_TUFF=block(NTrialsModBlocks.POLISHED_TUFF);
-	public static final RegistryObject<Item> TUFF_STAIRS=block(NTrialsModBlocks.TUFF_STAIRS);
-	public static final RegistryObject<Item> TUFF_BRICK_STAIRS=block(NTrialsModBlocks.TUFF_BRICK_STAIRS);
-	public static final RegistryObject<Item> POLISHED_TUFF_STAIRS=block(NTrialsModBlocks.POLISHED_TUFF_STAIRS);
-	public static final RegistryObject<Item> TUFF_SLAB=block(NTrialsModBlocks.TUFF_SLAB);
-	public static final RegistryObject<Item> TUFF_BRICK_SLAB=block(NTrialsModBlocks.TUFF_BRICK_SLAB);
-	public static final RegistryObject<Item> POLISHED_TUFF_SLAB=block(NTrialsModBlocks.POLISHED_TUFF_SLAB);
-	public static final RegistryObject<Item> TUFF_WALL=block(NTrialsModBlocks.TUFF_WALL);
-	public static final RegistryObject<Item> TUFF_BRICK_WALL=block(NTrialsModBlocks.TUFF_BRICK_WALL);
-	public static final RegistryObject<Item> POLISHED_TUFF_WALL=block(NTrialsModBlocks.POLISHED_TUFF_WALL);
-	public static final RegistryObject<Item> CHISELED_COPPER=block(NTrialsModBlocks.CHISELED_COPPER);
-	public static final RegistryObject<Item> EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.EXPOSED_CHISELED_COPPER);
-	public static final RegistryObject<Item> WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WEATHERED_CHISELED_COPPER);
-	public static final RegistryObject<Item> OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER);
-	public static final RegistryObject<Item> WAXED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_CHISELED_COPPER);
-	public static final RegistryObject<Item> WAXED_EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER);
-	public static final RegistryObject<Item> WAXED_WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER);
-	public static final RegistryObject<Item> WAXED_OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER);
-	public static final RegistryObject<Item> COPPER_DOOR=block(NTrialsModBlocks.COPPER_DOOR);
-	public static final RegistryObject<Item> EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.EXPOSED_COPPER_DOOR);
-	public static final RegistryObject<Item> WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WEATHERED_COPPER_DOOR);
-	public static final RegistryObject<Item> OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_DOOR);
-	public static final RegistryObject<Item> WAXED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_COPPER_DOOR);
-	public static final RegistryObject<Item> WAXED_EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR);
-	public static final RegistryObject<Item> WAXED_WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR);
-	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR);
-	public static final RegistryObject<Item> COPPER_TRAPDOOR=block(NTrialsModBlocks.COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> EXPOSED_COPPER_TRAPDOOR=block(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> WEATHERED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> OXIDIZED_COPPER_TRAPDOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> WAXED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> WAXED_EXPOSED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> WAXED_WEATHERED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_TRAPDOOR);
-	public static final RegistryObject<Item> COPPER_GRATE=block(NTrialsModBlocks.COPPER_GRATE);
-	public static final RegistryObject<Item> EXPOSED_COPPER_GRATE=block(NTrialsModBlocks.EXPOSED_COPPER_GRATE);
-	public static final RegistryObject<Item> WEATHERED_COPPER_GRATE=block(NTrialsModBlocks.WEATHERED_COPPER_GRATE);
-	public static final RegistryObject<Item> OXIDIZED_COPPER_GRATE=block(NTrialsModBlocks.OXIDIZED_COPPER_GRATE);
-	public static final RegistryObject<Item> WAXED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_COPPER_GRATE);
-	public static final RegistryObject<Item> WAXED_EXPOSED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_GRATE);
-	public static final RegistryObject<Item> WAXED_WEATHERED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_GRATE);
-	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_GRATE);
-	public static final RegistryObject<Item> COPPER_BULB=block(NTrialsModBlocks.COPPER_BULB);
-	public static final RegistryObject<Item> EXPOSED_COPPER_BULB=block(NTrialsModBlocks.EXPOSED_COPPER_BULB);
-	public static final RegistryObject<Item> WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WEATHERED_COPPER_BULB);
-	public static final RegistryObject<Item> OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.OXIDIZED_COPPER_BULB);
-	public static final RegistryObject<Item> WAXED_COPPER_BULB=block(NTrialsModBlocks.WAXED_COPPER_BULB);
-	public static final RegistryObject<Item> WAXED_EXPOSED_COPPER_BULB=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_BULB);
-	public static final RegistryObject<Item> WAXED_WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_BULB);
-	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_BULB);
-	private static RegistryObject<Item> block(RegistryObject<Block> block){
-		assert block.getId()!=null;
-		return REGISTRY.register(block.getId().getPath(),()->new BlockItem(block.get(),new Item.Properties()));
-	}
+    public static final DeferredRegister<Item>REGISTRY=DeferredRegister.create(ForgeRegistries.ITEMS,NTrialsMod.MODID);
+
+    public static final RegistryObject<Item>BOGGED_SPAWN_EGG=REGISTRY.register("bogged_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BOGGED,-16738048,-9200555,new Item.Properties()));
+    public static final RegistryObject<Item>BREEZE_SPAWN_EGG=REGISTRY.register("breeze_spawn_egg",()->new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE,-1,-1,new Item.Properties()));
+	public static final RegistryObject<Item>BREEZE_BOSS_SPAWN_EGG=REGISTRY.register("breeze_boss_spawn_egg", () -> new ForgeSpawnEggItem(NTrialsModEntityTypes.BREEZE_BOSS,-1,-1,new Item.Properties()));
+
+
+    public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
+    public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
+	public static final RegistryObject<Item>TRIAL_SPAWNER_BOSS=block(NTrialsModBlocks.TRIAL_SPAWNER_BOSS);
+    public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
+	public static final RegistryObject<Item>VAULT_BOSS=block(NTrialsModBlocks.VAULT_BOSS);
+
+    public static final RegistryObject<Item>TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
+    public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);
+	public static final RegistryObject<Item>BOSS_TRIAL_KEY=REGISTRY.register("boss_trial_key",BasicItem::new);
+    public static final RegistryObject<Item>WIND_CHARGE=REGISTRY.register("wind_charge",WindChargeItem::new);
+    public static final RegistryObject<Item>MACE=REGISTRY.register("mace",MaceItem::new);
+    public static final RegistryObject<Item>BREEZE_ROD=REGISTRY.register("breeze_rod",BasicItem::new);
+    public static final RegistryObject<Item>MACE_HANDLE=REGISTRY.register("mace_handle",BasicItem::new);
+    public static final RegistryObject<Item>OMINOUS_BOTTLE=REGISTRY.register("ominous_bottle",OminousBottleItem::new);
+    public static final RegistryObject<Item>COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",CopperUpgradeSmithingTemplateItem::new);
+
+
+    public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
+    public static final RegistryObject<Item>CHISELED_TUFF=block(NTrialsModBlocks.CHISELED_TUFF);
+    public static final RegistryObject<Item>CHISELED_TUFF_BRICKS=block(NTrialsModBlocks.CHISELED_TUFF_BRICKS);
+    public static final RegistryObject<Item>POLISHED_TUFF=block(NTrialsModBlocks.POLISHED_TUFF);
+
+    public static final RegistryObject<Item>TUFF_STAIRS=block(NTrialsModBlocks.TUFF_STAIRS);
+    public static final RegistryObject<Item>TUFF_BRICK_STAIRS=block(NTrialsModBlocks.TUFF_BRICK_STAIRS);
+    public static final RegistryObject<Item>POLISHED_TUFF_STAIRS=block(NTrialsModBlocks.POLISHED_TUFF_STAIRS);
+
+    public static final RegistryObject<Item>TUFF_SLAB=block(NTrialsModBlocks.TUFF_SLAB);
+    public static final RegistryObject<Item>TUFF_BRICK_SLAB=block(NTrialsModBlocks.TUFF_BRICK_SLAB);
+    public static final RegistryObject<Item>POLISHED_TUFF_SLAB=block(NTrialsModBlocks.POLISHED_TUFF_SLAB);
+
+    public static final RegistryObject<Item>TUFF_WALL=block(NTrialsModBlocks.TUFF_WALL);
+    public static final RegistryObject<Item>TUFF_BRICK_WALL=block(NTrialsModBlocks.TUFF_BRICK_WALL);
+    public static final RegistryObject<Item>POLISHED_TUFF_WALL=block(NTrialsModBlocks.POLISHED_TUFF_WALL);
+
+
+
+    public static final RegistryObject<Item>CHISELED_COPPER=block(NTrialsModBlocks.CHISELED_COPPER);
+    public static final RegistryObject<Item>EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.EXPOSED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WEATHERED_CHISELED_COPPER);
+    public static final RegistryObject<Item>OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.OXIDIZED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_EXPOSED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_EXPOSED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_WEATHERED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_WEATHERED_CHISELED_COPPER);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_CHISELED_COPPER=block(NTrialsModBlocks.WAXED_OXIDIZED_CHISELED_COPPER);
+
+    public static final RegistryObject<Item>COPPER_DOOR=block(NTrialsModBlocks.COPPER_DOOR);
+    public static final RegistryObject<Item>EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.EXPOSED_COPPER_DOOR);
+    public static final RegistryObject<Item>WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WEATHERED_COPPER_DOOR);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_DOOR);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_DOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_DOOR);
+
+    public static final RegistryObject<Item>COPPER_TRAPDOOR=block(NTrialsModBlocks.COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>EXPOSED_COPPER_TRAPDOOR=block(NTrialsModBlocks.EXPOSED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WEATHERED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WEATHERED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_TRAPDOOR=block(NTrialsModBlocks.OXIDIZED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_TRAPDOOR);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_TRAPDOOR=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_TRAPDOOR);
+
+    public static final RegistryObject<Item>COPPER_GRATE=block(NTrialsModBlocks.COPPER_GRATE);
+    public static final RegistryObject<Item>EXPOSED_COPPER_GRATE=block(NTrialsModBlocks.EXPOSED_COPPER_GRATE);
+    public static final RegistryObject<Item>WEATHERED_COPPER_GRATE=block(NTrialsModBlocks.WEATHERED_COPPER_GRATE);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_GRATE=block(NTrialsModBlocks.OXIDIZED_COPPER_GRATE);
+    public static final RegistryObject<Item>WAXED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_COPPER_GRATE);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_GRATE);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_GRATE);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_GRATE=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_GRATE);
+
+    public static final RegistryObject<Item>COPPER_BULB=block(NTrialsModBlocks.COPPER_BULB);
+    public static final RegistryObject<Item>EXPOSED_COPPER_BULB=block(NTrialsModBlocks.EXPOSED_COPPER_BULB);
+    public static final RegistryObject<Item>WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WEATHERED_COPPER_BULB);
+    public static final RegistryObject<Item>OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.OXIDIZED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_COPPER_BULB=block(NTrialsModBlocks.WAXED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_EXPOSED_COPPER_BULB=block(NTrialsModBlocks.WAXED_EXPOSED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_WEATHERED_COPPER_BULB=block(NTrialsModBlocks.WAXED_WEATHERED_COPPER_BULB);
+    public static final RegistryObject<Item>WAXED_OXIDIZED_COPPER_BULB=block(NTrialsModBlocks.WAXED_OXIDIZED_COPPER_BULB);
+
+    private static RegistryObject<Item>block(RegistryObject<Block>block){
+        assert block.getId()!=null;
+        return REGISTRY.register(block.getId().getPath(),()->new BlockItem(block.get(),new Item.Properties()));
+    }
+
 }

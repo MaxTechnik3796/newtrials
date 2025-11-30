@@ -1,6 +1,6 @@
 {
-	"parent":"minecraft:block/template_wall_side_tall",
-	"textures":{
-		"wall":"ntrials:block/polished_tuff"
-	}
+  "parent": "minecraft:block/template_wall_side_tall",
+  "textures": {
+    "wall": "ntrials:block/polished_tuff"
+  }
 }

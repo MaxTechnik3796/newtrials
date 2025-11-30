@@ -1,6 +1,6 @@
 {
-	"parent":"minecraft:block/cube_all",
-	"textures":{
-		"all":"ntrials:block/tuff_bricks"
-	}
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "ntrials:block/tuff_bricks"
+  }
 }

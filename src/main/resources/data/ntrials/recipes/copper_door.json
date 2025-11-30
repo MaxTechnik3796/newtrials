@@ -1,18 +1,18 @@
 {
-	"type":"minecraft:crafting_shaped",
-	"category":"redstone",
-	"key":{
-		"#":{
-			"item":"minecraft:copper_ingot"
-		}
-	},
-	"pattern":[
-		"##",
-		"##",
-		"##"
-	],
-	"result":{
-		"count":3,
-		"item":"ntrials:copper_door"
-	}
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "pattern": [
+    "##",
+    "##",
+    "##"
+  ],
+  "result": {
+    "count": 3,
+    "item": "ntrials:copper_door"
+  }
 }

@@ -1,6 +1,6 @@
 {
-	"parent":"minecraft:block/wall_inventory",
-	"textures":{
-		"wall":"ntrials:block/polished_tuff"
-	}
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "ntrials:block/polished_tuff"
+  }
 }

@@ -1,9 +1,9 @@
 {
-	"parent":"ntrials:block/template_vault",
-	"textures":{
-		"bottom":"ntrials:block/vault_bottom_boss",
-		"front":"ntrials:block/vault_front_off_boss",
-		"side":"ntrials:block/vault_side_off_boss",
-		"top":"ntrials:block/vault_top_boss"
-	}
+  "parent": "ntrials:block/template_vault",
+  "textures": {
+    "bottom": "ntrials:block/vault_bottom_boss",
+    "front": "ntrials:block/vault_front_off_boss",
+    "side": "ntrials:block/vault_side_off_boss",
+    "top": "ntrials:block/vault_top_boss"
+  }
 }

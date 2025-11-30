@@ -1,10 +1,10 @@
 {
-	"textures":[
-		"ntrials:gust_0",
-		"ntrials:gust_1",
-		"ntrials:gust_2",
-		"ntrials:gust_3",
-		"ntrials:gust_4",
-		"ntrials:gust_5"
-	]
+  "textures": [
+    "ntrials:gust_0",
+    "ntrials:gust_1",
+    "ntrials:gust_2",
+    "ntrials:gust_3",
+    "ntrials:gust_4",
+    "ntrials:gust_5"
+  ]
 }

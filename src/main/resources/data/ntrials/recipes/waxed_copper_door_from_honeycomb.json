@@ -1,17 +1,17 @@
 {
-	"type":"minecraft:crafting_shapeless",
-	"category":"building",
-	"group":"waxed_copper_door",
-	"ingredients":[
-		{
-			"item":"ntrials:copper_door"
-		},
-		{
-			"item":"minecraft:honeycomb"
-		}
-	],
-	"result":{
-		"count":1,
-		"item":"ntrials:waxed_copper_door"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "waxed_copper_door",
+  "ingredients": [
+    {
+      "item": "ntrials:copper_door"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "ntrials:waxed_copper_door"
+  }
 }

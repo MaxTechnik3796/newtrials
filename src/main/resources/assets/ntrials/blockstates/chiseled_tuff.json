@@ -1,7 +1,7 @@
 {
-	"variants":{
-		"":{
-			"model":"ntrials:block/chiseled_tuff"
-		}
-	}
+  "variants": {
+    "": {
+      "model": "ntrials:block/chiseled_tuff"
+    }
+  }
 }

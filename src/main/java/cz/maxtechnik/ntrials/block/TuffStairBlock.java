@@ -10,16 +10,16 @@ import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class TuffStairBlock extends StairBlock{
-	@SuppressWarnings("deprecation")
-	public TuffStairBlock(){
-		super(Blocks.AIR.defaultBlockState(),Properties.of().sound(SoundType.TUFF).strength(1.5f,6).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
-	}
-	@Override
-	public float getExplosionResistance(){
-		return 6f;
-	}
-	@Override
-	public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
-		return 0;
-	}
+    @SuppressWarnings("deprecation")
+    public TuffStairBlock(){
+        super(Blocks.AIR.defaultBlockState(),Properties.of().sound(SoundType.TUFF).strength(1.5f,6).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
+    }
+    @Override
+    public float getExplosionResistance(){
+        return 6f;
+    }
+    @Override
+    public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
+        return 0;
+    }
 }

@@ -1,19 +1,19 @@
 {
-	"type":"minecraft:crafting_shaped",
-	"key":{
-		"#":{
-			"item":"ntrials:mace_handle"
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"#": {
+			"item": "ntrials:mace_handle"
 		},
-		"*":{
-			"item":"ntrials:heavy_core"
+		"*": {
+			"item": "ntrials:heavy_core"
 		}
 	},
-	"pattern":[
+	"pattern": [
 		"*",
 		"#"
 	],
-	"result":{
-		"count":1,
-		"item":"ntrials:mace"
+	"result": {
+		"count": 1,
+		"item": "ntrials:mace"
 	}
 }

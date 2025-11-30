@@ -14,35 +14,39 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.api.distmarker.Dist;
-public class ClientSetup{
-	@Mod.EventBusSubscriber(modid="ntrials", bus=Mod.EventBusSubscriber.Bus.MOD, value=Dist.CLIENT)
-	public static class ClientEvents{
-		@SubscribeEvent
-		public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event){
-			event.registerBlockEntityRenderer(
-					NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
-					context1->new VaultBlockEntityRenderer()
-			);
-			event.registerBlockEntityRenderer(
-					NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(),
-					context->new TrialSpawnerBlockEntityRenderer()
-			);
-			event.registerBlockEntityRenderer(
-					NTrialsModBlockEntities.TRIAL_SPAWNER_BOSS_BLOCK_ENTITY.get(),
-					context->new TrialSpawnerBossBlockEntityRenderer()
-			);
-		}
-		@SubscribeEvent
-		public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event){
-			event.registerEntityRenderer(
-					NTrialsModEntityTypes.WIND_CHARGE_PROJECTILE.get(),
-					WindChargeProjectileRenderer::new
-			);
-		}
-		@SubscribeEvent
-		public static void registerParticleProviders(RegisterParticleProvidersEvent event){
-			event.registerSpriteSet(NTrialsModParticles.GUST.get(),GustParticle.Provider::new);
-			event.registerSpriteSet(NTrialsModParticles.SMALL_GUST.get(),SmallGustParticle.Provider::new);
-		}
-	}
+
+public class ClientSetup {
+
+    @Mod.EventBusSubscriber(modid = "ntrials", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientEvents {
+        @SubscribeEvent
+        public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(
+                NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
+                    context1 -> new VaultBlockEntityRenderer()
+            );
+            event.registerBlockEntityRenderer(
+                NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(),
+                    context -> new TrialSpawnerBlockEntityRenderer()
+            );
+            event.registerBlockEntityRenderer(
+                NTrialsModBlockEntities.TRIAL_SPAWNER_BOSS_BLOCK_ENTITY.get(),
+                    context -> new TrialSpawnerBossBlockEntityRenderer()
+            );
+        }
+
+        @SubscribeEvent
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(
+                NTrialsModEntityTypes.WIND_CHARGE_PROJECTILE.get(),
+                WindChargeProjectileRenderer::new
+            );
+        }
+
+        @SubscribeEvent
+        public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(NTrialsModParticles.GUST.get(), GustParticle.Provider::new);
+            event.registerSpriteSet(NTrialsModParticles.SMALL_GUST.get(), SmallGustParticle.Provider::new);
+        }
+    }
 }

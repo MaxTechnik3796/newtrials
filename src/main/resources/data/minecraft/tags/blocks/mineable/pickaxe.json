@@ -1,6 +1,6 @@
 {
-	"replace":false,
-	"values":[
+	"replace": false,
+	"values": [
 		"ntrials:heavy_core",
 		"ntrials:chiseled_copper",
 		"ntrials:exposed_chiseled_copper",
@@ -56,5 +56,5 @@
 		"ntrials:waxed_exposed_copper_bulb",
 		"ntrials:waxed_weathered_copper_bulb",
 		"ntrials:waxed_oxidized_copper_bulb"
-	]
+  ]
 }

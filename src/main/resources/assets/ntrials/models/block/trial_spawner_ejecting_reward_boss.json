@@ -1,9 +1,9 @@
 {
-	"parent":"ntrials:block/cube_bottom_top_inner_faces",
-	"textures":{
-		"bottom":"ntrials:block/trial_spawner_bottom",
-		"side":"ntrials:block/trial_spawner_side_active_boss",
-		"top":"ntrials:block/trial_spawner_top_ejecting_reward_boss",
-		"particle":"ntrials:block/trial_spawner_bottom"
-	}
+  "parent": "ntrials:block/cube_bottom_top_inner_faces",
+  "textures": {
+    "bottom": "ntrials:block/trial_spawner_bottom",
+    "side": "ntrials:block/trial_spawner_side_active_boss",
+    "top": "ntrials:block/trial_spawner_top_ejecting_reward_boss",
+    "particle":"ntrials:block/trial_spawner_bottom"
+  }
 }
