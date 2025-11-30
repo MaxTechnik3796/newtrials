@@ -12,6 +12,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffects; // Nový import pro efekty
+import net.minecraft.world.effect.MobEffectInstance; // Nový import pro instance efektů
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +33,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     private static final int LOOT_DROP_INTERVAL = 10;
     private static final int COMPLETE_TRIAL_DELAY = 20;
     private static final int BASE_BOSS_HP = 120;
-    private static final double HP_MULTIPLIER_PER_PLAYER = 1.4;
+    private static final double HP_MULTIPLIER_PER_PLAYER = 1.5;
     private static final int MAX_COOLDOWN_TICKS = 30 * 60 * 20; // 30 minut
 
     private boolean isActivated = false;
@@ -52,7 +54,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     private transient boolean wasActivated = false;
 
     private final Set<UUID> playersWhoReceivedReward = new HashSet<>();
-    private int cooldownTimer = 0; // Pole pro odpočet cooldownu
+    private int cooldownTimer = 0; // Odpočet cooldownu
 
     public TrialSpawnerBossBlockEntity(BlockPos pos, BlockState blockState) {
         super(NTrialsModBlockEntities.TRIAL_SPAWNER_BOSS_BLOCK_ENTITY.get(), pos, blockState);
@@ -62,7 +64,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     public void addPlayerWhoReceivedReward(UUID playerUuid) { playersWhoReceivedReward.add(playerUuid); setChanged(); }
     public int getCooldownTimer() { return cooldownTimer; }
 
-    // Hlavní tick metoda - spravuje spawn, loot a boss
+    // Hlavní tick metoda
     public void tick() {
         if (level == null || level.isClientSide) return;
 
@@ -70,11 +72,10 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (cooldownTimer > 0) {
             if (--cooldownTimer == 0) {
                 // Cooldown skončil
-                // POZOR: Seznam playersWhoReceivedReward se NEMAŽE, aby aktivaci mohli jen noví hráči!
                 level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_VAULT_DEACTIVATE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             }
             if (level.getGameTime() % 20 == 0) updateBlockState();
-            return; // Spawner je v cooldownu, nic jiného nedělá
+            return; // Spawner je v cooldownu
         }
 
         if (level.getGameTime() % 40 == 0) {
@@ -94,7 +95,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (level.getGameTime() % 20 == 0) updateBlockState();
     }
 
-    // Aktualizuje seznam hráčů v dosahu
+    // Aktualizuje hráče v dosahu
     private void updatePlayersInRange() {
         if (level == null) return;
         double range = 20.0;
@@ -104,7 +105,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         for (Player player : level.getEntitiesOfClass(Player.class, searchArea)) nearbyPlayers.add(player.getUUID());
     }
 
-    // Kontroluje aktivaci podle blízkosti hráčů
+    // Kontroluje aktivaci blízkostí hráčů
     private void checkAndActivateByProximity() {
         if (level == null || level.isClientSide) return;
         double range = 8.0;
@@ -129,7 +130,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         }
     }
 
-    // Aktivuje spawner pomocí klíče
+    // Aktivace klíčem
     public void activateWithKey() {
         if (!isKeyActivated && level != null && !level.isClientSide && isActivated) {
             isKeyActivated = true;
@@ -146,7 +147,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         }
     }
 
-    // Spawnuje částice při aktivaci klíčem
+    // Spawnuje částice aktivace klíčem
     private void spawnKeyActivationParticles() {
         if (level == null || level.isClientSide || !(level instanceof ServerLevel serverLevel)) return;
         BlockPos center = getBlockPos();
@@ -160,10 +161,11 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         }
     }
 
-    // Spawnuje breeze bossa
+    // Spawnuje bossa
     private void spawnBreezeBoss() {
         if (level == null || level.isClientSide) return;
         int playerCount = participatingPlayers.size();
+        // Upraví HP podle počtu hráčů
         bossHP = BASE_BOSS_HP;
         for (int i = 1; i < playerCount; i++) bossHP = (int) (bossHP * HP_MULTIPLIER_PER_PLAYER);
 
@@ -176,6 +178,11 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
                 healthAttribute.setBaseValue(bossHP);
                 boss.setHealth(boss.getMaxHealth());
             }
+
+            // Přidá trvalé efekty: Regenerace I a Rezistence I (999999 ticks = "navždy")
+            boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 999999, 0, false, false));
+            boss.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0, false, false));
+            boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 999999, 0, false, false));
             if (level instanceof ServerLevel serverLevel) {
                 @SuppressWarnings({"deprecation", "unused"})
                 var ignored = boss.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
@@ -218,7 +225,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    // Vygeneruje loot podle počtu hráčů
+    // Vygeneruje loot podle hráčů
     private void generateLootReward() {
         if (level == null || level.isClientSide) return;
         List<ItemStack> lootItems = new ArrayList<>();
@@ -235,7 +242,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (!lootItems.isEmpty()) startLootAnimation(lootItems);
     }
 
-    // Spustí animaci vypadávání lootu
+    // Spustí animaci lootu
     private void startLootAnimation(List<ItemStack> lootItems) {
         this.isLootAnimating = true;
         this.lootAnimationTick = 0;
@@ -249,7 +256,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         }
     }
 
-    // Tick animace lootu - vypadává postupně
+    // Tick animace lootu
     private void tickLootAnimation() {
         if (!isLootAnimating || pendingLootItems.isEmpty()) { stopLootAnimation(); return; }
         lootAnimationTick++;
@@ -257,7 +264,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (currentLootDropIndex >= pendingLootItems.size()) stopLootAnimation();
     }
 
-    // Vypustí další item z lootu
+    // Vypustí další item
     private void dropNextLootItem() {
         if (level == null || level.isClientSide() || currentLootDropIndex >= pendingLootItems.size()) return;
         ItemStack itemToDrop = pendingLootItems.get(currentLootDropIndex);
@@ -280,7 +287,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         this.currentLootDropIndex = 0;
         this.pendingLootItems.clear();
 
-        // Reset spawneru a spuštění cooldownu
+        // Reset a cooldown
         this.isKeyActivated = false;
         this.spawnTimer = -1;
         this.spawnedBossUUID = null;
@@ -295,7 +302,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         }
     }
 
-    // Aktualizuje stav bloku podle aktuálního stavu
+    // Aktualizuje stav bloku
     private void updateBlockState() {
         if (level == null || level.isClientSide()) return;
         BlockState currentState = level.getBlockState(getBlockPos());
@@ -311,7 +318,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     private TrialSpawnerBlock.@NotNull TrialSpawnerState getTrialSpawnerState() {
         TrialSpawnerBlock.TrialSpawnerState newState;
 
-        // Cooldown nebo neaktivní stav = INACTIVE (dle požadavku)
+        // Cooldown/Neaktivní = INACTIVE
         if (this.cooldownTimer > 0) {
             newState = TrialSpawnerBlock.TrialSpawnerState.INACTIVE;
         } else if (this.completeTrialTimer > 0 || this.isLootAnimating || (this.pendingLootItems != null && !this.pendingLootItems.isEmpty())) {
@@ -326,7 +333,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         return newState;
     }
 
-    // Uloží data do NBT
+    // Uloží NBT
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
@@ -338,7 +345,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         tag.putBoolean("IsLootAnimating", isLootAnimating);
         tag.putInt("LootAnimationTick", lootAnimationTick);
         tag.putInt("CurrentLootDropIndex", currentLootDropIndex);
-        tag.putInt("CooldownTimer", cooldownTimer); // Uložení cooldownu
+        tag.putInt("CooldownTimer", cooldownTimer);
         if (spawnedBossUUID != null) tag.putUUID("SpawnedBossUUID", spawnedBossUUID);
         net.minecraft.nbt.ListTag lootItemsTag = new net.minecraft.nbt.ListTag();
         for (ItemStack item : pendingLootItems) {
@@ -357,7 +364,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         tag.put("PlayersWhoReceivedReward", playersTag);
     }
 
-    // Načte data z NBT
+    // Načte NBT
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
@@ -369,7 +376,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         isLootAnimating = tag.getBoolean("IsLootAnimating");
         lootAnimationTick = tag.getInt("LootAnimationTick");
         currentLootDropIndex = tag.getInt("CurrentLootDropIndex");
-        this.cooldownTimer = tag.getInt("CooldownTimer"); // Načtení cooldownu
+        this.cooldownTimer = tag.getInt("CooldownTimer");
         if (tag.hasUUID("SpawnedBossUUID")) spawnedBossUUID = tag.getUUID("SpawnedBossUUID");
         this.pendingLootItems.clear();
         net.minecraft.nbt.ListTag lootItemsTag = tag.getList("PendingLootItems", 10);
@@ -391,7 +398,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     public boolean isActivated() { return isActivated; }
     public boolean isKeyActivated() { return isKeyActivated; }
 
-    // Client-side tick - zpracovává částice
+    // Client-side tick
     public void clientTick() {
         this.clientTickCount++;
         if (level == null || !level.isClientSide) return;
