@@ -323,8 +323,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (lootTable != null) this.ominousLootTable = lootTable;
         setChanged();
     }
-
-    public String getVaultTag() { return vaultTag; }
     public void setVaultTag(String tag) { this.vaultTag = tag == null ? "" : tag; setChanged(); }
 
     // Synchronizuje data s klienty
