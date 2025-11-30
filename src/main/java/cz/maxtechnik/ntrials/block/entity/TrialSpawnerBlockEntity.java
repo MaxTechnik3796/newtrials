@@ -410,7 +410,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     // Scaling Logic (20 blocks range)
     private void updateMobCountBasedOnPlayers() {
         if (level == null || level.isClientSide()) return;
-        double scanRange = 20.0; // Scaling detection range
+        double scanRange = 28.0; // Scaling detection range
         net.minecraft.world.phys.AABB scanArea = new net.minecraft.world.phys.AABB(
                 getBlockPos().getX() - scanRange, getBlockPos().getY() - scanRange, getBlockPos().getZ() - scanRange,
                 getBlockPos().getX() + scanRange, getBlockPos().getY() + scanRange, getBlockPos().getZ() + scanRange
