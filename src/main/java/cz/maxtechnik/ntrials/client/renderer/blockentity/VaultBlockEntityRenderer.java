@@ -14,59 +14,42 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
-public class VaultBlockEntityRenderer implements BlockEntityRenderer<VaultBlockEntity> {
-
-    public VaultBlockEntityRenderer() {
-    }
-
-    @Override
-    public void render(VaultBlockEntity vaultEntity, float partialTick, @NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-
-        Level level = vaultEntity.getLevel();
-        if (level == null) {
-            return;
-        }
-
-        // Zobrazuje itemy pouze pokud je vault ACTIVE
-        VaultBlock.VaultState state = vaultEntity.getBlockState().getValue(VaultBlock.STATE);
-
-        if (state != VaultBlock.VaultState.ACTIVE || !vaultEntity.hasDisplayItems()) {
-            return;
-        }
-
-        ItemStack currentItem = vaultEntity.getCurrentDisplayItem();
-        if (currentItem.isEmpty()) {
-            return;
-        }
-
-        poseStack.pushPose();
-
-        // posicion offset from block (in this case default is center)
-        poseStack.translate(0.5, 0.5, 0.5); // Zvýšil z 0.7 na 1.5
-
-        // Rotace kolem Y osy (vertikální rotace)
-        float rotation = vaultEntity.getItemRotation() + partialTick * 2.0f;
-        poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
-
-        // Mírné pohupování nahoru a dolů
-        float time = (level.getGameTime() + partialTick) * 0.1f;
-        float bobbing = (float) Math.sin(time) * 0.1f; // Zvětšil pohupování
-        poseStack.translate(0, bobbing, 0);
-
-        // percentage scaling
-        poseStack.scale(1.0f, 1.0f, 1.0f);
-
-        // Vykreslení itemu
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        BakedModel model = itemRenderer.getModel(currentItem, level, null, 0);
-
-
-
-        itemRenderer.render(currentItem, ItemDisplayContext.GROUND, false, poseStack,
-                          bufferSource, packedLight, OverlayTexture.NO_OVERLAY, model);
-
-        poseStack.popPose();
-    }
+public class VaultBlockEntityRenderer implements BlockEntityRenderer<VaultBlockEntity>{
+	public VaultBlockEntityRenderer(){
+	}
+	@Override
+	public void render(VaultBlockEntity vaultEntity,float partialTick,@NotNull PoseStack poseStack,
+					   @NotNull MultiBufferSource bufferSource,int packedLight,int packedOverlay){
+		Level level=vaultEntity.getLevel();
+		if(level==null){
+			return;
+		}
+		// Zobrazuje itemy pouze pokud je vault ACTIVE
+		VaultBlock.VaultState state=vaultEntity.getBlockState().getValue(VaultBlock.STATE);
+		if(state!=VaultBlock.VaultState.ACTIVE||!vaultEntity.hasDisplayItems()){
+			return;
+		}
+		ItemStack currentItem=vaultEntity.getCurrentDisplayItem();
+		if(currentItem.isEmpty()){
+			return;
+		}
+		poseStack.pushPose();
+		// posicion offset from block (in this case default is center)
+		poseStack.translate(0.5,0.5,0.5); // Zvýšil z 0.7 na 1.5
+		// Rotace kolem Y osy (vertikální rotace)
+		float rotation=vaultEntity.getItemRotation()+partialTick*2.0f;
+		poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+		// Mírné pohupování nahoru a dolů
+		float time=(level.getGameTime()+partialTick)*0.1f;
+		float bobbing=(float)Math.sin(time)*0.1f; // Zvětšil pohupování
+		poseStack.translate(0,bobbing,0);
+		// percentage scaling
+		poseStack.scale(1.0f,1.0f,1.0f);
+		// Vykreslení itemu
+		ItemRenderer itemRenderer=Minecraft.getInstance().getItemRenderer();
+		BakedModel model=itemRenderer.getModel(currentItem,level,null,0);
+		itemRenderer.render(currentItem,ItemDisplayContext.GROUND,false,poseStack,
+				bufferSource,packedLight,OverlayTexture.NO_OVERLAY,model);
+		poseStack.popPose();
+	}
 }

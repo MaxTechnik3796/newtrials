@@ -1,7 +1,7 @@
 {
-  "variants": {
-    "": {
-      "model": "ntrials:block/polished_tuff"
-    }
-  }
+	"variants":{
+		"":{
+			"model":"ntrials:block/polished_tuff"
+		}
+	}
 }

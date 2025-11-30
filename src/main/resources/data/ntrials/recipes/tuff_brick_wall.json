@@ -1,17 +1,17 @@
 {
-  "type":"minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "#": {
-      "item": "ntrials:tuff_bricks"
-    }
-  },
-  "pattern": [
-    "###",
-    "###"
-  ],
-  "result": {
-    "count": 6,
-    "item": "ntrials:tuff_brick_wall"
-  }
+	"type":"minecraft:crafting_shaped",
+	"category":"misc",
+	"key":{
+		"#":{
+			"item":"ntrials:tuff_bricks"
+		}
+	},
+	"pattern":[
+		"###",
+		"###"
+	],
+	"result":{
+		"count":6,
+		"item":"ntrials:tuff_brick_wall"
+	}
 }

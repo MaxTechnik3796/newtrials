@@ -1,17 +1,17 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "building",
-  "group": "waxed_weathered_copper_bulb",
-  "ingredients": [
-    {
-      "item": "ntrials:weathered_copper_bulb"
-    },
-    {
-      "item": "minecraft:honeycomb"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "item": "ntrials:waxed_weathered_copper_bulb"
-  }
+	"type":"minecraft:crafting_shapeless",
+	"category":"building",
+	"group":"waxed_weathered_copper_bulb",
+	"ingredients":[
+		{
+			"item":"ntrials:weathered_copper_bulb"
+		},
+		{
+			"item":"minecraft:honeycomb"
+		}
+	],
+	"result":{
+		"count":1,
+		"item":"ntrials:waxed_weathered_copper_bulb"
+	}
 }

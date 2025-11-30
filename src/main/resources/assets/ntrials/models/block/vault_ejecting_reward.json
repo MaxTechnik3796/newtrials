@@ -1,9 +1,9 @@
 {
-  "parent": "ntrials:block/template_vault",
-  "textures": {
-    "bottom": "ntrials:block/vault_bottom",
-    "front": "ntrials:block/vault_front_ejecting",
-    "side": "ntrials:block/vault_side_on",
-    "top": "ntrials:block/vault_top_ejecting"
-  }
+	"parent":"ntrials:block/template_vault",
+	"textures":{
+		"bottom":"ntrials:block/vault_bottom",
+		"front":"ntrials:block/vault_front_ejecting",
+		"side":"ntrials:block/vault_side_on",
+		"top":"ntrials:block/vault_top_ejecting"
+	}
 }

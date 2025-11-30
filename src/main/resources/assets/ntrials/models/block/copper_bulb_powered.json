@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "ntrials:block/copper_bulb_powered"
-  }
+	"parent":"minecraft:block/cube_all",
+	"textures":{
+		"all":"ntrials:block/copper_bulb_powered"
+	}
 }

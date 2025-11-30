@@ -1,7 +1,7 @@
 {
-  "variants": {
-    "": {
-      "model": "ntrials:block/tuff_bricks"
-    }
-  }
+	"variants":{
+		"":{
+			"model":"ntrials:block/tuff_bricks"
+		}
+	}
 }

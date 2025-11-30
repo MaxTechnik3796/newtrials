@@ -1,7 +1,7 @@
 {
-  "variants": {
-    "": {
-      "model": "ntrials:block/exposed_copper_grate"
-    }
-  }
+	"variants":{
+		"":{
+			"model":"ntrials:block/exposed_copper_grate"
+		}
+	}
 }

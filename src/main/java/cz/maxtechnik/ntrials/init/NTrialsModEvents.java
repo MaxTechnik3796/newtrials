@@ -23,21 +23,20 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 @Mod.EventBusSubscriber(modid=NTrialsMod.MODID)
 public class NTrialsModEvents{
-    @SubscribeEvent
-    public static void registerTrades(VillagerTradesEvent event){
-        if(event.getType().equals(VillagerProfession.CARTOGRAPHER)){
+	@SubscribeEvent
+	public static void registerTrades(VillagerTradesEvent event){
+		if(event.getType().equals(VillagerProfession.CARTOGRAPHER)){
 			event.getTrades().get(3).add(new TrialsMapTrade(12,12,10));
-        }
-    }
-	public record TrialsMapTrade(int emeraldCost,int maxUses,int villagerXp)implements VillagerTrades.ItemListing{
+		}
+	}
+	public record TrialsMapTrade(int emeraldCost,int maxUses,int villagerXp) implements VillagerTrades.ItemListing{
 		private static final TagKey<Structure> TRIALS_STRUCTURE_TAG=TagKey.create(Registries.STRUCTURE,ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"trials"));
 		@Nullable
 		@Override
 		public MerchantOffer getOffer(Entity trader,@NotNull RandomSource random){
-			if(!(trader.level()instanceof ServerLevel serverLevel))
+			if(!(trader.level() instanceof ServerLevel serverLevel))
 				return null;
 			BlockPos structurePos=serverLevel.findNearestMapStructure(TRIALS_STRUCTURE_TAG,trader.blockPosition(),100,true);
 			if(structurePos==null)

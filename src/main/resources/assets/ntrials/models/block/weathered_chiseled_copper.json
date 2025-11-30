@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "ntrials:block/weathered_chiseled_copper"
-  }
+	"parent":"minecraft:block/cube_all",
+	"textures":{
+		"all":"ntrials:block/weathered_chiseled_copper"
+	}
 }

@@ -1,8 +1,8 @@
 {
-  "type": "minecraft:stonecutting",
-  "count": 4,
-  "ingredient": {
-    "item": "minecraft:waxed_copper_block"
-  },
-  "result": "ntrials:waxed_chiseled_copper"
+	"type":"minecraft:stonecutting",
+	"count":4,
+	"ingredient":{
+		"item":"minecraft:waxed_copper_block"
+	},
+	"result":"ntrials:waxed_chiseled_copper"
 }

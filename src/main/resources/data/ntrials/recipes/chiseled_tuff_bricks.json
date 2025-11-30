@@ -1,17 +1,17 @@
 {
-  "type":"minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "#": {
-      "item": "ntrials:tuff_brick_slab"
-    }
-  },
-  "pattern": [
-    "#",
-    "#"
-  ],
-  "result": {
-    "count": 1,
-    "item": "ntrials:chiseled_tuff_bricks"
-  }
+	"type":"minecraft:crafting_shaped",
+	"category":"building",
+	"key":{
+		"#":{
+			"item":"ntrials:tuff_brick_slab"
+		}
+	},
+	"pattern":[
+		"#",
+		"#"
+	],
+	"result":{
+		"count":1,
+		"item":"ntrials:chiseled_tuff_bricks"
+	}
 }

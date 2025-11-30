@@ -9,11 +9,11 @@ import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class TuffSlabBlock extends SlabBlock{
-    public TuffSlabBlock(){
-        super(Properties.of().sound(SoundType.TUFF).strength(1.5f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
-    }
-    @Override
-    public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
-        return 0;
-    }
+	public TuffSlabBlock(){
+		super(Properties.of().sound(SoundType.TUFF).strength(1.5f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
+	}
+	@Override
+	public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
+		return 0;
+	}
 }
