@@ -24,4 +24,5 @@ public class BreachEnchantment extends Enchantment {
     public int getMaxLevel() {
         return 4;
     }
+
 }
