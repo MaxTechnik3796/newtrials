@@ -15,17 +15,20 @@ public class Mace extends SwordItem {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if (enchantment == Enchantments.MENDING ||
+                enchantment == Enchantments.VANISHING_CURSE ||
+                enchantment == NTrialsModEnchantments.WIND_BURST.get()) {
+            return true;
+        }
         return enchantment.category == MACE ||
                 enchantment == NTrialsModEnchantments.DENSITY.get() ||
                 enchantment == NTrialsModEnchantments.BREACH.get() ||
-                enchantment == NTrialsModEnchantments.WIND_BURST.get() ||
                 enchantment == Enchantments.UNBREAKING ||
                 enchantment == Enchantments.FIRE_ASPECT ||
                 enchantment == Enchantments.BANE_OF_ARTHROPODS ||
                 enchantment == Enchantments.SMITE ||
                 enchantment == Enchantments.KNOCKBACK;
     }
-
     @Override
     public int getEnchantmentValue() {
         return 20;
