@@ -112,6 +112,16 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
 
                 // 3. LOGIKA INTERAKCE S KLÍČEM VS BEZ KLÍČE
                 if (isHoldingKey) {
+                    // Key activation must obey startTag if set on the spawner
+                    boolean acceptKey = isAcceptKey(bossSpawner, itemStack);
+                    if (!acceptKey) {
+                        // don't accept this key
+                        if (!level.isClientSide) {
+                            player.displayClientMessage(Component.literal("This spawner requires a different key tag."), true);
+                            level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                        }
+                        return InteractionResult.FAIL;
+                    }
                     // --- Hráč DRŽÍ KLÍČ ---
                     if (bossSpawner.isActivated() && !bossSpawner.isKeyActivated()) {
                         bossSpawner.activateWithKey();
@@ -132,6 +142,22 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
         }
 
         return InteractionResult.FAIL;
+    }
+
+    private boolean isAcceptKey(TrialSpawnerBossBlockEntity bossSpawner, ItemStack itemStack) {
+        CompoundTag keyNbt = itemStack.getTag();
+        String keyVaultTag = "";
+                    if (keyNbt != null && keyNbt.contains("vault_tag")) keyVaultTag = keyNbt.getString("vault_tag");
+                    String required = bossSpawner.getKeyTag();
+        boolean acceptKey;
+                    if (required == null || required.isEmpty()) {
+                        // default: spawner without a keyTag requires keys WITHOUT a vault_tag (only untagged keys)
+                        acceptKey = keyVaultTag.isEmpty();
+                    } else {
+            // only accept keys with matching tag
+            acceptKey = !keyVaultTag.isEmpty() && keyVaultTag.equals(required);
+        }
+        return acceptKey;
     }
 
     @Override

@@ -35,11 +35,13 @@ import net.minecraft.world.entity.EntityType;
 public class TrialSpawnerBossBlockEntity extends BlockEntity {
     // Tag for boss key (e.g. 'ocean')
     private String keyTag = "";
+    // (vault key tag handled by keyTag) - startTag removed, we use keyTag/vault_tag for activation logic
 
     // Default mob type for boss spawner (Breeze Boss)
     private EntityType<?> bossMobType = NTrialsModEntityTypes.BREEZE_BOSS.get();
 
-    public void setKeyTag(String tag) { this.keyTag = tag == null ? "" : tag; setChanged(); }
+    public void setKeyTag(String tag) { this.keyTag = tag == null ? "" : tag; setChanged(); if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3); }
+    public String getKeyTag() { return keyTag; }
 
     public EntityType<?> getBossMobType() {
         return bossMobType;
@@ -55,6 +57,8 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
             }
         }
     }
+
+    // startTag removed - use keyTag instead (setKeyTag already notifies clients)
 
     @Override
     public @NotNull CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
@@ -383,6 +387,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putString("key_tag", keyTag);
+        // start_tag removed; keyTag (vault_tag) is used for activation/loot
         tag.putBoolean("IsActivated", isActivated);
         tag.putBoolean("IsKeyActivated", isKeyActivated);
         tag.putInt("SpawnTimer", spawnTimer);
@@ -416,6 +421,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         if (tag.contains("key_tag")) keyTag = tag.getString("key_tag");
+        // start_tag removed; keyTag (vault_tag) is used for activation/loot
         isActivated = tag.getBoolean("IsActivated");
         isKeyActivated = tag.getBoolean("IsKeyActivated");
         spawnTimer = tag.getInt("SpawnTimer");
