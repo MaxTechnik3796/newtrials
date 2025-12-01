@@ -28,7 +28,44 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+// import net.minecraft.world.entity.EntityType; // (already imported above)
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+
 public class TrialSpawnerBossBlockEntity extends BlockEntity {
+    // Tag for boss key (e.g. 'ocean')
+    private String keyTag = "";
+
+    // Default mob type for boss spawner (Breeze Boss)
+    private EntityType<?> bossMobType = NTrialsModEntityTypes.BREEZE_BOSS.get();
+
+    public void setKeyTag(String tag) { this.keyTag = tag == null ? "" : tag; setChanged(); }
+
+    public EntityType<?> getBossMobType() {
+        return bossMobType;
+    }
+
+    public void setBossMobType(EntityType<?> type) {
+        if (type != null) {
+            this.bossMobType = type;
+            setChanged();
+            // Notify clients that BlockEntity data changed (so render preview updates on clients)
+            if (level != null && !level.isClientSide()) {
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            }
+        }
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) { super.handleUpdateTag(tag); this.load(tag); }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
     private static final int SPAWN_DELAY = 60;
     private static final int LOOT_DROP_INTERVAL = 10;
     private static final int COMPLETE_TRIAL_DELAY = 20;
@@ -165,32 +202,37 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     private void spawnBreezeBoss() {
         if (level == null || level.isClientSide) return;
         int playerCount = participatingPlayers.size();
-        // Upraví HP podle počtu hráčů
         bossHP = BASE_BOSS_HP;
         for (int i = 1; i < playerCount; i++) bossHP = (int) (bossHP * HP_MULTIPLIER_PER_PLAYER);
 
         BlockPos spawnPos = findSpawnPosition();
-        if (spawnPos != null) {
-            cz.maxtechnik.ntrials.entity.BreezeBossEntity boss = new cz.maxtechnik.ntrials.entity.BreezeBossEntity(NTrialsModEntityTypes.BREEZE_BOSS.get(), level);
-            boss.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
-            var healthAttribute = boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
-            if (healthAttribute != null) {
-                healthAttribute.setBaseValue(bossHP);
-                boss.setHealth(boss.getMaxHealth());
+        if (spawnPos != null && bossMobType != null) {
+            net.minecraft.world.entity.Mob boss;
+            if (bossMobType == NTrialsModEntityTypes.BREEZE_BOSS.get()) {
+                boss = new cz.maxtechnik.ntrials.entity.BreezeBossEntity(NTrialsModEntityTypes.BREEZE_BOSS.get(), level);
+            } else {
+                boss = (net.minecraft.world.entity.Mob) bossMobType.create(level);
             }
-
-            // Přidá trvalé efekty: Regenerace I a Rezistence I (999999 ticks = "navždy")
-            boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 999999, 0, false, false));
-            boss.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0, false, false));
-            boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 999999, 0, false, false));
-            if (level instanceof ServerLevel serverLevel) {
-                @SuppressWarnings({"deprecation", "unused"})
-                var ignored = boss.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
+            if (boss != null) {
+                boss.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+                var healthAttribute = boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
+                if (healthAttribute != null) {
+                    healthAttribute.setBaseValue(bossHP);
+                    boss.setHealth(boss.getMaxHealth());
+                }
+                // Přidá trvalé efekty: Regenerace I a Rezistence I (999999 ticks = "navždy")
+                boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 999999, 0, false, false));
+                boss.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0, false, false));
+                boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 999999, 0, false, false));
+                if (level instanceof ServerLevel serverLevel) {
+                    @SuppressWarnings({"deprecation", "unused"})
+                    var ignored = boss.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(spawnPos), net.minecraft.world.entity.MobSpawnType.SPAWNER, null, null);
+                }
+                level.addFreshEntity(boss);
+                spawnedBossUUID = boss.getUUID();
+                level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                setChanged();
             }
-            level.addFreshEntity(boss);
-            spawnedBossUUID = boss.getUUID();
-            level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-            setChanged();
         }
     }
 
@@ -232,9 +274,12 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (level instanceof ServerLevel serverLevel) {
             for (UUID playerUUID : participatingPlayers) {
                 Player player = serverLevel.getPlayerByUUID(playerUUID);
-
                 if (player != null && !this.hasPlayerReceivedReward(playerUUID)) {
-                    lootItems.add(new ItemStack(NTrialsModItems.BOSS_TRIAL_KEY.get()));
+                    ItemStack key = new ItemStack(NTrialsModItems.BOSS_TRIAL_KEY.get());
+                    if (keyTag != null && !keyTag.isEmpty()) {
+                        key.getOrCreateTag().putString("vault_tag", keyTag);
+                    }
+                    lootItems.add(key);
                     this.addPlayerWhoReceivedReward(playerUUID);
                 }
             }
@@ -337,6 +382,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
+        tag.putString("key_tag", keyTag);
         tag.putBoolean("IsActivated", isActivated);
         tag.putBoolean("IsKeyActivated", isKeyActivated);
         tag.putInt("SpawnTimer", spawnTimer);
@@ -347,6 +393,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         tag.putInt("CurrentLootDropIndex", currentLootDropIndex);
         tag.putInt("CooldownTimer", cooldownTimer);
         if (spawnedBossUUID != null) tag.putUUID("SpawnedBossUUID", spawnedBossUUID);
+        if (bossMobType != null) tag.putString("BossMobType", EntityType.getKey(bossMobType).toString());
         net.minecraft.nbt.ListTag lootItemsTag = new net.minecraft.nbt.ListTag();
         for (ItemStack item : pendingLootItems) {
             CompoundTag itemTag = new CompoundTag();
@@ -368,6 +415,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
+        if (tag.contains("key_tag")) keyTag = tag.getString("key_tag");
         isActivated = tag.getBoolean("IsActivated");
         isKeyActivated = tag.getBoolean("IsKeyActivated");
         spawnTimer = tag.getInt("SpawnTimer");
@@ -378,6 +426,13 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         currentLootDropIndex = tag.getInt("CurrentLootDropIndex");
         this.cooldownTimer = tag.getInt("CooldownTimer");
         if (tag.hasUUID("SpawnedBossUUID")) spawnedBossUUID = tag.getUUID("SpawnedBossUUID");
+        if (tag.contains("BossMobType")) {
+            try {
+                String mobId = tag.getString("BossMobType");
+                EntityType<?> type = net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(mobId));
+                if (type != null) bossMobType = type;
+            } catch (Exception ignored) {}
+        }
         this.pendingLootItems.clear();
         net.minecraft.nbt.ListTag lootItemsTag = tag.getList("PendingLootItems", 10);
         for (int i = 0; i < lootItemsTag.size(); i++) this.pendingLootItems.add(ItemStack.of(lootItemsTag.getCompound(i)));

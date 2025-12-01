@@ -518,6 +518,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int needed = mobsPerWave - alive;
         if (needed > 0 && remainingMobs > 0) {
             int spawnCount = Math.min(needed, remainingMobs);
+            assert level != null;
             level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             BlockState currentState = level.getBlockState(getBlockPos());
             boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);

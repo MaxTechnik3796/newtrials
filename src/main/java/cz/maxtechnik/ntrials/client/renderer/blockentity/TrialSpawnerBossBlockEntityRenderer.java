@@ -31,8 +31,12 @@ public class TrialSpawnerBossBlockEntityRenderer implements BlockEntityRenderer<
             return;
         }
 
-        // Always render regular Breeze inside (not Breeze Boss, so it doesn't stick out of the block)
-        EntityType<?> entityType = NTrialsModEntityTypes.BREEZE.get();
+
+        // Display the correct mob model (if bossMobType is Breeze Boss, show regular Breeze)
+        EntityType<?> entityType = blockEntity.getBossMobType();
+        if (entityType == NTrialsModEntityTypes.BREEZE_BOSS.get()) {
+            entityType = NTrialsModEntityTypes.BREEZE.get();
+        }
 
         // Get or create cached entity for this type
         Entity entity = getOrCreateEntity(entityType, level);
