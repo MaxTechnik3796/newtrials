@@ -309,19 +309,24 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.hasBeenSynced = false;
         setChanged();
         syncToClients();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
     }
 
     public void setNormalLootTable(String lootTable) {
         if (lootTable != null) this.normalLootTable = lootTable;
         setChanged();
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
     }
 
     public void setOminousLootTable(String lootTable) {
         if (lootTable != null) this.ominousLootTable = lootTable;
         setChanged();
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
     }
 
-    public void setVaultTag(String tag) { this.vaultTag = tag == null ? "" : tag; setChanged(); }
+    public void setVaultTag(String tag) { this.vaultTag = tag == null ? "" : tag; setChanged(); if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3); }
 
     // Server->Client Sync
     private void syncToClients() {

@@ -6,6 +6,7 @@ import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,7 +56,14 @@ public class TrialSpawnerBlock extends BaseEntityBlock {
         if (blockEntity instanceof TrialSpawnerBlockEntity trialSpawner) {
             // 1. Logika pro Spawn Egg (zachována)
             if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
+                // Only allow spawn-egg changes when player is in Creative (instabuild)
                 if (!level.isClientSide) {
+                    if (!player.getAbilities().instabuild) {
+                        player.displayClientMessage(Component.literal("You must be in Creative to change the spawner with a spawn egg."), true);
+                        if (level != null) level.playSound(null, pos, cz.maxtechnik.ntrials.init.NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                        return InteractionResult.FAIL;
+                    }
+
                     EntityType<?> entityType = spawnEggItem.getType(itemStack.getTag());
                     trialSpawner.setSpawnEntity(entityType);
 
@@ -65,10 +73,7 @@ public class TrialSpawnerBlock extends BaseEntityBlock {
                                 serverLevel.getChunkAt(pos)), packet);
                     }
 
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
-                    }
-
+                    // creative players don't consume the egg; non-creative case is prevented above
                     return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.sidedSuccess(true);
