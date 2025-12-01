@@ -52,15 +52,15 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private static final String[] ARMOR_BOOTS = {"minecraft:iron_boots", "minecraft:golden_boots", "minecraft:diamond_boots"};
     private static final String[] WEAPONS = {"minecraft:stone_sword", "minecraft:iron_sword", "minecraft:diamond_sword", "minecraft:iron_axe", "minecraft:diamond_axe"};
 
-    // Default settings
-    private static final int DEFAULT_BASE_MOBS_PER_WAVE = 2;
-    private static final int DEFAULT_BASE_MAX_WAVES = 2;
+    // Default settings (non-breeze)
+    private static final int DEFAULT_BASE_MOBS_PER_WAVE = 3; // spawn 3 at once for 1 player
+    private static final int DEFAULT_BASE_TOTAL_MOBS = 6; // 6 mobs total for 1 player
 
     // Breeze settings (Base = 1 Player)
     private static final int BREEZE_BASE_MOBS_PER_WAVE = 1; // 1 mob at once
-    private static final int BREEZE_BASE_MAX_WAVES = 3;     // 3 waves total
+    private static final int BREEZE_BASE_TOTAL_MOBS = 3; // 3 total for 1 player
     private static final int BREEZE_MOBS_ADDED_PER_PLAYER = 1; // +1 mob at once per extra player
-    private static final int BREEZE_WAVES_ADDED_PER_PLAYER = 2; // +2 waves total per extra player
+    private static final int BREEZE_TOTAL_ADDED_PER_PLAYER = 2; // +2 total per extra player
 
     private final Set<UUID> detectedPlayers = new HashSet<>();
     private final Set<UUID> spawnedEntities = new HashSet<>();
@@ -76,13 +76,14 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private transient boolean wasOminous = false;
     private transient cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState lastState = null;
 
-    private int maxWaves = 2;
-    private int mobsPerWave = 3;
-    private int currentTrialMobsPerWave = 2;
-    private int maxWavesCount = 2;
+    // Spawning configuration
+    // mobsPerWave = how many spawn at once
+    // totalMobs = how many mobs should be spawned in total throughout the trial
+    private int mobsPerWave = 3; // default for non-breeze
+    private int totalMobs = 6; // default total for non-breeze
+    private int remainingMobs = 0; // how many left to spawn (decrements as we spawn)
     private int playersCount = 0;
-    private int currentWave = 0;
-    private int currentWaveMobs = 0;
+    private int currentWave = 0; // (legacy) kept for backwards compat but unused in new logic
     private boolean trialActive = false;
 
     private String normalLootTable = "ntrials:chests/spawner";
@@ -123,7 +124,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         if (completeTrialTimer > 0 && --completeTrialTimer == 0) {
             trialActive = false;
             currentWave = 0;
-            currentWaveMobs = 0;
+            remainingMobs = 0;
             spawnedEntities.clear();
             generateLootReward();
             setCooldownTime(36000);
@@ -207,12 +208,19 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         this.isOminous = tag.getBoolean("Ominous");
         this.tickCount = tag.getInt("TickCount");
         this.shouldResetOminousOnCooldownEnd = tag.getBoolean("ShouldResetOminousOnCooldownEnd");
-        this.maxWaves = tag.getInt("MaxWaves");
-        if (this.maxWaves <= 0) this.maxWaves = 5;
-        this.mobsPerWave = tag.getInt("MobsPerWave");
-        if (this.mobsPerWave <= 0) this.mobsPerWave = 3;
-        this.currentWave = tag.getInt("CurrentWave");
-        this.currentWaveMobs = tag.getInt("CurrentWaveMobs");
+        // read previous 'MobsPerWave' if present
+        this.mobsPerWave = tag.contains("MobsPerWave") ? tag.getInt("MobsPerWave") : this.mobsPerWave;
+        if (this.mobsPerWave <= 0) this.mobsPerWave = DEFAULT_BASE_MOBS_PER_WAVE;
+        // read total/remaining - support both new keys and legacy MaxWaves key
+        if (tag.contains("TotalMobs")) this.totalMobs = tag.getInt("TotalMobs");
+        else if (tag.contains("MaxWaves")) {
+            int oldMaxWaves = tag.getInt("MaxWaves");
+            if (oldMaxWaves <= 0) oldMaxWaves = 5;
+            this.totalMobs = oldMaxWaves * this.mobsPerWave;
+        }
+        if (this.totalMobs <= 0) this.totalMobs = DEFAULT_BASE_TOTAL_MOBS;
+        this.remainingMobs = tag.contains("RemainingMobs") ? tag.getInt("RemainingMobs") : this.totalMobs;
+        this.currentWave = tag.contains("CurrentWave") ? tag.getInt("CurrentWave") : 0;
         this.trialActive = tag.getBoolean("TrialActive");
         if (tag.contains("NormalLootTable")) this.normalLootTable = tag.getString("NormalLootTable");
         if (tag.contains("OminousLootTable")) this.ominousLootTable = tag.getString("OminousLootTable");
@@ -258,10 +266,10 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         tag.putBoolean("Ominous", this.isOminous);
         tag.putInt("TickCount", this.tickCount);
         tag.putBoolean("ShouldResetOminousOnCooldownEnd", this.shouldResetOminousOnCooldownEnd);
-        tag.putInt("MaxWaves", this.maxWaves);
         tag.putInt("MobsPerWave", this.mobsPerWave);
+        tag.putInt("TotalMobs", this.totalMobs);
+        tag.putInt("RemainingMobs", this.remainingMobs);
         tag.putInt("CurrentWave", this.currentWave);
-        tag.putInt("CurrentWaveMobs", this.currentWaveMobs);
         tag.putBoolean("TrialActive", this.trialActive);
         tag.putString("NormalLootTable", this.normalLootTable);
         tag.putString("OminousLootTable", this.ominousLootTable);
@@ -404,6 +412,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         currentWave = 1;
         spawnedEntities.clear();
         updateMobCountBasedOnPlayers();
+        // fill remaining pool and schedule initial spawn
+        this.remainingMobs = Math.max(0, this.totalMobs);
         startTrialTimer = 20;
     }
 
@@ -418,15 +428,20 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         int playerCount = level.getEntitiesOfClass(net.minecraft.world.entity.player.Player.class, scanArea).size();
         this.playersCount = playerCount;
         boolean isBreeze = spawnEntity != null && spawnEntity == cz.maxtechnik.ntrials.init.NTrialsModEntityTypes.BREEZE.get();
+        int extraPlayers = Math.max(0, playerCount - 1);
         if (isBreeze) {
-            int extraPlayers = Math.max(0, playerCount - 1);
-            // 1P: 1 at once. 2P: 1+1=2 at once.
-            this.currentTrialMobsPerWave = BREEZE_BASE_MOBS_PER_WAVE + (extraPlayers * BREEZE_MOBS_ADDED_PER_PLAYER);
-            // 1P: 3 waves. 2P: 3+2=5 waves.
-            this.maxWavesCount = BREEZE_BASE_MAX_WAVES + (extraPlayers * BREEZE_WAVES_ADDED_PER_PLAYER);
+            // Breeze: base per-wave 1, base total 3. Each extra player: +1 per-wave, +2 total
+            this.mobsPerWave = BREEZE_BASE_MOBS_PER_WAVE + (extraPlayers * BREEZE_MOBS_ADDED_PER_PLAYER);
+            this.totalMobs = BREEZE_BASE_TOTAL_MOBS + (extraPlayers * BREEZE_TOTAL_ADDED_PER_PLAYER);
         } else {
-            this.currentTrialMobsPerWave = DEFAULT_BASE_MOBS_PER_WAVE + playerCount;
-            this.maxWavesCount = DEFAULT_BASE_MAX_WAVES + playerCount;
+            // Non-breeze: base per-wave 3, base total 6. Each extra player: +1 per-wave, +2 total
+            this.mobsPerWave = DEFAULT_BASE_MOBS_PER_WAVE + extraPlayers;
+            this.totalMobs = DEFAULT_BASE_TOTAL_MOBS + (extraPlayers * 2);
+        }
+        // If trial already running, adjust remaining pool to new total minus currently alive
+        if (this.trialActive) {
+            int alive = this.spawnedEntities.size();
+            this.remainingMobs = Math.max(0, this.totalMobs - alive);
         }
     }
 
@@ -434,7 +449,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     private void stopTrial() {
         trialActive = false;
         currentWave = 0;
-        currentWaveMobs = 0;
+        remainingMobs = 0;
         cleanupSpawnedEntities();
         spawnedEntities.clear();
         updateBlockState();
@@ -447,7 +462,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
         level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 
-        for (int i = 0; i < currentTrialMobsPerWave; i++) {
+        int toSpawn = Math.min(mobsPerWave, Math.max(0, remainingMobs));
+        for (int i = 0; i < toSpawn; i++) {
             BlockPos spawnPos = findSpawnPosition();
             net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
             if (entity != null) {
@@ -459,6 +475,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                 }
                 level.addFreshEntity(entity);
                 spawnedEntities.add(entity.getUUID());
+                remainingMobs = Math.max(0, remainingMobs - 1);
                 spawnSpawnParticles(getBlockPos(), isOminousBlock);
             }
         }
@@ -488,24 +505,23 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     // Checks if wave is done
     private void checkWaveCompletion() {
+        // Remove dead or unloaded entities
         spawnedEntities.removeIf(uuid -> {
             assert level != null;
             net.minecraft.world.entity.Entity entity = ((net.minecraft.server.level.ServerLevel) level).getEntity(uuid);
             return entity == null || !entity.isAlive();
         });
         int alive = spawnedEntities.size();
-        if (alive == 0) {
-            if (currentWave >= maxWavesCount) completeTrial();
-            else { currentWave++; spawnWave(); }
-            return;
-        }
-        int needed = currentTrialMobsPerWave - alive;
-        if (needed > 0 && (currentWave + 1) <= maxWavesCount) {
-            currentWave++;
+        // If no alive and no remaining to spawn => complete the trial
+        if (alive == 0 && remainingMobs <= 0) { completeTrial(); return; }
+        // Otherwise if we have room in the active group (mobsPerWave) and more to spawn, top-up
+        int needed = mobsPerWave - alive;
+        if (needed > 0 && remainingMobs > 0) {
+            int spawnCount = Math.min(needed, remainingMobs);
             level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             BlockState currentState = level.getBlockState(getBlockPos());
             boolean isOminousBlock = currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS);
-            for (int i = 0; i < needed; i++) {
+            for (int i = 0; i < spawnCount; i++) {
                 BlockPos spawnPos = findSpawnPosition();
                 net.minecraft.world.entity.Entity entity = spawnEntity.create(level);
                 if (entity != null) {
@@ -518,6 +534,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
                     level.addFreshEntity(entity);
                     spawnedEntities.add(entity.getUUID());
                     spawnSpawnParticles(getBlockPos(), isOminousBlock);
+                    remainingMobs = Math.max(0, remainingMobs - 1);
                 }
             }
         }
@@ -545,7 +562,12 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableLocation);
         }
 
-        LootParams lootParams = new LootParams.Builder(serverLevel).withParameter(LootContextParams.ORIGIN, getBlockPos().getCenter()).create(LootContextParamSets.CHEST);
+        // include block state and a safe default tool parameter so loot tables requiring these don't crash
+        LootParams lootParams = new LootParams.Builder(serverLevel)
+            .withParameter(LootContextParams.ORIGIN, getBlockPos().getCenter())
+            .withParameter(LootContextParams.BLOCK_STATE, currentState)
+            .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
+            .create(LootContextParamSets.CHEST);
         int lootMultiplier = Math.max(1, playersCount);
         List<ItemStack> allLootItems = new ArrayList<>();
 
