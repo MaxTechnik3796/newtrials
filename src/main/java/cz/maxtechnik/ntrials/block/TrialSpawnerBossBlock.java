@@ -45,7 +45,6 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
-        boolean isHoldingKey = itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.OMINOUS_TRIAL_KEY.get();
 
         // Allow changing mob with spawn egg only if player is in creative (instabuild) — otherwise spawner must be set via BlockEntityTag (/give)
         if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
@@ -70,6 +69,8 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner) {
+                // determine whether the held item qualifies as a key for this spawner (only mod built-in keys)
+                boolean isHoldingKey = itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.OMINOUS_TRIAL_KEY.get() || itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.BOSS_TRIAL_KEY.get();
                 // If the placed item has BlockEntityTag or top-level NBT with settings, apply them on use
                 // (We still accept block NBT when using the item in the world; for placement we handle setPlacedBy below.)
                 // Support for setting key tag via BlockEntityTag or item NBT (for /give)
@@ -83,9 +84,8 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
                             if (type != null) bossSpawner.setBossMobType(type);
                         } catch (Exception ignored) {}
                     }
-                    if (tag.contains("key_tag")) {
-                        bossSpawner.setKeyTag(tag.getString("key_tag"));
-                    }
+                    if (tag.contains("key_tag")) bossSpawner.setKeyTag(tag.getString("key_tag"));
+                    if (tag.contains("BossLootTable")) bossSpawner.setBossLootTable(tag.getString("BossLootTable"));
                 }
     // Add keyTag field and getter/setter
     // (This is a new field for supporting tagged keys)
@@ -182,6 +182,7 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
                         } catch (Exception ignored) {}
                     }
                     if (tag.contains("key_tag")) spawnerEntity.setKeyTag(tag.getString("key_tag"));
+                    if (tag.contains("BossLootTable")) spawnerEntity.setBossLootTable(tag.getString("BossLootTable"));
                 }
             }
         }

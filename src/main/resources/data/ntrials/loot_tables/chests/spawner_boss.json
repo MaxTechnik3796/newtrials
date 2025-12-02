@@ -1,0 +1,15 @@
+{
+	"type":"minecraft:chest",
+	"pools":[
+        {
+            "entries": [
+                {
+                  "type":"minecraft:item",
+                  "name":"ntrials:boss_trial_key"
+                }
+            ],
+            "rolls":1.0
+        }
+	],
+	"random_sequence":"ntrials:chests/spawner_boss"
+}

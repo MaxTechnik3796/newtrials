@@ -2,7 +2,7 @@ modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
 [[mods]]
-modId="ntrials"
+modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://discord.gg/mjVprFtWTk"
@@ -10,7 +10,7 @@ authors="${mod_authors}"
 logoFile="pack.png"
 description='''${mod_description}'''
 
-[[dependencies."ntrials"]]
+[[dependencies."${mod_id}"]]
 modId="forge"
 mandatory=true
 versionRange="${forge_version_range}"
@@ -20,7 +20,7 @@ versionRange="${forge_version_range}"
 ordering = "NONE"
 # Side this dependency is applied on - BOTH, CLIENT, or SERVER
 side="BOTH"
-[[dependencies."ntrials"]]
+[[dependencies."${mod_id}"]]
 modId="minecraft"
 mandatory=true
 versionRange="${minecraft_version_range}"

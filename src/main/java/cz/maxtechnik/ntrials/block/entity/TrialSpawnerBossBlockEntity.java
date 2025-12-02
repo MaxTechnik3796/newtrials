@@ -4,16 +4,19 @@ import cz.maxtechnik.ntrials.block.TrialSpawnerBossBlock;
 import cz.maxtechnik.ntrials.block.TrialSpawnerBlock;
 import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
 import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffects; // Nový import pro efekty
-import net.minecraft.world.effect.MobEffectInstance; // Nový import pro instance efektů
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -28,17 +31,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-// import net.minecraft.world.entity.EntityType; // (already imported above)
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 
 public class TrialSpawnerBossBlockEntity extends BlockEntity {
-    // Tag for boss key (e.g. 'ocean')
     private String keyTag = "";
-    // (vault key tag handled by keyTag) - startTag removed, we use keyTag/vault_tag for activation logic
-
-    // Default mob type for boss spawner (Breeze Boss)
     private EntityType<?> bossMobType = NTrialsModEntityTypes.BREEZE_BOSS.get();
+    private String bossLootTable = "";
 
     public void setKeyTag(String tag) { this.keyTag = tag == null ? "" : tag; setChanged(); if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3); }
     public String getKeyTag() { return keyTag; }
@@ -51,15 +50,17 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         if (type != null) {
             this.bossMobType = type;
             setChanged();
-            // Notify clients that BlockEntity data changed (so render preview updates on clients)
             if (level != null && !level.isClientSide()) {
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         }
     }
 
-    // startTag removed - use keyTag instead (setKeyTag already notifies clients)
-
+    public void setBossLootTable(String loot) {
+        this.bossLootTable = loot == null ? "" : loot;
+        setChanged();
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+    }
     @Override
     public @NotNull CompoundTag getUpdateTag() { CompoundTag tag = super.getUpdateTag(); this.saveAdditional(tag); return tag; }
 
@@ -75,7 +76,8 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
     private static final int COMPLETE_TRIAL_DELAY = 20;
     private static final int BASE_BOSS_HP = 120;
     private static final double HP_MULTIPLIER_PER_PLAYER = 1.5;
-    private static final int MAX_COOLDOWN_TICKS = 30 * 60 * 20; // 30 minut
+    private static final int MAX_COOLDOWN_TICKS = 30 * 60 * 20;
+    private static final String DEFAULT_BOSS_LOOT = "ntrials:chests/spawner_boss";
 
     private boolean isActivated = false;
     private boolean isKeyActivated = false;
@@ -273,22 +275,39 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
 
     // Vygeneruje loot podle hráčů
     private void generateLootReward() {
-        if (level == null || level.isClientSide) return;
-        List<ItemStack> lootItems = new ArrayList<>();
-        if (level instanceof ServerLevel serverLevel) {
-            for (UUID playerUUID : participatingPlayers) {
-                Player player = serverLevel.getPlayerByUUID(playerUUID);
-                if (player != null && !this.hasPlayerReceivedReward(playerUUID)) {
-                    ItemStack key = new ItemStack(NTrialsModItems.BOSS_TRIAL_KEY.get());
-                    if (keyTag != null && !keyTag.isEmpty()) {
-                        key.getOrCreateTag().putString("vault_tag", keyTag);
-                    }
-                    lootItems.add(key);
-                    this.addPlayerWhoReceivedReward(playerUUID);
-                }
+        if (level == null || level.isClientSide || !(level instanceof ServerLevel serverLevel)) return;
+
+        // Determine loot table path (fallback to default boss reward table)
+        String lootPath = this.bossLootTable == null || this.bossLootTable.isEmpty() ? DEFAULT_BOSS_LOOT : this.bossLootTable;
+        ResourceLocation lootTableId;
+        net.minecraft.world.level.storage.loot.LootTable lootTable;
+        try {
+            lootTableId = ResourceLocation.parse(lootPath);
+            lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+            if (lootTable == net.minecraft.world.level.storage.loot.LootTable.EMPTY) throw new IllegalArgumentException("empty loot table");
+        } catch (Exception ex) {
+            lootTableId = ResourceLocation.parse(DEFAULT_BOSS_LOOT);
+            lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+        }
+
+        LootParams lootParams = new LootParams.Builder(serverLevel).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(getBlockPos())).create(LootContextParamSets.CHEST);
+
+        // multiply loot by number of participating players (so each participant gets one copy of the table result)
+        int playersCount = Math.max(1, participatingPlayers.size());
+        List<ItemStack> baseLoot = lootTable.getRandomItems(lootParams);
+        List<ItemStack> allLootItems = new ArrayList<>();
+        for (int i = 0; i < playersCount; i++) {
+            for (ItemStack item : baseLoot) {
+                if (!item.isEmpty()) allLootItems.add(item.copy());
             }
         }
-        if (!lootItems.isEmpty()) startLootAnimation(lootItems);
+
+        // Mark participating players as having received reward (so they cannot claim repeatedly)
+        for (UUID playerUUID : new HashSet<>(participatingPlayers)) {
+            if (!this.hasPlayerReceivedReward(playerUUID)) this.addPlayerWhoReceivedReward(playerUUID);
+        }
+
+        if (!allLootItems.isEmpty()) startLootAnimation(allLootItems);
     }
 
     // Spustí animaci lootu
@@ -399,6 +418,8 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
         tag.putInt("CooldownTimer", cooldownTimer);
         if (spawnedBossUUID != null) tag.putUUID("SpawnedBossUUID", spawnedBossUUID);
         if (bossMobType != null) tag.putString("BossMobType", EntityType.getKey(bossMobType).toString());
+        // Boss loot table (optional)
+        tag.putString("BossLootTable", bossLootTable == null ? "" : bossLootTable);
         net.minecraft.nbt.ListTag lootItemsTag = new net.minecraft.nbt.ListTag();
         for (ItemStack item : pendingLootItems) {
             CompoundTag itemTag = new CompoundTag();
@@ -449,6 +470,8 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
             try { playersWhoReceivedReward.add(UUID.fromString(playersTag.getString(i))); } catch (IllegalArgumentException ignored) {}
         }
 
+        if (tag.contains("BossLootTable")) this.bossLootTable = tag.getString("BossLootTable");
+
         participatingPlayers.clear();
         ListTag participatingPlayersTag = tag.getList("ParticipatingPlayers", 8);
         for (int i = 0; i < participatingPlayersTag.size(); i++) {
@@ -479,6 +502,5 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity {
                     worldPosition.getZ() + 0.3 + level.random.nextDouble() * 0.4, 0.0, 0.05, 0.0);
         }
     }
-
     public int getClientTickCount() { return clientTickCount; }
 }
