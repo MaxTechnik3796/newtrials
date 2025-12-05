@@ -67,6 +67,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
     private int cooldownTime = 0;
     private boolean isOminous = false;
+    private boolean redstoneEnabled = true; // True = no redstone / runs normally, False = powered redstone
     private int tickCount = 0;
     private int clientTickCount = 0;
     private EntityType<?> spawnEntity = null;
@@ -256,6 +257,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         }
         if (level != null && !level.isClientSide() && this.spawnEntity != null) syncToClients();
         if (tag.contains("VaultTag")) this.vaultTag = tag.getString("VaultTag");
+        this.redstoneEnabled = !tag.contains("RedstoneEnabled") || tag.getBoolean("RedstoneEnabled");
     }
 
     // Save NBT
@@ -294,6 +296,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
         for (UUID uuid : this.detectedPlayers) playersTag.putBoolean(uuid.toString(), true);
         tag.put("DetectedPlayers", playersTag);
         tag.putString("VaultTag", vaultTag);
+        tag.putBoolean("RedstoneEnabled", this.redstoneEnabled);
     }
 
     // Setters/Getters
@@ -302,6 +305,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
     public boolean isOminous() { return isOminous; }
     public void setOminous(boolean ominous) { this.isOminous = ominous; setChanged(); }
     public int getClientTickCount() { return clientTickCount; }
+    public void setRedstoneEnabled(boolean enabled) { this.redstoneEnabled = enabled; setChanged(); }
+
     @Nullable public EntityType<?> getSpawnEntity() { return spawnEntity; }
 
     public void setSpawnEntity(@Nullable EntityType<?> spawnEntity) {
@@ -362,7 +367,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
             }
         }
 
-        if (hasPlayerWithBadOmen) {
+        // Redstone logic: když je spawner napájený (POWERED=true), vypínáme nové detekce Bad Omen
+        if (hasPlayerWithBadOmen && this.redstoneEnabled) {
             BlockState currentState = level.getBlockState(getBlockPos());
             if (!currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)) {
                 level.setBlock(getBlockPos(), currentState.setValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS, true), 3);
@@ -376,11 +382,16 @@ public class TrialSpawnerBlockEntity extends BlockEntity {
 
         if (this.cooldownTime > 0) return;
 
-        if (hasSurvivalPlayer && !trialActive && currentWave == 0) {
+        // Redstone logic: když je spawner napájený (redstoneEnabled=false), nedetekuje nové hráče
+        // Pokud je Trial už aktivní, pokračuje normálně (neovlivňuje jej redstone)
+        if (hasSurvivalPlayer && !trialActive && currentWave == 0 && this.redstoneEnabled) {
             level.playSound(null, getBlockPos(), NTrialsModSounds.BLOCK_TRIAL_SPAWNER_DETECT_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             startTrial();
-        } else if (playerCount == 0 && trialActive && spawnedEntities.isEmpty()) stopTrial();
-        else if (trialActive && playerCount > 0) checkWaveCompletion();
+        } else if (playerCount == 0 && trialActive && spawnedEntities.isEmpty()) {
+            stopTrial();
+        } else if (trialActive && playerCount > 0) {
+            checkWaveCompletion();
+        }
 
         updateBlockState();
     }
