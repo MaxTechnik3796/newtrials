@@ -12,6 +12,17 @@ This mod brings **new items and blocks from the latest Minecraft versions** into
   - **Breeze Boss & Larger structure**
 - Preserves original mechanics and behavior, just like in vanilla Minecraft.
 
+**You can now create your own mod that can contain our spawners/vaults with your lootables.
+(mod version: 1.4.0+)**
+  - **Vault/Boss Vault tags:**  
+  {BlockEntityTag:{vault_tag:"KEY_TAG",loot_table:"LOOTABLE"}}
+  - **Key tags:**  
+  {vault_tag:"KEY_TAG"}
+  - **Spawner tags:**  
+  {BlockEntityTag:{NormalLootTable:"LOOTABLE",OminousLootTable:"LOOTABLE"}}
+  - **BossSpawner tags:**  
+  {BlockEntityTag:{key_tag:"KEY_TAG",BossLootTable:"LOOTABLE"}}
+
 ---
 
 ## 🛠 Requirements
