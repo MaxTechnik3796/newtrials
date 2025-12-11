@@ -1,22 +1,26 @@
 package cz.maxtechnik.ntrials.item;
 
+import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.NotNull;
 
-public class MaceItem extends Mace {
-
-    private static final float MIN_FALL_DISTANCE = 1.5F;
+public class MaceItem extends SwordItem{
+	public static final EnchantmentCategory MACE = EnchantmentCategory.create("mace",item -> item instanceof MaceItem);
+	private static final float MIN_FALL_DISTANCE = 1.5F;
 
     public MaceItem() {
-        super(Tiers.IRON, 3, -3.2F, new Item.Properties().durability(500));
-    }
+		super(Tiers.IRON,3,-3.2F,new Properties().durability(500));
+	}
     @Override
     public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if (attacker instanceof Player player) {
@@ -46,4 +50,32 @@ public class MaceItem extends Mace {
         }
         return super.hurtEnemy(stack, target, attacker);
     }
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+		if (enchantment == Enchantments.MENDING ||
+				enchantment == Enchantments.VANISHING_CURSE ||
+				enchantment == NTrialsModEnchantments.WIND_BURST.get()) {
+			return true;
+		}
+		return enchantment.category == MACE ||
+				enchantment == NTrialsModEnchantments.DENSITY.get() ||
+				enchantment == NTrialsModEnchantments.BREACH.get() ||
+				enchantment == Enchantments.UNBREAKING ||
+				enchantment == Enchantments.FIRE_ASPECT ||
+				enchantment == Enchantments.BANE_OF_ARTHROPODS ||
+				enchantment == Enchantments.SMITE ||
+				enchantment == Enchantments.KNOCKBACK;
+	}
+	@Override
+	public int getEnchantmentValue() {
+		return 20;
+	}
+	@Override
+	public boolean canBeDepleted() {
+		return true;
+	}
+	@Override
+	public boolean isValidRepairItem(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
+		return super.isValidRepairItem(toRepair, repair);
+	}
 }
