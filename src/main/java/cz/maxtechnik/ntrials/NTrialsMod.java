@@ -52,5 +52,6 @@ public class NTrialsMod{
             LOGGER.info("NewTrials Client loading...");
         }
     }
+
 }
 
