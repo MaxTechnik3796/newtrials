@@ -6,6 +6,7 @@ import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import cz.maxtechnik.ntrials.init.NTrialsModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,11 +41,12 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("deprecation")
 public class TrialSpawnerBlock extends BaseEntityBlock {
     public static final BooleanProperty OMINOUS = BooleanProperty.create("ominous");
+    public static final BooleanProperty POWERED = BooleanProperty.create("powered");
     public static final EnumProperty<TrialSpawnerState> STATE = EnumProperty.create("trial_spawner_state", TrialSpawnerState.class);
 
     public TrialSpawnerBlock() {
-        super(Properties.of().sound(SoundType.METAL).strength(45F, 999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
-        this.registerDefaultState(this.stateDefinition.any().setValue(OMINOUS, false).setValue(STATE, TrialSpawnerState.INACTIVE));
+        super(Properties.of().sound(SoundType.METAL).strength(20F, 999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
+        this.registerDefaultState(this.stateDefinition.any().setValue(OMINOUS, false).setValue(POWERED, false).setValue(STATE, TrialSpawnerState.INACTIVE));
     }
 
     @Override
@@ -55,7 +57,14 @@ public class TrialSpawnerBlock extends BaseEntityBlock {
         if (blockEntity instanceof TrialSpawnerBlockEntity trialSpawner) {
             // 1. Logika pro Spawn Egg (zachována)
             if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
+                // Only allow spawn-egg changes when player is in Creative (instabuild)
                 if (!level.isClientSide) {
+                    if (!player.getAbilities().instabuild) {
+                        player.displayClientMessage(Component.literal("You must be in Creative to change the spawner with a spawn egg."), true);
+                        level.playSound(null, pos, cz.maxtechnik.ntrials.init.NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                        return InteractionResult.FAIL;
+                    }
+
                     EntityType<?> entityType = spawnEggItem.getType(itemStack.getTag());
                     trialSpawner.setSpawnEntity(entityType);
 
@@ -65,10 +74,7 @@ public class TrialSpawnerBlock extends BaseEntityBlock {
                                 serverLevel.getChunkAt(pos)), packet);
                     }
 
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
-                    }
-
+                    // creative players don't consume the egg; non-creative case is prevented above
                     return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.sidedSuccess(true);
@@ -141,6 +147,18 @@ public class TrialSpawnerBlock extends BaseEntityBlock {
                 }
             }
         }
+        // Initialize redstone state when block is placed
+        if (!level.isClientSide) {
+            BlockState blockState = level.getBlockState(pos);
+            boolean isPowered = level.hasNeighborSignal(pos);
+            if (isPowered != blockState.getValue(POWERED)) {
+                level.setBlock(pos, blockState.setValue(POWERED, isPowered), 3);
+            }
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof TrialSpawnerBlockEntity spawnerEntity) {
+                spawnerEntity.setRedstoneEnabled(!isPowered);
+            }
+        }
     }
 
     @Override
@@ -175,8 +193,22 @@ public class TrialSpawnerBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void neighborChanged(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Block blockIn, @NotNull BlockPos fromPos, boolean isMoving) {
+        if (!level.isClientSide) {
+            boolean isPowered = level.hasNeighborSignal(pos);
+            if (isPowered != state.getValue(POWERED)) {
+                level.setBlock(pos, state.setValue(POWERED, isPowered), 3);
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof TrialSpawnerBlockEntity spawnerEntity) {
+                    spawnerEntity.setRedstoneEnabled(!isPowered);
+                }
+            }
+        }
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(OMINOUS, STATE);
+        builder.add(OMINOUS, POWERED, STATE);
     }
 
     @Override

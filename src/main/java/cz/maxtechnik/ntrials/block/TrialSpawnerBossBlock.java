@@ -10,6 +10,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -17,6 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,18 +38,57 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
     public static final EnumProperty<TrialSpawnerBlock.TrialSpawnerState> STATE = EnumProperty.create("trial_spawner_state", TrialSpawnerBlock.TrialSpawnerState.class);
 
     public TrialSpawnerBossBlock() {
-        super(Properties.of().sound(SoundType.METAL).strength(45F, 999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
+        super(Properties.of().sound(SoundType.METAL).strength(20F, 999999999F).noOcclusion().mapColor(MapColor.COLOR_BLACK).isRedstoneConductor((bs, br, bp) -> false).noLootTable().pushReaction(PushReaction.BLOCK));
         this.registerDefaultState(this.stateDefinition.any().setValue(STATE, TrialSpawnerBlock.TrialSpawnerState.INACTIVE));
     }
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
-        boolean isHoldingKey = itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.OMINOUS_TRIAL_KEY.get();
+
+        // Allow changing mob with spawn egg only if player is in creative (instabuild) — otherwise spawner must be set via BlockEntityTag (/give)
+        if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
+            if (!level.isClientSide) {
+                if (!player.getAbilities().instabuild) {
+                    // Not allowed for survival players
+                    player.displayClientMessage(Component.literal("You must be in Creative to change a boss spawner with a spawn egg."), true);
+                    level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                    return InteractionResult.FAIL;
+                }
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner) {
+                    EntityType<?> entityType = spawnEggItem.getType(itemStack.getTag());
+                    bossSpawner.setBossMobType(entityType);
+                    bossSpawner.setChanged();
+                    player.displayClientMessage(Component.literal("Boss mob set from spawn egg (Creative)."), true);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
 
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner) {
+                // determine whether the held item qualifies as a key for this spawner (only mod built-in keys)
+                boolean isHoldingKey = itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.OMINOUS_TRIAL_KEY.get() || itemStack.getItem() == cz.maxtechnik.ntrials.init.NTrialsModItems.BOSS_TRIAL_KEY.get();
+                // If the placed item has BlockEntityTag or top-level NBT with settings, apply them on use
+                // (We still accept block NBT when using the item in the world; for placement we handle setPlacedBy below.)
+                // Support for setting key tag via BlockEntityTag or item NBT (for /give)
+                CompoundTag tag = itemStack.getTagElement("BlockEntityTag");
+                if (tag == null) tag = itemStack.getTag();
+                if (tag != null) {
+                    if (tag.contains("BossMobType")) {
+                        try {
+                            String mobId = tag.getString("BossMobType");
+                            EntityType<?> type = net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(mobId));
+                            if (type != null) bossSpawner.setBossMobType(type);
+                        } catch (Exception ignored) {}
+                    }
+                    if (tag.contains("key_tag")) bossSpawner.setKeyTag(tag.getString("key_tag"));
+                    if (tag.contains("BossLootTable")) bossSpawner.setBossLootTable(tag.getString("BossLootTable"));
+                }
+    // Add keyTag field and getter/setter
+    // (This is a new field for supporting tagged keys)
 
                 // 1. KONTROLA COOLDOWNU
                 if (bossSpawner.getCooldownTimer() > 0) {
@@ -68,6 +112,16 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
 
                 // 3. LOGIKA INTERAKCE S KLÍČEM VS BEZ KLÍČE
                 if (isHoldingKey) {
+                    // Key activation must obey startTag if set on the spawner
+                    boolean acceptKey = isAcceptKey(bossSpawner, itemStack);
+                    if (!acceptKey) {
+                        // don't accept this key
+                        if (!level.isClientSide) {
+                            player.displayClientMessage(Component.literal("This spawner requires a different key tag."), true);
+                            level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                        }
+                        return InteractionResult.FAIL;
+                    }
                     // --- Hráč DRŽÍ KLÍČ ---
                     if (bossSpawner.isActivated() && !bossSpawner.isKeyActivated()) {
                         bossSpawner.activateWithKey();
@@ -90,9 +144,48 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock {
         return InteractionResult.FAIL;
     }
 
+    private boolean isAcceptKey(TrialSpawnerBossBlockEntity bossSpawner, ItemStack itemStack) {
+        CompoundTag keyNbt = itemStack.getTag();
+        String keyVaultTag = "";
+                    if (keyNbt != null && keyNbt.contains("vault_tag")) keyVaultTag = keyNbt.getString("vault_tag");
+                    String required = bossSpawner.getKeyTag();
+        boolean acceptKey;
+                    if (required == null || required.isEmpty()) {
+                        // default: spawner without a keyTag requires keys WITHOUT a vault_tag (only untagged keys)
+                        acceptKey = keyVaultTag.isEmpty();
+                    } else {
+            // only accept keys with matching tag
+            acceptKey = !keyVaultTag.isEmpty() && keyVaultTag.equals(required);
+        }
+        return acceptKey;
+    }
+
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new TrialSpawnerBossBlockEntity(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide) {
+            CompoundTag tag = stack.getTagElement("BlockEntityTag");
+            if (tag == null) tag = stack.getTag();
+            if (tag != null) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof TrialSpawnerBossBlockEntity spawnerEntity) {
+                    if (tag.contains("BossMobType")) {
+                        try {
+                            String mobId = tag.getString("BossMobType");
+                            EntityType<?> type = net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(mobId));
+                            if (type != null) spawnerEntity.setBossMobType(type);
+                        } catch (Exception ignored) {}
+                    }
+                    if (tag.contains("key_tag")) spawnerEntity.setKeyTag(tag.getString("key_tag"));
+                    if (tag.contains("BossLootTable")) spawnerEntity.setBossLootTable(tag.getString("BossLootTable"));
+                }
+            }
+        }
     }
 
     @Override
