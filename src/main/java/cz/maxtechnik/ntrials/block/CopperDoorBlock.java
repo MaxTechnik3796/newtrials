@@ -1,5 +1,6 @@
 package cz.maxtechnik.ntrials.block;
 
+import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 	private final WeatherState level;
 	public CopperDoorBlock(WeatherState level,BlockBehaviour.Properties props){
-		super(props,new BlockSetType("copper",true,SoundType.COPPER,SoundEvents.IRON_DOOR_CLOSE,SoundEvents.IRON_DOOR_OPEN,SoundEvents.IRON_TRAPDOOR_CLOSE,SoundEvents.IRON_TRAPDOOR_OPEN,SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF,SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,SoundEvents.STONE_BUTTON_CLICK_OFF,SoundEvents.STONE_BUTTON_CLICK_ON));
+		super(props,new BlockSetType("copper",true,SoundType.COPPER,NTrialsModSounds.BLOCK_COPPER_DOOR_CLOSE.get(),NTrialsModSounds.BLOCK_COPPER_DOOR_OPEN.get(),NTrialsModSounds.BLOCK_COPPER_TRAPDOOR_CLOSE.get(),NTrialsModSounds.BLOCK_COPPER_TRAPDOOR_OPEN.get(),SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF,SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,SoundEvents.STONE_BUTTON_CLICK_OFF,SoundEvents.STONE_BUTTON_CLICK_ON));
 		this.level=level;
 	}
 	@Override
