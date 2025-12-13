@@ -1,0 +1,28 @@
+{
+	"parent":"ntrials:trial_enter",
+	"criteria":{
+		"lighten_up":{
+			"trigger":"minecraft:impossible"
+		}
+	},
+	"display":{
+		"announce_to_chat":true,
+		"frame":"task",
+		"hidden":false,
+		"show_toast":true,
+		"title":{
+			"translate":"advancements.adventure.lighten_up.title"
+		},
+		"description":{
+			"translate":"advancements.adventure.lighten_up.description"
+		},
+		"icon":{
+			"item":"ntrials:copper_bulb"
+		}
+	},
+	"requirements":[
+		[
+			"lighten_up"
+		]
+	]
+}

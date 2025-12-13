@@ -1,0 +1,28 @@
+{
+	"parent":"ntrials:vault",
+	"criteria":{
+		"vault":{
+			"trigger":"minecraft:impossible"
+		}
+	},
+	"display":{
+		"announce_to_chat":true,
+		"frame":"task",
+		"hidden":false,
+		"show_toast":true,
+		"title":{
+			"translate":"advancements.adventure.revaulting.title"
+		},
+		"description":{
+			"translate":"advancements.adventure.revaulting.description"
+		},
+		"icon":{
+			"item":"ntrials:ominous_trial_key"
+		}
+	},
+	"requirements":[
+		[
+			"vault"
+		]
+	]
+}

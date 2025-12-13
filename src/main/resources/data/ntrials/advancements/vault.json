@@ -1,0 +1,28 @@
+{
+	"parent":"ntrials:trial_enter",
+	"criteria":{
+		"vault":{
+			"trigger":"minecraft:impossible"
+		}
+	},
+	"display":{
+		"announce_to_chat":true,
+		"frame":"task",
+		"hidden":false,
+		"show_toast":true,
+		"title":{
+			"translate":"advancements.adventure.under_lock_and_key.title"
+		},
+		"description":{
+			"translate":"advancements.adventure.under_lock_and_key.description"
+		},
+		"icon":{
+			"item":"ntrials:trial_key"
+		}
+	},
+	"requirements":[
+		[
+			"vault"
+		]
+	]
+}

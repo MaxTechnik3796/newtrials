@@ -1,0 +1,35 @@
+{
+	"parent":"ntrials:trial_enter",
+	"criteria":{
+		"kill":{
+			"trigger":"player_killed_entity",
+			"conditions":{
+				"killing_blow":{
+					"source_entity":{
+						"nbt":"{SelectedItem:{id:\"ntrials:mace\"}}"
+					}
+				}
+			}
+		}
+	},
+	"display":{
+		"announce_to_chat":true,
+		"frame":"task",
+		"hidden":false,
+		"show_toast":true,
+		"title":{
+			"translate":"advancements.adventure.overoverkill.title"
+		},
+		"description":{
+			"translate":"advancements.adventure.overoverkill.description"
+		},
+		"icon":{
+			"item":"ntrials:mace"
+		}
+	},
+	"requirements":[
+		[
+			"kill"
+		]
+	]
+}

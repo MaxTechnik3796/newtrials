@@ -3,6 +3,10 @@ package cz.maxtechnik.ntrials;
 import com.mojang.logging.LogUtils;
 import cz.maxtechnik.ntrials.init.*;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -15,6 +19,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+
+import java.util.Objects;
 @SuppressWarnings("removal")
 @Mod(NTrialsMod.MODID)
 public class NTrialsMod{
@@ -52,6 +58,14 @@ public class NTrialsMod{
             LOGGER.info("NewTrials Client loading...");
         }
     }
-
+	public static void adv(ServerPlayer player,ResourceLocation adv_path){
+		Advancement _adv=Objects.requireNonNull(player.getServer()).getAdvancements().getAdvancement(adv_path);
+		assert _adv!=null;
+		AdvancementProgress ap=player.getAdvancements().getOrStartProgress(_adv);
+		if(!ap.isDone()){
+			for(String criteria: ap.getRemainingCriteria())
+				player.getAdvancements().award(_adv,criteria);
+		}
+	}
 }
 

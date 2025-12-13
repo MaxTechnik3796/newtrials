@@ -4,6 +4,23 @@
 
 	"effect.ntrials.trial_omen": "Trial Omen",
 
+
+	"advancements.adventure.minecraft_trials_edition.description": "Step foot in a Trial Chamber",
+	"advancements.adventure.minecraft_trials_edition.title": "Trials Chamber",
+	"advancements.adventure.under_lock_and_key.description": "Unlock a Vault with a Trial Key",
+	"advancements.adventure.under_lock_and_key.title": "Under Lock and Key",
+	"advancements.adventure.revaulting.description": "Unlock an Ominous Vault with an Ominous Trial Key",
+	"advancements.adventure.revaulting.title": "Revaulting",
+	"advancements.adventure.bossvault.description": "Unlock an Boss Vault with an Boss Trial Key",
+	"advancements.adventure.bossvault.title": "Vault Treasure",
+	"advancements.adventure.overoverkill.description": "Deal 50 hearts of damage in a single hit using the Mace",
+	"advancements.adventure.overoverkill.title": "Over-Overkill",
+	"advancements.adventure.lighten_up.description": "Scrape a Copper Bulb with an Axe to make it brighter",
+	"advancements.adventure.lighten_up.title": "Lighten Up",
+
+
+
+
 	"block.ntrials.heavy_core": "§dHeavy Core§r",
 	"item.ntrials.trial_key": "Trial Key",
 	"item.ntrials.ominous_trial_key": "Ominous Trial Key",

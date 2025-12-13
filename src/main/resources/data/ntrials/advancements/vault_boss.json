@@ -1,0 +1,28 @@
+{
+	"parent":"ntrials:vault_ominous",
+	"criteria":{
+		"vault":{
+			"trigger":"minecraft:impossible"
+		}
+	},
+	"display":{
+		"announce_to_chat":true,
+		"frame":"task",
+		"hidden":false,
+		"show_toast":true,
+		"title":{
+			"translate":"advancements.adventure.bossvault.title"
+		},
+		"description":{
+			"translate":"advancements.adventure.bossvault.description"
+		},
+		"icon":{
+			"item":"ntrials:boss_trial_key"
+		}
+	},
+	"requirements":[
+		[
+			"vault"
+		]
+	]
+}
