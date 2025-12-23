@@ -9,15 +9,15 @@ import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class TuffBlock extends Block{
-    public TuffBlock(){
-        super(Properties.of().sound(SoundType.TUFF).strength(1.5f,6f).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
-    }
-    @Override
-    public boolean propagatesSkylightDown(@NotNull BlockState state,@NotNull BlockGetter reader,@NotNull BlockPos pos){
-        return true;
-    }
-    @Override
-    public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
-        return 15;
-    }
+	public TuffBlock(){
+		super(Properties.of().sound(SoundType.TUFF).strength(1.5F,6F).requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY));
+	}
+	@Override
+	public boolean propagatesSkylightDown(@NotNull BlockState state,@NotNull BlockGetter reader,@NotNull BlockPos pos){
+		return true;
+	}
+	@Override
+	public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
+		return 15;
+	}
 }

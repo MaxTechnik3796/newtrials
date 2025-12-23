@@ -2,8 +2,6 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -141,7 +139,6 @@ public class VaultBlock extends BaseEntityBlock{
 			level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(),SoundSource.BLOCKS,1.0f,1.0f);
 		return InteractionResult.PASS;
 	}
-
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,@NotNull BlockState state,@NotNull BlockEntityType<T> blockEntityType){
