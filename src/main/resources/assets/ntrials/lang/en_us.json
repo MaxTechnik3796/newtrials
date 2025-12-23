@@ -28,9 +28,16 @@
 	"item.ntrials.mace": "§dMace§r",
 	"item.ntrials.mace_handle": "§dMace Handle§r",
 	"item.ntrials.copper_upgrade_smithing_template": "Smithing Template",
+
 	"upgrade.ntrials.copper_upgrade": "Copper Upgrade",
 	"item.ntrials.smithing_template.copper_upgrade.applies_to": "Breeze Rod",
 	"item.ntrials.smithing_template.copper_upgrade.ingredients": "Netherite Scrap",
+
+
+	"item.ntrials.bolt_armor_trim_smithing_template":"Smithing Template",
+	"trim_pattern.ntrials.bolt":"Bolt Armor Trim",
+	"item.ntrials.flow_armor_trim_smithing_template":"Smithing Template",
+	"trim_pattern.ntrials.flow":"Flow Armor Trim",
 
 	"item.ntrials.ominous_bottle": "Ominous Bottle",
 

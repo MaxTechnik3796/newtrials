@@ -2,8 +2,10 @@ package cz.maxtechnik.ntrials.init;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.item.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
@@ -35,8 +37,10 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>OMINOUS_BOTTLE=REGISTRY.register("ominous_bottle",OminousBottleItem::new);
     public static final RegistryObject<Item>COPPER_UPGRADE_SMITHING_TEMPLATE=REGISTRY.register("copper_upgrade_smithing_template",CopperUpgradeSmithingTemplateItem::new);
 
+	public static final RegistryObject<Item>BOLT_ARMOR_TRIM_SMITHING_TEMPLATE=REGISTRY.register("bolt_armor_trim_smithing_template",()->SmithingTemplateItem.createArmorTrimTemplate(ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"bolt")));
+	public static final RegistryObject<Item>FLOW_ARMOR_TRIM_SMITHING_TEMPLATE=REGISTRY.register("flow_armor_trim_smithing_template",()->SmithingTemplateItem.createArmorTrimTemplate(ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"flow")));
 
-    public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
+	public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
     public static final RegistryObject<Item>CHISELED_TUFF=block(NTrialsModBlocks.CHISELED_TUFF);
     public static final RegistryObject<Item>CHISELED_TUFF_BRICKS=block(NTrialsModBlocks.CHISELED_TUFF_BRICKS);
     public static final RegistryObject<Item>POLISHED_TUFF=block(NTrialsModBlocks.POLISHED_TUFF);

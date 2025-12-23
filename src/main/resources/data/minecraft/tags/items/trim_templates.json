@@ -1,0 +1,7 @@
+{
+	"replace":false,
+	"values":[
+		"ntrials:bolt_armor_trim_smithing_template",
+		"ntrials:flow_armor_trim_smithing_template"
+	]
+}

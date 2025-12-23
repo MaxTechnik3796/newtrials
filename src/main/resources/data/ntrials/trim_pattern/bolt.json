@@ -1,0 +1,7 @@
+{
+	"asset_id":"ntrials:bolt",
+	"description":{
+		"translate":"trim_pattern.ntrials.bolt"
+	},
+	"template_item":"ntrials:bolt_armor_trim_smithing_template"
+}

@@ -17,6 +17,8 @@ public class NTrialsModTabs{
 		tabData.accept(NTrialsModItems.BOSS_TRIAL_KEY.get());
 		tabData.accept(NTrialsModItems.OMINOUS_BOTTLE.get());
 		tabData.accept(NTrialsModItems.COPPER_UPGRADE_SMITHING_TEMPLATE.get());
+		tabData.accept(NTrialsModItems.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE.get());
+		tabData.accept(NTrialsModItems.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE.get());
 
 		tabData.accept(NTrialsModItems.TRIAL_SPAWNER.get());
 		tabData.accept(NTrialsModItems.VAULT.get());
