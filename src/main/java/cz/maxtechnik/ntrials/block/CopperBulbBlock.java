@@ -130,7 +130,8 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
 				if(!level.isClientSide){
 					BlockState new_state=scrapedBlock.defaultBlockState();
-					if(new_state.getBlock().equals(NTrialsModBlocks.COPPER_BULB.get()))NTrialsMod.adv((ServerPlayer)player,ResourceLocation.fromNamespaceAndPath("ntrials","lighten_up"));
+					if(new_state.getBlock().equals(NTrialsModBlocks.COPPER_BULB.get()))
+						NTrialsMod.adv((ServerPlayer)player,ResourceLocation.fromNamespaceAndPath("ntrials","lighten_up"));
 					new_state=new_state.setValue(LIT,state.getValue(LIT));
 					new_state=new_state.setValue(POWERED,state.getValue(POWERED));
 					level.setBlock(pos,new_state,3);

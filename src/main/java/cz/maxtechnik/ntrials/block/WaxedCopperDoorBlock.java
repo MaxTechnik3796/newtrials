@@ -47,12 +47,11 @@ public class WaxedCopperDoorBlock extends DoorBlock{
 					if(state.getValue(HALF)==DoubleBlockHalf.LOWER){
 						// Jsme dolní díl, druhý díl je nahoře
 						otherPos=pos.above();
-						otherState=level.getBlockState(otherPos);
 					}else{
 						// Jsme horní díl, druhý díl je dole
 						otherPos=pos.below();
-						otherState=level.getBlockState(otherPos);
 					}
+					otherState=level.getBlockState(otherPos);
 					// Zkontrolujeme, že druhý díl je stejný typ dveří
 					if(otherState.getBlock()==this){
 						// Připravíme nové stavy pro oba díly (zachováme všechny properties)
