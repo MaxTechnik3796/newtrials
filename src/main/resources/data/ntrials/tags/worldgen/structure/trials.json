@@ -1,7 +1,7 @@
 {
-  "replace": false,
-  "values": [
-    "ntrials:trials"
-  ]
+	"replace":false,
+	"values":[
+		"ntrials:trials"
+	]
 }
 

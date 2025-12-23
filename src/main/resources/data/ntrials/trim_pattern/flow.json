@@ -1,0 +1,7 @@
+{
+	"asset_id":"ntrials:flow",
+	"description":{
+		"translate":"trim_pattern.ntrials.flow"
+	},
+	"template_item":"ntrials:flow_armor_trim_smithing_template"
+}
