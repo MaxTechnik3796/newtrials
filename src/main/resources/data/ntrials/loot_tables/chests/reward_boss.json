@@ -10,7 +10,7 @@
 					"weight":8
 				}
 			],
-			"rolls": 1.0
+			"rolls":1.0
 		},
 		{
 			"bonus_rolls":0.0,
@@ -51,22 +51,32 @@
 			],
 			"rolls":1.0
 		},
-      {
-        "bonus_rolls":0.0,
-        "conditions": [
-          {
-            "chance": 0.5,
-            "condition": "minecraft:random_chance"
-          }
-        ],
-        "entries": [
-          {
-            "type":"minecraft:item",
-            "name":"minecraft:enchanted_golden_apple"
-          }
-        ],
-        "rolls":1.0
-      }
+		{
+			"bonus_rolls":0.0,
+			"conditions":[
+				{
+					"chance":0.5,
+					"condition":"minecraft:random_chance"
+				}
+			],
+			"entries":[
+				{
+					"type":"minecraft:item",
+					"name":"minecraft:enchanted_golden_apple",
+					"weight":3
+				},
+				{
+					"type":"minecraft:item",
+					"name":"ntrials:bolt_armor_trim_smithing_template",
+					"weight":2
+				},
+				{
+					"type":"minecraft:item",
+					"name":"ntrials:flow_armor_trim_smithing_template"
+				}
+			],
+			"rolls":1.0
+		}
 	],
 	"random_sequence":"ntrials:chests/reward_boss"
 }
