@@ -7,6 +7,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -19,6 +20,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 
 import java.util.Objects;
 @SuppressWarnings("removal")
@@ -66,6 +69,36 @@ public class NTrialsMod{
 			for(String criteria: ap.getRemainingCriteria())
 				player.getAdvancements().award(_adv,criteria);
 		}
+	}
+	@SubscribeEvent
+	public void onPlayerFall(LivingFallEvent event) {
+		if (!(event.getEntity() instanceof net.minecraft.world.entity.player.Player player)) return;
+		if (player.level().isClientSide()) return;
+		CompoundTag data = player.getPersistentData();
+		if (!data.contains("WindChargeImmunityTime")) return;
+		long explosionTime = data.getLong("WindChargeImmunityTime");
+		long currentTime = player.level().getGameTime();
+		if (currentTime - explosionTime <= 38) {//explosion time = imunit
+			Vec3 explosionPos = new Vec3(
+					data.getDouble("WindChargeExplosionX"),
+					data.getDouble("WindChargeExplosionY"),
+					data.getDouble("WindChargeExplosionZ")
+			);
+			Vec3 landingPos = player.position();
+			double horizDist = Math.sqrt(
+					Math.pow(landingPos.x - explosionPos.x, 2) +
+							Math.pow(landingPos.z - explosionPos.z, 2)
+			);
+			if (horizDist <= 2.5D) {
+				event.setDamageMultiplier(0.0F);
+				event.setDistance(0.0F);
+			}
+		}
+		// clear data
+		data.remove("WindChargeImmunityTime");
+		data.remove("WindChargeExplosionX");
+		data.remove("WindChargeExplosionY");
+		data.remove("WindChargeExplosionZ");
 	}
 }
 
