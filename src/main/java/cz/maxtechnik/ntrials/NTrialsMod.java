@@ -78,7 +78,7 @@ public class NTrialsMod{
 		if(!data.contains("WindChargeImmunityTime"))return;
 		long explosionTime=data.getLong("WindChargeImmunityTime");
 		long currentTime=player.level().getGameTime();
-		if(currentTime-explosionTime<=38){
+		if(currentTime-explosionTime<=39){
 			Vec3 explosionPos=new Vec3(
 					data.getDouble("WindChargeExplosionX"),
 					data.getDouble("WindChargeExplosionY"),
