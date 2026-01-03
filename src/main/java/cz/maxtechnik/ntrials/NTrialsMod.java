@@ -27,74 +27,73 @@ import java.util.Objects;
 @SuppressWarnings("removal")
 @Mod(NTrialsMod.MODID)
 public class NTrialsMod{
-    public static final String MODID="ntrials";
-    public static final Logger LOGGER=LogUtils.getLogger();
-    public NTrialsMod(){
-        IEventBus modEventBus=FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(this::commonSetup);
-        MinecraftForge.EVENT_BUS.register(this);
-        NTrialsModBlocks.REGISTRY.register(modEventBus);
-        NTrialsModItems.REGISTRY.register(modEventBus);
-        NTrialsModEntityTypes.REGISTRY.register(modEventBus);
-        NTrialsModParticles.REGISTRY.register(modEventBus);
-        NTrialsModTabs.REGISTER.register(modEventBus);
-        NTrialsModMobEffects.REGISTER.register(modEventBus);
-        NTrialsModBlockEntities.register(modEventBus);
-        NTrialsModSounds.REGISTER.register(modEventBus);
-        NTrialsModEnchantments.register(modEventBus);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,Config.SPEC);
-    }
-    private void commonSetup(final FMLCommonSetupEvent event){
-        LOGGER.info("NewTrials Common loading...");
-        event.enqueueWork(NTrialsModEvents::setupOxidation);
+	public static final String MODID="ntrials";
+	public static final Logger LOGGER=LogUtils.getLogger();
+	public NTrialsMod(){
+		IEventBus modEventBus=FMLJavaModLoadingContext.get().getModEventBus();
+		modEventBus.addListener(this::commonSetup);
+		MinecraftForge.EVENT_BUS.register(this);
+		NTrialsModBlocks.REGISTRY.register(modEventBus);
+		NTrialsModItems.REGISTRY.register(modEventBus);
+		NTrialsModEntityTypes.REGISTRY.register(modEventBus);
+		NTrialsModParticles.REGISTRY.register(modEventBus);
+		NTrialsModTabs.REGISTER.register(modEventBus);
+		NTrialsModMobEffects.REGISTER.register(modEventBus);
+		NTrialsModBlockEntities.register(modEventBus);
+		NTrialsModSounds.REGISTER.register(modEventBus);
+		NTrialsModEnchantments.REGISTER.register(modEventBus);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,Config.SPEC);
+	}
+	private void commonSetup(final FMLCommonSetupEvent event){
+		LOGGER.info("NewTrials Common loading...");
+		event.enqueueWork(NTrialsModEvents::setupOxidation);
 		event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
-        event.enqueueWork(NetworkHandler::registerPackets);
-    }
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event){
-        LOGGER.info("NewTrials Server loading...");
-    }
-    @Mod.EventBusSubscriber(modid=MODID,bus=Mod.EventBusSubscriber.Bus.MOD,value=Dist.CLIENT)
-    public static class ClientModEvents{
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event){
-            LOGGER.info("NewTrials Client loading...");
-        }
-    }
+		event.enqueueWork(NetworkHandler::registerPackets);
+	}
+	@SubscribeEvent
+	public void onServerStarting(ServerStartingEvent event){
+		LOGGER.info("NewTrials Server loading...");
+	}
+	@Mod.EventBusSubscriber(modid=MODID,bus=Mod.EventBusSubscriber.Bus.MOD,value=Dist.CLIENT)
+	public static class ClientModEvents{
+		@SubscribeEvent
+		public static void onClientSetup(FMLClientSetupEvent event){
+			LOGGER.info("NewTrials Client loading...");
+		}
+	}
 	public static void adv(ServerPlayer player,ResourceLocation adv_path){
-		Advancement _adv=Objects.requireNonNull(player.getServer()).getAdvancements().getAdvancement(adv_path);
-		assert _adv!=null;
-		AdvancementProgress ap=player.getAdvancements().getOrStartProgress(_adv);
+		Advancement adv=Objects.requireNonNull(player.getServer()).getAdvancements().getAdvancement(adv_path);
+		assert adv!=null;
+		AdvancementProgress ap=player.getAdvancements().getOrStartProgress(adv);
 		if(!ap.isDone()){
 			for(String criteria: ap.getRemainingCriteria())
-				player.getAdvancements().award(_adv,criteria);
+				player.getAdvancements().award(adv,criteria);
 		}
 	}
 	@SubscribeEvent
-	public void onPlayerFall(LivingFallEvent event) {
-		if (!(event.getEntity() instanceof net.minecraft.world.entity.player.Player player)) return;
-		if (player.level().isClientSide()) return;
-		CompoundTag data = player.getPersistentData();
-		if (!data.contains("WindChargeImmunityTime")) return;
-		long explosionTime = data.getLong("WindChargeImmunityTime");
-		long currentTime = player.level().getGameTime();
-		if (currentTime - explosionTime <= 38) {//explosion time = imunit
-			Vec3 explosionPos = new Vec3(
+	public void onPlayerFall(LivingFallEvent event){
+		if(!(event.getEntity()instanceof net.minecraft.world.entity.player.Player player))return;
+		if(player.level().isClientSide())return;
+		CompoundTag data=player.getPersistentData();
+		if(!data.contains("WindChargeImmunityTime"))return;
+		long explosionTime=data.getLong("WindChargeImmunityTime");
+		long currentTime=player.level().getGameTime();
+		if(currentTime-explosionTime<=38){
+			Vec3 explosionPos=new Vec3(
 					data.getDouble("WindChargeExplosionX"),
 					data.getDouble("WindChargeExplosionY"),
 					data.getDouble("WindChargeExplosionZ")
 			);
-			Vec3 landingPos = player.position();
-			double horizDist = Math.sqrt(
-					Math.pow(landingPos.x - explosionPos.x, 2) +
-							Math.pow(landingPos.z - explosionPos.z, 2)
+			Vec3 landingPos=player.position();
+			double horizDist=Math.sqrt(
+					Math.pow(landingPos.x-explosionPos.x,2)+
+							Math.pow(landingPos.z-explosionPos.z,2)
 			);
-			if (horizDist <= 2.5D) {
+			if(horizDist<=2.5D){
 				event.setDamageMultiplier(0.0F);
 				event.setDistance(0.0F);
 			}
 		}
-		// clear data
 		data.remove("WindChargeImmunityTime");
 		data.remove("WindChargeExplosionX");
 		data.remove("WindChargeExplosionY");

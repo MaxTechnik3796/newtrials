@@ -36,11 +36,9 @@ public class NTrialsModEvents{
 		@Nullable
 		@Override
 		public MerchantOffer getOffer(Entity trader,@NotNull RandomSource random){
-			if(!(trader.level() instanceof ServerLevel serverLevel))
-				return null;
+			if(!(trader.level() instanceof ServerLevel serverLevel))return null;
 			BlockPos structurePos=serverLevel.findNearestMapStructure(TRIALS_STRUCTURE_TAG,trader.blockPosition(),100,true);
-			if(structurePos==null)
-				return null;
+			if(structurePos==null)return null;
 			ItemStack mapStack=MapItem.create(serverLevel,structurePos.getX(),structurePos.getZ(),(byte)2,true,true);
 			MapItem.renderBiomePreviewMap(serverLevel,mapStack);
 			mapStack.setHoverName(Component.translatable("item.ntrials.trials_explorer_map"));
