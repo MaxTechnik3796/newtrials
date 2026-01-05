@@ -4,9 +4,7 @@ import cz.maxtechnik.ntrials.NTrialsModEvents;
 import cz.maxtechnik.ntrials.init.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -46,18 +44,9 @@ public class WaxedCopperTrapdoorBlock extends TrapDoorBlock{
 							.setValue(POWERED,stateAtPos.getValue(POWERED))
 							.setValue(WATERLOGGED,stateAtPos.getValue(WATERLOGGED));
 					level.setBlock(pos,nextState,3);
-					level.playSound(null,pos,SoundEvents.AXE_WAX_OFF,SoundSource.BLOCKS,1f,1f);
-					if(level instanceof ServerLevel serverLevel){
-						for(int i=0;i<20;i++){
-							double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
-							double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
-							double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
-							serverLevel.sendParticles(ParticleTypes.WAX_OFF,x,y,z,1,0,0,0,0.05);
-						}
-					}
-					if(!player.isCreative()){
-						itemInHand.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-					}
+					CopperUtil.play(level,pos,SoundEvents.AXE_WAX_OFF);
+					CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_OFF);
+					CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
 			}

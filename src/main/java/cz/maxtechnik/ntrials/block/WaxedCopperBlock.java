@@ -2,9 +2,7 @@ package cz.maxtechnik.ntrials.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -31,17 +29,9 @@ public class WaxedCopperBlock extends Block{
 			if(unwaxedBlock!=null){
 				if(!level.isClientSide){
 					level.setBlock(pos,unwaxedBlock.defaultBlockState(),3);
-					level.playSound(null,pos,SoundEvents.AXE_WAX_OFF,SoundSource.BLOCKS,1.0F,1.0F);
-					if(level instanceof ServerLevel serverLevel){
-						for(int i=0;i<20;i++){
-							double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
-							double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
-							double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
-							serverLevel.sendParticles(ParticleTypes.WAX_OFF,x,y,z,1,0.0,0.0,0.0,0.05);
-						}
-					}
-					// Poškodenie nástroja
-					itemInHand.hurtAndBreak(1,player,(p)->p.broadcastBreakEvent(hand));
+					CopperUtil.play(level,pos,SoundEvents.AXE_WAX_OFF);
+					CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_OFF);
+					CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
 			}

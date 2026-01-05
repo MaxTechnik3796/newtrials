@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -83,15 +82,8 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 						level.setBlock(otherPos,newState2,2|16);
 						level.sendBlockUpdated(pos,state,newState1,3);
 						level.sendBlockUpdated(otherPos,otherState,newState2,3);
-						level.playSound(null,pos,SoundEvents.HONEYCOMB_WAX_ON,SoundSource.BLOCKS,1f,1f);
-						if(level instanceof ServerLevel serverLevel){
-							for(int i=0;i<20;i++){
-								double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
-								double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
-								double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
-								serverLevel.sendParticles(ParticleTypes.WAX_ON,x,y,z,1,0,0,0,0.05);
-							}
-						}
+						CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
 						if(!player.isCreative()){
 							stack.shrink(1);
 						}
@@ -137,17 +129,9 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 						level.setBlock(otherPos,newState2,2|16);
 						level.sendBlockUpdated(pos,state,newState1,3);
 						level.sendBlockUpdated(otherPos,otherState,newState2,3);
-						level.playSound(null,pos,SoundEvents.AXE_SCRAPE,SoundSource.BLOCKS,1.0f,1.0f);
-						if(level instanceof ServerLevel serverLevel){
-							for(int i=0;i<20;i++){
-								double x=pos.getX()-0.2+level.random.nextDouble()*1.4;
-								double y=pos.getY()-0.2+level.random.nextDouble()*1.4;
-								double z=pos.getZ()-0.2+level.random.nextDouble()*1.4;
-								serverLevel.sendParticles(ParticleTypes.SCRAPE,x,y,z,1,0,0,0,0.05);
-							}
-						}
-						// Poškození nástroje
-						stack.hurtAndBreak(1,player,(p)->p.broadcastBreakEvent(hand));
+						CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
+						CopperUtil.damageToolIfNotCreative(stack,player,hand);
 					}
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
