@@ -56,7 +56,7 @@ public class WaxedCopperTrapdoorBlock extends TrapDoorBlock{
 						}
 					}
 					if(!player.isCreative()){
-						itemInHand.shrink(1);
+						itemInHand.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
 					}
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
