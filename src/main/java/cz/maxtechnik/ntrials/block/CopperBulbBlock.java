@@ -3,6 +3,7 @@ package cz.maxtechnik.ntrials.block;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.NTrialsModEvents;
 import cz.maxtechnik.ntrials.init.NTrialsModBlocks;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -35,6 +36,10 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){
 		builder.add(LIT);
 		builder.add(POWERED);
+	}
+	@Override
+	public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
+		return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
 	}
 	public CopperBulbBlock(WeatherState level,BlockBehaviour.Properties props){
 		super(props);
@@ -123,7 +128,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 				if(!level.isClientSide){
 					BlockState new_state=scrapedBlock.defaultBlockState();
 					if(new_state.getBlock().equals(NTrialsModBlocks.COPPER_BULB.get()))
-						NTrialsMod.adv((ServerPlayer)player,ResourceLocation.fromNamespaceAndPath("ntrials","lighten_up"));
+						NTrialsMod.adv((ServerPlayer)player,ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"lighten_up"));
 					new_state=new_state.setValue(LIT,state.getValue(LIT));
 					new_state=new_state.setValue(POWERED,state.getValue(POWERED));
 					level.setBlock(pos,new_state,3);

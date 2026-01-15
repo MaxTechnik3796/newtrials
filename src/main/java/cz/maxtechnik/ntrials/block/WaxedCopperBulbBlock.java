@@ -2,6 +2,7 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsModEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -27,6 +28,10 @@ public class WaxedCopperBulbBlock extends Block{
 		super(props);
 		this.weatheringLevel=weatheringLevel;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LIT,false).setValue(POWERED,false));
+	}
+	@Override
+	public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
+		return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
 	}
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){

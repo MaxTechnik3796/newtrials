@@ -53,7 +53,6 @@ public class WaxedCopperGrateBlock extends Block implements SimpleWaterloggedBlo
 		return 1.0f;
 	}
 	@Override
-	@SuppressWarnings("deprecation")
 	public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
 		return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
 	}
