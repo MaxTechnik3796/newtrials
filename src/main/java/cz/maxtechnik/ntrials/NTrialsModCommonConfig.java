@@ -49,7 +49,7 @@ public class NTrialsModCommonConfig{
 		VAULT_EJECT_INTERVAL=BUILDER.comment("Vault ejecting interval.\nNTrials-reload required!\nDefault value: 20").defineInRange("vault_ejecting_interval",20,1,Integer.MAX_VALUE);
 		VAULT_CLOSE_DELAY=BUILDER.comment("Vault close delay.\nNTrials-reload required!\nDefault value: 20").defineInRange("vault_close_delay",20,1,Integer.MAX_VALUE);
 		VAULT_DISPLAY_ITEM_SWITCH_INTERVAL=BUILDER.comment("Vault display item switch interval.\nNTrials-reload required!\nDefault value: 20").defineInRange("vault_display_item_switch_interval",20,1,Integer.MAX_VALUE);
-		VAULT_ITEM_ROTATION_SPEED=BUILDER.comment("Vault item rotation speed.\nNTrials-reload required!\nDefault value: 2.0").defineInRange("vault_item_rotation_speed",2.0,1.0,Double.MAX_VALUE);
+		VAULT_ITEM_ROTATION_SPEED=BUILDER.comment("Vault item rotation speed.\nNTrials-reload required!\nDefault value: 2.0").defineInRange("vault_item_rotation_speed",2.0,1.0,Integer.MAX_VALUE);
 		BUILDER.pop();
 		BUILDER.push("SpawnerSettings");
 		SPAWNER_COOLDOWN_OMINOUS=BUILDER.comment("Spawner cooldown ominous.\nNTrials-reload required!\nDefault value: 10").defineInRange("spawner_cooldown_ominous",10,1,Integer.MAX_VALUE);
@@ -67,7 +67,7 @@ public class NTrialsModCommonConfig{
 		BOSS_SPAWNER_LOOT_DROP_INTERVAL=BUILDER.comment("Boss Spawner loot drop interval.\nNTrials-reload required!\nDefault value: 10").defineInRange("boss_spawner_loot_drop_interval",10,1,Integer.MAX_VALUE);
 		BOSS_SPAWNER_COMPLETE_TRIAL_DELAY=BUILDER.comment("Boss Spawner complete_trial_delay.\nNTrials-reload required!\nDefault value: 20").defineInRange("boss_spawner_complete_trial_delay",20,1,Integer.MAX_VALUE);
 		BOSS_SPAWNER_BASE_BOSS_HP=BUILDER.comment("Boss Spawner base boss hp.\nNTrials-reload required!\nDefault value: 200").defineInRange("boss_spawner_base_boss_hp",200,1,Integer.MAX_VALUE);
-		BOSS_SPAWNER_HP_MULTIPLIER_PER_PLAYER=BUILDER.comment("Boss Spawner hp multiplier per player.\nNTrials-reload required!\nDefault value: 1.5").defineInRange("boss_spawner_hs_multiplier_per_player",1.5,1.0,Double.MAX_VALUE);
+		BOSS_SPAWNER_HP_MULTIPLIER_PER_PLAYER=BUILDER.comment("Boss Spawner hp multiplier per player.\nNTrials-reload required!\nDefault value: 1.5").defineInRange("boss_spawner_hs_multiplier_per_player",1.5,1.0,Integer.MAX_VALUE);
 		BOSS_SPAWNER_MAX_COOLDOWN_TICKS=BUILDER.comment("Boss Spawner max cooldown ticks.\nNTrials-reload required!\nDefault value: 36000").defineInRange("boss_spawner_max_cooldown_ticks",36000,1,Integer.MAX_VALUE);
 
 
