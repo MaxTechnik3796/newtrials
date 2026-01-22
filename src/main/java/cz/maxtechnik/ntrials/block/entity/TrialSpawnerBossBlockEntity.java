@@ -35,6 +35,23 @@ import java.util.UUID;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 public class TrialSpawnerBossBlockEntity extends BlockEntity{
+	private static final String DEFAULT_BOSS_LOOT="ntrials:chests/spawner_boss";
+	private boolean isActivated=false;
+	private boolean isKeyActivated=false;
+	private int spawnTimer=-1;
+	private UUID spawnedBossUUID=null;
+	private final Set<UUID> nearbyPlayers=new HashSet<>();
+	private final Set<UUID> participatingPlayers=new HashSet<>();
+	private int bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
+	private boolean isLootAnimating=false;
+	private int lootAnimationTick=0;
+	private List<ItemStack> pendingLootItems=new ArrayList<>();
+	private int currentLootDropIndex=0;
+	private int completeTrialTimer=-1;
+	private int clientTickCount=0;
+	private transient boolean wasActivated=false;
+	private final Set<UUID> playersWhoReceivedReward=new HashSet<>();
+	private int cooldownTimer=0; // Odpočet cooldownu
 	private String keyTag="";
 	private EntityType<?> bossMobType=NTrialsModEntityTypes.BREEZE_BOSS.get();
 	private String bossLootTable="";
@@ -78,23 +95,6 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 	public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket(){
 		return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
 	}
-	private static final String DEFAULT_BOSS_LOOT="ntrials:chests/spawner_boss";
-	private boolean isActivated=false;
-	private boolean isKeyActivated=false;
-	private int spawnTimer=-1;
-	private UUID spawnedBossUUID=null;
-	private final Set<UUID> nearbyPlayers=new HashSet<>();
-	private final Set<UUID> participatingPlayers=new HashSet<>();
-	private int bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
-	private boolean isLootAnimating=false;
-	private int lootAnimationTick=0;
-	private List<ItemStack> pendingLootItems=new ArrayList<>();
-	private int currentLootDropIndex=0;
-	private int completeTrialTimer=-1;
-	private int clientTickCount=0;
-	private transient boolean wasActivated=false;
-	private final Set<UUID> playersWhoReceivedReward=new HashSet<>();
-	private int cooldownTimer=0; // Odpočet cooldownu
 	public TrialSpawnerBossBlockEntity(BlockPos pos,BlockState blockState){
 		super(NTrialsModBlockEntities.TRIAL_SPAWNER_BOSS_BLOCK_ENTITY.get(),pos,blockState);
 	}
