@@ -1,9 +1,10 @@
-package cz.maxtechnik.ntrials.init;
+package cz.maxtechnik.ntrials.init.other;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBossBlockEntity;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModBlocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;

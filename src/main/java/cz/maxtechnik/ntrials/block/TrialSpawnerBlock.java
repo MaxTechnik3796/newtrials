@@ -1,13 +1,14 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
-import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -57,7 +58,7 @@ public class TrialSpawnerBlock extends BaseEntityBlock{
 				if(!level.isClientSide){
 					if(!player.getAbilities().instabuild){
 						player.displayClientMessage(Component.literal("You must be in Creative to change the spawner with a spawn egg."),true);
-						level.playSound(null,pos,cz.maxtechnik.ntrials.init.NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(),SoundSource.BLOCKS,1.0f,1.0f);
+						level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 						return InteractionResult.FAIL;
 					}
 					EntityType<?> entityType=spawnEggItem.getType(itemStack.getTag());

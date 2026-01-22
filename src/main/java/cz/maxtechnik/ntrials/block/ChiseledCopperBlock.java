@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
@@ -40,7 +40,7 @@ public class ChiseledCopperBlock extends Block implements WeatheringCopper{
 		ItemStack itemInHand=player.getItemInHand(hand);
 		// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
 		if(itemInHand.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
+			Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
 			if(waxedBlock!=null){
 				if(!level.isClientSide){
 					level.setBlock(pos,waxedBlock.defaultBlockState(),3);
@@ -55,7 +55,7 @@ public class ChiseledCopperBlock extends Block implements WeatheringCopper{
 		}
 		// Sekera interakcia - scraping (čištění oxidace o jeden stupeň zpět)
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
+			Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
 			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
 				if(!level.isClientSide){
 					level.setBlock(pos,scrapedBlock.defaultBlockState(),3);
@@ -99,7 +99,7 @@ public class ChiseledCopperBlock extends Block implements WeatheringCopper{
 		// Výpočet šance na oxidáciu na základe okolia (vanilla logika)
 		float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
 		if(random.nextFloat()<oxidationChance){
-			Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+			Block nextBlock=NTrialsMod_ModModEvents.OXIDATION_LEVEL_INCREASES.get(this);
 			if(nextBlock!=null){
 				level.setBlockAndUpdate(pos,nextBlock.defaultBlockState());
 			}

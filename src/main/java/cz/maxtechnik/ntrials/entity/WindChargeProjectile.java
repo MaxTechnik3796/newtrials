@@ -1,9 +1,9 @@
 package cz.maxtechnik.ntrials.entity;
 
-import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
-import cz.maxtechnik.ntrials.init.NTrialsModParticles;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.other.NTrialsModParticles;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;

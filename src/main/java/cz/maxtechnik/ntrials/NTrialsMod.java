@@ -1,12 +1,21 @@
 package cz.maxtechnik.ntrials;
 
 import com.mojang.logging.LogUtils;
-import cz.maxtechnik.ntrials.init.*;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModBlocks;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModTabs;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
+import cz.maxtechnik.ntrials.init.other.*;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,12 +51,12 @@ public class NTrialsMod{
 		NTrialsModBlockEntities.register(modEventBus);
 		NTrialsModSounds.REGISTER.register(modEventBus);
 		NTrialsModEnchantments.REGISTER.register(modEventBus);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,Config.SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,NTrialsModCommonConfig.SPEC);
 	}
 	private void commonSetup(final FMLCommonSetupEvent event){
 		LOGGER.info("NewTrials Common loading...");
-		event.enqueueWork(NTrialsModEvents::setupOxidation);
-		event.enqueueWork(NTrialsModEvents::setupDispenserBehaviors);
+		event.enqueueWork(NTrialsMod_ModModEvents::setupOxidation);
+		event.enqueueWork(NTrialsMod_ModModEvents::setupDispenserBehaviors);
 		event.enqueueWork(NetworkHandler::registerPackets);
 	}
 	@SubscribeEvent
@@ -98,6 +107,13 @@ public class NTrialsMod{
 		data.remove("WindChargeExplosionX");
 		data.remove("WindChargeExplosionY");
 		data.remove("WindChargeExplosionZ");
+	}
+	public static void sendMessageToPlayer(Player player,MutableComponent message){
+		MutableComponent messageTemplate=Component.empty();
+		messageTemplate.append(Component.translatable("chat.ntrials.mod_prefix"));
+		messageTemplate.append(CommonComponents.space());
+		messageTemplate.append(message);
+		player.sendSystemMessage(messageTemplate);
 	}
 }
 

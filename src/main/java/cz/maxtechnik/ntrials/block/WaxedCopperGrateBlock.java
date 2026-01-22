@@ -1,6 +1,6 @@
 package cz.maxtechnik.ntrials.block;
 
-import cz.maxtechnik.ntrials.NTrialsModEvents;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -82,7 +82,7 @@ public class WaxedCopperGrateBlock extends Block implements SimpleWaterloggedBlo
 		ItemStack itemInHand=player.getItemInHand(hand);
 		// Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block unwaxedBlock=NTrialsModEvents.UNWAXING_MAP.get(this);
+			Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
 			if(unwaxedBlock!=null){
 				if(!level.isClientSide){
 					BlockState nextstate=unwaxedBlock.defaultBlockState();

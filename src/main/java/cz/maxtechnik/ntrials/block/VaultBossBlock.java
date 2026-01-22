@@ -2,12 +2,13 @@ package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -131,7 +132,7 @@ public class VaultBossBlock extends BaseEntityBlock{
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,@NotNull BlockState state,@NotNull BlockEntityType<T> blockEntityType){
-		return createTickerHelper(blockEntityType,cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
+		return createTickerHelper(blockEntityType,NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
 				level.isClientSide?VaultBossBlock::clientTick:VaultBossBlock::serverTick);
 	}
 	// Server tick - zpracovává animaci, částice a hráče

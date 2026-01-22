@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class WaxedCopperBlock extends Block{
@@ -25,7 +25,7 @@ public class WaxedCopperBlock extends Block{
 		ItemStack itemInHand=player.getItemInHand(hand);
 		// Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block unwaxedBlock=NTrialsModEvents.UNWAXING_MAP.get(this);
+			Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
 			if(unwaxedBlock!=null){
 				if(!level.isClientSide){
 					level.setBlock(pos,unwaxedBlock.defaultBlockState(),3);

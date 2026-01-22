@@ -1,7 +1,7 @@
 package cz.maxtechnik.ntrials.block;
 
-import cz.maxtechnik.ntrials.NTrialsModEvents;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -49,7 +49,7 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
 		ItemStack itemInHand=player.getItemInHand(hand);
 		// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
 		if(itemInHand.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
+			Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
 			if(waxedBlock!=null){
 				if(!level.isClientSide){
 					BlockState stateAtPos=level.getBlockState(pos);
@@ -72,7 +72,7 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
 		}
 		//axe scraping
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
+			Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
 			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
 				if(!level.isClientSide){
 					BlockState stateAtPos=level.getBlockState(pos);
@@ -124,7 +124,7 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
 		// Výpočet šance na oxidáciu na základe okolia (vanilla logika)
 		float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
 		if(random.nextFloat()<oxidationChance){
-			Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+			Block nextBlock=NTrialsMod_ModModEvents.OXIDATION_LEVEL_INCREASES.get(this);
 			if(nextBlock!=null){
 				BlockState nextState=nextBlock.defaultBlockState();
 				// Zachováváme orientáciu a stav trapdoor

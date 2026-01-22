@@ -1,6 +1,7 @@
-package cz.maxtechnik.ntrials.init;
+package cz.maxtechnik.ntrials.init.basic;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.item.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;

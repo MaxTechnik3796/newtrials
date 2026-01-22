@@ -1,7 +1,9 @@
 package cz.maxtechnik.ntrials.block.entity;
 
-import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.NTrialsModCommonConfig;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.network.NetworkHandler;
 import cz.maxtechnik.ntrials.network.TrialSpawnerSyncPacket;
 import net.minecraft.core.BlockPos;
@@ -24,7 +26,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import cz.maxtechnik.ntrials.init.NTrialsModMobEffects;
+import cz.maxtechnik.ntrials.init.other.NTrialsModMobEffects;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.particles.ParticleOptions;
@@ -36,8 +38,6 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import java.util.*;
 @SuppressWarnings("deprecation")
 public class TrialSpawnerBlockEntity extends BlockEntity{
-	private static final int COOLDOWN_OMINOUS_RESET_TICK=10;
-	private static final int LOOT_DROP_INTERVAL=10;
 	private static final List<MobEffect> OMNIOUS_EFFECTS=List.of(
 			MobEffects.REGENERATION,MobEffects.BLINDNESS,MobEffects.POISON,MobEffects.MOVEMENT_SLOWDOWN,
 			MobEffects.CONFUSION,MobEffects.WEAKNESS,MobEffects.MOVEMENT_SPEED,MobEffects.DAMAGE_BOOST
@@ -47,14 +47,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	private static final String[] ARMOR_LEGGINGS={"minecraft:iron_leggings","minecraft:golden_leggings","minecraft:diamond_leggings"};
 	private static final String[] ARMOR_BOOTS={"minecraft:iron_boots","minecraft:golden_boots","minecraft:diamond_boots"};
 	private static final String[] WEAPONS={"minecraft:stone_sword","minecraft:iron_sword","minecraft:diamond_sword","minecraft:iron_axe","minecraft:diamond_axe"};
-	// Default settings (non-breeze)
-	private static final int DEFAULT_BASE_MOBS_PER_WAVE=3; // spawn 3 at once for 1 player
-	private static final int DEFAULT_BASE_TOTAL_MOBS=6; // 6 mobs total for 1 player
-	// Breeze settings (Base = 1 Player)
-	private static final int BREEZE_BASE_MOBS_PER_WAVE=1; // 1 mob at once
-	private static final int BREEZE_BASE_TOTAL_MOBS=3; // 3 total for 1 player
-	private static final int BREEZE_MOBS_ADDED_PER_PLAYER=1; // +1 mob at once per extra player
-	private static final int BREEZE_TOTAL_ADDED_PER_PLAYER=2; // +2 total per extra player
 	private final Set<UUID> detectedPlayers=new HashSet<>();
 	private final Set<UUID> spawnedEntities=new HashSet<>();
 	private int cooldownTime=0;
@@ -67,14 +59,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	private boolean shouldResetOminousOnCooldownEnd=false;
 	private transient boolean wasOminous=false;
 	private transient cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState lastState=null;
-	// Spawning configuration
-	// mobsPerWave = how many spawn at once
-	// totalMobs = how many mobs should be spawned in total throughout the trial
 	private int mobsPerWave=3; // default for non-breeze
 	private int totalMobs=6; // default total for non-breeze
 	private int remainingMobs=0; // how many left to spawn (decrements as we spawn)
 	private int playersCount=0;
-	private int currentWave=0; // (legacy) kept for backwards compat but unused in new logic
+	private int currentWave=0; // (legacy) kept for backwards compact but unused in new logic
 	private boolean trialActive=false;
 	private String normalLootTable="ntrials:chests/spawner";
 	private String ominousLootTable="ntrials:chests/spawner_ominous";
@@ -93,7 +82,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.tickCount++;
 		if(this.cooldownTime>0){
 			this.cooldownTime--;
-			if(this.cooldownTime==COOLDOWN_OMINOUS_RESET_TICK&&this.shouldResetOminousOnCooldownEnd){
+			if(this.cooldownTime==NTrialsModCommonConfig.spawnerCooldownOminous&&this.shouldResetOminousOnCooldownEnd){
 				assert level!=null;
 				BlockState currentState=level.getBlockState(getBlockPos());
 				if(currentState.getValue(cz.maxtechnik.ntrials.block.TrialSpawnerBlock.OMINOUS)){
@@ -184,7 +173,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.shouldResetOminousOnCooldownEnd=tag.getBoolean("ShouldResetOminousOnCooldownEnd");
 		// read previous 'MobsPerWave' if present
 		this.mobsPerWave=tag.contains("MobsPerWave")?tag.getInt("MobsPerWave"):this.mobsPerWave;
-		if(this.mobsPerWave<=0) this.mobsPerWave=DEFAULT_BASE_MOBS_PER_WAVE;
+		if(this.mobsPerWave<=0) this.mobsPerWave=NTrialsModCommonConfig.spawnerDefaultBaseMobsPerWave;
 		// read total/remaining - support both new keys and legacy MaxWaves key
 		if(tag.contains("TotalMobs")) this.totalMobs=tag.getInt("TotalMobs");
 		else if(tag.contains("MaxWaves")){
@@ -192,7 +181,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 			if(oldMaxWaves<=0) oldMaxWaves=5;
 			this.totalMobs=oldMaxWaves*this.mobsPerWave;
 		}
-		if(this.totalMobs<=0) this.totalMobs=DEFAULT_BASE_TOTAL_MOBS;
+		if(this.totalMobs<=0) this.totalMobs=NTrialsModCommonConfig.spawnerDefaultBaseTotalMobs;
 		this.remainingMobs=tag.contains("RemainingMobs")?tag.getInt("RemainingMobs"):this.totalMobs;
 		this.currentWave=tag.contains("CurrentWave")?tag.getInt("CurrentWave"):0;
 		this.trialActive=tag.getBoolean("TrialActive");
@@ -389,7 +378,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState newState;
 		if(this.completeTrialTimer>0||this.isLootAnimating||(this.pendingLootItems!=null&&!this.pendingLootItems.isEmpty())){
 			newState=cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
-		}else if(this.cooldownTime>COOLDOWN_OMINOUS_RESET_TICK&&this.isOminous){
+		}else if(this.cooldownTime>NTrialsModCommonConfig.spawnerCooldownOminous&&this.isOminous){
 			newState=cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
 		}else if(this.cooldownTime>0){
 			newState=cz.maxtechnik.ntrials.block.TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
@@ -424,16 +413,16 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		);
 		int playerCount=level.getEntitiesOfClass(net.minecraft.world.entity.player.Player.class,scanArea).size();
 		this.playersCount=playerCount;
-		boolean isBreeze=spawnEntity!=null&&spawnEntity==cz.maxtechnik.ntrials.init.NTrialsModEntityTypes.BREEZE.get();
+		boolean isBreeze=spawnEntity!=null&&spawnEntity==NTrialsModEntityTypes.BREEZE.get();
 		int extraPlayers=Math.max(0,playerCount-1);
 		if(isBreeze){
 			// Breeze: base per-wave 1, base total 3. Each extra player: +1 per-wave, +2 total
-			this.mobsPerWave=BREEZE_BASE_MOBS_PER_WAVE+(extraPlayers*BREEZE_MOBS_ADDED_PER_PLAYER);
-			this.totalMobs=BREEZE_BASE_TOTAL_MOBS+(extraPlayers*BREEZE_TOTAL_ADDED_PER_PLAYER);
+			this.mobsPerWave=NTrialsModCommonConfig.spawnerBreezeBaseMobsPerWave+(extraPlayers*NTrialsModCommonConfig.spawnerBreezeMobsAddedPerPlayer);
+			this.totalMobs=NTrialsModCommonConfig.spawnerBreezeBaseTotalMobs+(extraPlayers*NTrialsModCommonConfig.spawnerBreezeTotalAddedPerPlayer);
 		}else{
 			// Non-breeze: base per-wave 3, base total 6. Each extra player: +1 per-wave, +2 total
-			this.mobsPerWave=DEFAULT_BASE_MOBS_PER_WAVE+extraPlayers;
-			this.totalMobs=DEFAULT_BASE_TOTAL_MOBS+(extraPlayers*2);
+			this.mobsPerWave=NTrialsModCommonConfig.spawnerDefaultBaseMobsPerWave+extraPlayers;
+			this.totalMobs=NTrialsModCommonConfig.spawnerDefaultBaseTotalMobs+(extraPlayers*2);
 		}
 		// If trial already running, adjust remaining pool to new total minus currently alive
 		if(this.trialActive){
@@ -590,7 +579,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 			return;
 		}
 		lootAnimationTick++;
-		if(lootAnimationTick%LOOT_DROP_INTERVAL==0&&currentLootDropIndex<pendingLootItems.size()) dropNextLootItem();
+		if(lootAnimationTick%NTrialsModCommonConfig.spawnerLootDropInterval==0&&currentLootDropIndex<pendingLootItems.size()) dropNextLootItem();
 		if(currentLootDropIndex>=pendingLootItems.size()) stopLootAnimation();
 	}
 	// Drop item

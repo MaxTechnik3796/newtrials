@@ -1,6 +1,6 @@
 package cz.maxtechnik.ntrials.block;
 
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class WaxedCopperDoorBlock extends DoorBlock{
 		ItemStack itemInHand=player.getItemInHand(hand);
 		// Axe unwaxing - POUZE když držíme shift
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block unwaxedBlock=NTrialsModEvents.UNWAXING_MAP.get(this);
+			Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
 			if(unwaxedBlock!=null){
 				if(!level.isClientSide){
 					// Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně

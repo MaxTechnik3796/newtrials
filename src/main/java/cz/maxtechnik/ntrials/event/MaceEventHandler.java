@@ -1,8 +1,8 @@
 package cz.maxtechnik.ntrials.event;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
-import cz.maxtechnik.ntrials.init.NTrialsModParticles;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEnchantments;
+import cz.maxtechnik.ntrials.init.other.NTrialsModParticles;
 import cz.maxtechnik.ntrials.item.MaceItem;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;

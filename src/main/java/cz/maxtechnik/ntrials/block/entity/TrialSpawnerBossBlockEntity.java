@@ -1,10 +1,11 @@
 package cz.maxtechnik.ntrials.block.entity;
 
+import cz.maxtechnik.ntrials.NTrialsModCommonConfig;
 import cz.maxtechnik.ntrials.block.TrialSpawnerBossBlock;
 import cz.maxtechnik.ntrials.block.TrialSpawnerBlock;
-import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
-import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -77,12 +78,6 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 	public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket(){
 		return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
 	}
-	private static final int SPAWN_DELAY=60;
-	private static final int LOOT_DROP_INTERVAL=10;
-	private static final int COMPLETE_TRIAL_DELAY=20;
-	private static final int BASE_BOSS_HP=120;
-	private static final double HP_MULTIPLIER_PER_PLAYER=1.5;
-	private static final int MAX_COOLDOWN_TICKS=30*60*20;
 	private static final String DEFAULT_BOSS_LOOT="ntrials:chests/spawner_boss";
 	private boolean isActivated=false;
 	private boolean isKeyActivated=false;
@@ -90,7 +85,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 	private UUID spawnedBossUUID=null;
 	private final Set<UUID> nearbyPlayers=new HashSet<>();
 	private final Set<UUID> participatingPlayers=new HashSet<>();
-	private int bossHP=BASE_BOSS_HP;
+	private int bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
 	private boolean isLootAnimating=false;
 	private int lootAnimationTick=0;
 	private List<ItemStack> pendingLootItems=new ArrayList<>();
@@ -176,7 +171,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 			isKeyActivated=true;
 			this.participatingPlayers.clear();
 			this.participatingPlayers.addAll(this.nearbyPlayers);
-			spawnTimer=SPAWN_DELAY;
+			spawnTimer=NTrialsModCommonConfig.bossSpawnerSpawnDelay;
 			setChanged();
 			BlockState currentState=level.getBlockState(getBlockPos());
 			if(currentState.getBlock() instanceof TrialSpawnerBossBlock){
@@ -203,8 +198,8 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 	private void spawnBreezeBoss(){
 		if(level==null||level.isClientSide) return;
 		int playerCount=participatingPlayers.size();
-		bossHP=BASE_BOSS_HP;
-		for(int i=1;i<playerCount;i++) bossHP=(int)(bossHP*HP_MULTIPLIER_PER_PLAYER);
+		bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
+		for(int i=1;i<playerCount;i++) bossHP=(int)(bossHP*NTrialsModCommonConfig.bossSpawnerHpMultiplierPerPlayer);
 		BlockPos spawnPos=findSpawnPosition();
 		if(spawnPos!=null&&bossMobType!=null){
 			net.minecraft.world.entity.Mob boss;
@@ -259,7 +254,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 	// Zpracuje zabití bossa
 	private void handleBossKilled(){
 		if(level==null||level.isClientSide) return;
-		completeTrialTimer=COMPLETE_TRIAL_DELAY;
+		completeTrialTimer=NTrialsModCommonConfig.bossSpawnerCompleteTrialDelay;
 		spawnedBossUUID=null;
 		setChanged();
 	}
@@ -315,7 +310,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 			return;
 		}
 		lootAnimationTick++;
-		if(lootAnimationTick%LOOT_DROP_INTERVAL==0&&currentLootDropIndex<pendingLootItems.size()) dropNextLootItem();
+		if(lootAnimationTick%NTrialsModCommonConfig.spawnerLootDropInterval==0&&currentLootDropIndex<pendingLootItems.size()) dropNextLootItem();
 		if(currentLootDropIndex>=pendingLootItems.size()) stopLootAnimation();
 	}
 	// Vypustí další item
@@ -333,7 +328,7 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 		currentLootDropIndex++;
 		setChanged();
 	}
-	// Zastaví animaci lootu a spustí cooldown
+	// Zastaví animaci lootu a spumiest cooldown
 	private void stopLootAnimation(){
 		this.isLootAnimating=false;
 		this.lootAnimationTick=0;
@@ -344,8 +339,8 @@ public class TrialSpawnerBossBlockEntity extends BlockEntity{
 		this.spawnTimer=-1;
 		this.spawnedBossUUID=null;
 		this.participatingPlayers.clear();
-		this.bossHP=BASE_BOSS_HP;
-		this.cooldownTimer=MAX_COOLDOWN_TICKS;
+		this.bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
+		this.cooldownTimer=NTrialsModCommonConfig.bossSpawnerMaxCooldownTicks;
 		setChanged();
 		if(level!=null){
 			level.playSound(null,getBlockPos(),NTrialsModSounds.BLOCK_TRIAL_SPAWNER_CLOSE_SHUTTER.get(),SoundSource.BLOCKS,1.0f,1.0f);

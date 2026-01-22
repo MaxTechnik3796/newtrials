@@ -1,6 +1,6 @@
 package cz.maxtechnik.ntrials.block;
 
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
@@ -47,7 +47,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 		ItemStack stack=player.getItemInHand(hand);
 		// Honeycomb waxing - POUZE když držíme shift
 		if(stack.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
+			Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
 			if(waxedBlock!=null){
 				if(!level.isClientSide){
 					// Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně
@@ -94,7 +94,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 		}
 		// Axe scraping - POUZE když držíme shift
 		if(stack.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
+			Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
 			if(scrapedBlock!=null){
 				if(!level.isClientSide){
 					// Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně
@@ -179,7 +179,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 		// Výpočet šance na oxidaci na základě okolí (vanilla logika)
 		float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
 		if(random.nextFloat()<oxidationChance){
-			Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+			Block nextBlock=NTrialsMod_ModModEvents.OXIDATION_LEVEL_INCREASES.get(this);
 			if(nextBlock!=null){
 				// Najdeme horní díl
 				BlockPos upperPos=pos.above();

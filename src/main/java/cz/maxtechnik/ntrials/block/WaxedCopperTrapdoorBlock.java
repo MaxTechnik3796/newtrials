@@ -1,7 +1,7 @@
 package cz.maxtechnik.ntrials.block;
 
-import cz.maxtechnik.ntrials.NTrialsModEvents;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -32,7 +32,7 @@ public class WaxedCopperTrapdoorBlock extends TrapDoorBlock{
 	public @NotNull InteractionResult use(@NotNull BlockState state,@NotNull Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
 		ItemStack itemInHand=player.getItemInHand(hand);
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block waxedBlock=NTrialsModEvents.UNWAXING_MAP.get(this);
+			Block waxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
 			if(waxedBlock!=null){
 				if(!level.isClientSide){
 					BlockState stateAtPos=level.getBlockState(pos);

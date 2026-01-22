@@ -1,8 +1,8 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
-import cz.maxtechnik.ntrials.init.NTrialsModBlocks;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -105,7 +105,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 		ItemStack itemInHand=player.getItemInHand(hand);
 		// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
 		if(itemInHand.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
+			Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
 			if(waxedBlock!=null){
 				if(!level.isClientSide){
 					BlockState new_state=waxedBlock.defaultBlockState();
@@ -123,7 +123,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 		}
 		// Axe interakcia - čistenie (výmena za menej zoxidovanú verziu)
 		if(itemInHand.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
+			Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
 			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
 				if(!level.isClientSide){
 					BlockState new_state=scrapedBlock.defaultBlockState();
@@ -187,7 +187,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 		// Výpočet šance na oxidáciu na základe okolia (vanilla logika)
 		float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
 		if(random.nextFloat()<oxidationChance){
-			Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+			Block nextBlock=NTrialsMod_ModModEvents.OXIDATION_LEVEL_INCREASES.get(this);
 			if(nextBlock!=null){
 				BlockState new_state=nextBlock.defaultBlockState();
 				new_state=new_state.setValue(LIT,state.getValue(LIT));

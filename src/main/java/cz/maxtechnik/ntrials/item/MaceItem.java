@@ -1,7 +1,7 @@
 package cz.maxtechnik.ntrials.item;
 
-import cz.maxtechnik.ntrials.init.NTrialsModEnchantments;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEnchantments;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

@@ -3,7 +3,7 @@ package cz.maxtechnik.ntrials.client.renderer.blockentity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBossBlockEntity;
-import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;

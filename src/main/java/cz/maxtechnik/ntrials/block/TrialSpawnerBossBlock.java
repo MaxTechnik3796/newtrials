@@ -1,8 +1,9 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBossBlockEntity;
-import cz.maxtechnik.ntrials.init.NTrialsModBlockEntities;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
@@ -65,7 +66,7 @@ public class TrialSpawnerBossBlock extends BaseEntityBlock{
 			BlockEntity blockEntity=level.getBlockEntity(pos);
 			if(blockEntity instanceof TrialSpawnerBossBlockEntity bossSpawner){
 				// determine whether the held item qualifies as a key for this spawner (only mod built-in keys)
-				boolean isHoldingKey=itemStack.getItem()==cz.maxtechnik.ntrials.init.NTrialsModItems.OMINOUS_TRIAL_KEY.get()||itemStack.getItem()==cz.maxtechnik.ntrials.init.NTrialsModItems.BOSS_TRIAL_KEY.get();
+				boolean isHoldingKey=itemStack.getItem()==NTrialsModItems.OMINOUS_TRIAL_KEY.get()||itemStack.getItem()==NTrialsModItems.BOSS_TRIAL_KEY.get();
 				// If the placed item has BlockEntityTag or top-level NBT with settings, apply them on use
 				// (We still accept block NBT when using the item in the world; for placement we handle setPlacedBy below.)
 				// Support for setting key tag via BlockEntityTag or item NBT (for /give)

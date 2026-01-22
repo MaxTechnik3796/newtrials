@@ -1,7 +1,7 @@
 package cz.maxtechnik.ntrials.item;
 
 import cz.maxtechnik.ntrials.entity.WindChargeProjectile;
-import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
