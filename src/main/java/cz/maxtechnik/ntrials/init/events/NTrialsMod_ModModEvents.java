@@ -1,16 +1,17 @@
-package cz.maxtechnik.ntrials;
+package cz.maxtechnik.ntrials.init.events;
 
+import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.item.WindChargeDispenserBehavior;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.fml.common.Mod;
-import cz.maxtechnik.ntrials.init.NTrialsModBlocks;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModBlocks;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 @Mod.EventBusSubscriber(modid=NTrialsMod.MODID,bus=Mod.EventBusSubscriber.Bus.MOD)
-public class NTrialsModEvents{
+public class NTrialsMod_ModModEvents{
 
     // Mapa pro oxidační vztahy - inicializuje se až po registraci bloků
     public static BiMap<Block, Block> OXIDATION_LEVEL_INCREASES = HashBiMap.create();

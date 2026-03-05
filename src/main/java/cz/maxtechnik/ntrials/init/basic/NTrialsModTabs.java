@@ -1,4 +1,4 @@
-package cz.maxtechnik.ntrials.init;
+package cz.maxtechnik.ntrials.init.basic;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import net.minecraft.core.registries.Registries;
@@ -22,8 +22,6 @@ public class NTrialsModTabs{
 
 		tabData.accept(NTrialsModItems.TRIAL_SPAWNER.get());
 		tabData.accept(NTrialsModItems.VAULT.get());
-
-		tabData.accept(NTrialsModItems.TRIAL_SPAWNER_BOSS.get());
 		tabData.accept(NTrialsModItems.VAULT_BOSS.get());
 
 		tabData.accept(NTrialsModItems.BOGGED_SPAWN_EGG.get());

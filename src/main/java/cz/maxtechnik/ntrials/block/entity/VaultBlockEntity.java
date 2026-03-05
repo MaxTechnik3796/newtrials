@@ -1,5 +1,7 @@
 package cz.maxtechnik.ntrials.block.entity;
 
+import cz.maxtechnik.ntrials.NTrialsModCommonConfig;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,8 +17,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 public class VaultBlockEntity extends BlockEntity{
-	private static final int DISPLAY_ITEM_SWITCH_INTERVAL=20;
-	private static final float ITEM_ROTATION_SPEED=2.0f;
 	private final Set<UUID> playersWhoOpened=new HashSet<>();
 	private int animationTick=0;
 	private boolean isAnimating=false;
@@ -29,7 +29,7 @@ public class VaultBlockEntity extends BlockEntity{
 	private String vaultTag="";
 	private String lootTable="";
 	public VaultBlockEntity(BlockPos pos,BlockState blockState){
-		super(cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),pos,blockState);
+		super(NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),pos,blockState);
 	}
 	// Zkontroluje zda hráč otevřel vault
 	public boolean hasPlayerOpened(UUID playerUuid){
@@ -100,10 +100,10 @@ public class VaultBlockEntity extends BlockEntity{
 	// Tick rotace zobrazovaných itemů
 	public void tickDisplayItem(){
 		if(!displayItems.isEmpty()){
-			itemRotation+=ITEM_ROTATION_SPEED;
+			itemRotation+=NTrialsModCommonConfig.vaultItemRotationSpeed;
 			if(itemRotation>=360.0f) itemRotation=0.0f;
 			displayItemSwitchTick++;
-			if(displayItemSwitchTick>=DISPLAY_ITEM_SWITCH_INTERVAL){
+			if(displayItemSwitchTick>=NTrialsModCommonConfig.vaultDisplayItemSwitchInterval){
 				displayItemSwitchTick=0;
 				int oldIndex=currentDisplayItemIndex;
 				currentDisplayItemIndex=(currentDisplayItemIndex+1)%displayItems.size();

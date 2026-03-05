@@ -1,7 +1,7 @@
 package cz.maxtechnik.ntrials.entity;
 
-import cz.maxtechnik.ntrials.init.NTrialsModParticles;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModParticles;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import java.util.EnumSet;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.nbt.CompoundTag;

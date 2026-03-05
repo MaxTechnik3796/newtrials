@@ -1,6 +1,6 @@
 package cz.maxtechnik.ntrials.block;
 
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -22,123 +22,110 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
-	private final WeatherState level;
-	public CopperDoorBlock(WeatherState level,BlockBehaviour.Properties props){
+	private final WeatherState weatherState;
+	private final boolean waxed;
+	public CopperDoorBlock(WeatherState weatherState,boolean waxed,BlockBehaviour.Properties props){
 		super(props,new BlockSetType("copper",true,SoundType.COPPER,NTrialsModSounds.BLOCK_COPPER_DOOR_CLOSE.get(),NTrialsModSounds.BLOCK_COPPER_DOOR_OPEN.get(),NTrialsModSounds.BLOCK_COPPER_TRAPDOOR_CLOSE.get(),NTrialsModSounds.BLOCK_COPPER_TRAPDOOR_OPEN.get(),SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF,SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,SoundEvents.STONE_BUTTON_CLICK_OFF,SoundEvents.STONE_BUTTON_CLICK_ON));
-		this.level=level;
+		this.weatherState=weatherState;
+		this.waxed=waxed;
 	}
 	@Override
 	public @NotNull WeatherState getAge(){
-		return this.level;
+		return this.weatherState;
 	}
 	@Override
 	public boolean isRandomlyTicking(@NotNull BlockState state){
 		// Oxidace se spouští POUZE na dolním dílu dveří, ne na horním
 		// Tím zabráníme duplicitní oxidaci
-		return this.getAge()!=WeatherState.OXIDIZED&&state.getValue(HALF)==DoubleBlockHalf.LOWER;
+		return !waxed&&this.getAge()!=WeatherState.OXIDIZED&&state.getValue(HALF)==DoubleBlockHalf.LOWER;
 	}
 	@Override
 	public @NotNull InteractionResult use(@NotNull BlockState state,@NotNull Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
 		ItemStack stack=player.getItemInHand(hand);
-		// Honeycomb waxing - POUZE když držíme shift
-		if(stack.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
-			if(waxedBlock!=null){
-				if(!level.isClientSide){
-					// Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně
-					BlockPos otherPos;
-					BlockState otherState;
-					// Najdeme druhý díl dveří
-					if(state.getValue(HALF)==DoubleBlockHalf.LOWER){
-						// Jsme dolní díl, druhý díl je nahoře
-						otherPos=pos.above();
-					}else{
-						// Jsme horní díl, druhý díl je dole
-						otherPos=pos.below();
-					}
-					otherState=level.getBlockState(otherPos);
-					// Zkontrolujeme, že druhý díl je stejný typ dveří
-					if(otherState.getBlock()==this){
-						// Připravíme nové stavy pro oba díly (zachováme všechny properties)
-						BlockState newState1=waxedBlock.defaultBlockState()
-								.setValue(FACING,state.getValue(FACING))
-								.setValue(OPEN,state.getValue(OPEN))
-								.setValue(HINGE,state.getValue(HINGE))
-								.setValue(POWERED,state.getValue(POWERED))
-								.setValue(HALF,state.getValue(HALF));
-						BlockState newState2=waxedBlock.defaultBlockState()
-								.setValue(FACING,otherState.getValue(FACING))
-								.setValue(OPEN,otherState.getValue(OPEN))
-								.setValue(HINGE,otherState.getValue(HINGE))
-								.setValue(POWERED,otherState.getValue(POWERED))
-								.setValue(HALF,otherState.getValue(HALF));
-						// Vyměníme bloky PŘÍMO bez dropu - používáme flag 2|16 (no drop + no physics update)
-						level.setBlock(pos,newState1,2|16);
-						level.setBlock(otherPos,newState2,2|16);
-						level.sendBlockUpdated(pos,state,newState1,3);
-						level.sendBlockUpdated(otherPos,otherState,newState2,3);
+		if(!waxed){
+			// Honeycomb waxing
+			if(stack.is(Items.HONEYCOMB)){
+				Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
+				if(waxedBlock!=null){
+					if(!level.isClientSide){
+						applyToBothHalves(state,level,pos,waxedBlock);
 						CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
 						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
 						if(!player.isCreative()){
 							stack.shrink(1);
 						}
 					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
 			}
-		}
-		// Axe scraping - POUZE když držíme shift
-		if(stack.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
-			if(scrapedBlock!=null){
-				if(!level.isClientSide){
-					// Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně
-					BlockPos otherPos;
-					BlockState otherState;
-					// Najdeme druhý díl dveří
-					if(state.getValue(HALF)==DoubleBlockHalf.LOWER){
-						// Jsme dolní díl, druhý díl je nahoře
-						otherPos=pos.above();
-					}else{
-						// Jsme horní díl, druhý díl je dole
-						otherPos=pos.below();
-					}
-					otherState=level.getBlockState(otherPos);
-					// Zkontrolujeme, že druhý díl je stejný typ dveří
-					if(otherState.getBlock()==this){
-						// Připravíme nové stavy pro oba díly (zachováme všechny properties)
-						BlockState newState1=scrapedBlock.defaultBlockState()
-								.setValue(FACING,state.getValue(FACING))
-								.setValue(OPEN,state.getValue(OPEN))
-								.setValue(HINGE,state.getValue(HINGE))
-								.setValue(POWERED,state.getValue(POWERED))
-								.setValue(HALF,state.getValue(HALF));
-						BlockState newState2=scrapedBlock.defaultBlockState()
-								.setValue(FACING,otherState.getValue(FACING))
-								.setValue(OPEN,otherState.getValue(OPEN))
-								.setValue(HINGE,otherState.getValue(HINGE))
-								.setValue(POWERED,otherState.getValue(POWERED))
-								.setValue(HALF,otherState.getValue(HALF));
-						// Vyměníme bloky PŘÍMO bez dropu - používáme flag 2|16 (no drop + no physics update)
-						level.setBlock(pos,newState1,2|16);
-						level.setBlock(otherPos,newState2,2|16);
-						level.sendBlockUpdated(pos,state,newState1,3);
-						level.sendBlockUpdated(otherPos,otherState,newState2,3);
+			// Axe scraping
+			if(stack.getItem() instanceof AxeItem){
+				Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
+				if(scrapedBlock!=null){
+					if(!level.isClientSide){
+						applyToBothHalves(state,level,pos,scrapedBlock);
 						CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
 						CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
 						CopperUtil.damageToolIfNotCreative(stack,player,hand);
 					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
+			}
+		}else{
+			// Axe unwaxing
+			if(stack.getItem() instanceof AxeItem){
+				Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
+				if(unwaxedBlock!=null){
+					if(!level.isClientSide){
+						applyToBothHalves(state,level,pos,unwaxedBlock);
+						CopperUtil.play(level,pos,SoundEvents.AXE_WAX_OFF);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_OFF);
+						CopperUtil.damageToolIfNotCreative(stack,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
+				}
 			}
 		}
-		// Pokud není shift+honeycomb ani shift+axe, použij normální chování dveří
+		// Pokud není honeycomb ani axe, použij normální chování dveří
 		return super.use(state,level,pos,player,hand,hit);
+	}
+	private void applyToBothHalves(BlockState state,Level level,BlockPos pos,Block targetBlock){
+		// Inspirované tryOxidize funkcí - zpracování obou dílů dveří současně
+		BlockPos otherPos;
+		BlockState otherState;
+		// Najdeme druhý díl dveří
+		if(state.getValue(HALF)==DoubleBlockHalf.LOWER){
+			otherPos=pos.above();
+		}else{
+			otherPos=pos.below();
+		}
+		otherState=level.getBlockState(otherPos);
+		// Zkontrolujeme, že druhý díl je stejný typ dveří
+		if(otherState.getBlock()==this){
+			// Připravíme nové stavy pro oba díly (zachováme všechny properties)
+			BlockState newState1=targetBlock.defaultBlockState()
+					.setValue(FACING,state.getValue(FACING))
+					.setValue(OPEN,state.getValue(OPEN))
+					.setValue(HINGE,state.getValue(HINGE))
+					.setValue(POWERED,state.getValue(POWERED))
+					.setValue(HALF,state.getValue(HALF));
+			BlockState newState2=targetBlock.defaultBlockState()
+					.setValue(FACING,otherState.getValue(FACING))
+					.setValue(OPEN,otherState.getValue(OPEN))
+					.setValue(HINGE,otherState.getValue(HINGE))
+					.setValue(POWERED,otherState.getValue(POWERED))
+					.setValue(HALF,otherState.getValue(HALF));
+			// Vyměníme bloky PŘÍMO bez dropu - používáme flag 2|16 (no drop + no physics update)
+			level.setBlock(pos,newState1,2|16);
+			level.setBlock(otherPos,newState2,2|16);
+			level.sendBlockUpdated(pos,state,newState1,3);
+			level.sendBlockUpdated(otherPos,otherState,newState2,3);
+		}
 	}
 	@Override
 	public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
@@ -179,7 +166,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 		// Výpočet šance na oxidaci na základě okolí (vanilla logika)
 		float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
 		if(random.nextFloat()<oxidationChance){
-			Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+			Block nextBlock=NTrialsMod_ModModEvents.OXIDATION_LEVEL_INCREASES.get(this);
 			if(nextBlock!=null){
 				// Najdeme horní díl
 				BlockPos upperPos=pos.above();
@@ -194,7 +181,7 @@ public class CopperDoorBlock extends DoorBlock implements WeatheringCopper{
 							.setValue(POWERED,state.getValue(POWERED))
 							.setValue(HALF,DoubleBlockHalf.LOWER);
 					BlockState newUpperState=nextBlock.defaultBlockState()
-							.setValue(FACING,state.getValue(FACING)) // Horn�� díl má stejný FACING jako dolní
+							.setValue(FACING,state.getValue(FACING))
 							.setValue(OPEN,state.getValue(OPEN))
 							.setValue(HINGE,state.getValue(HINGE))
 							.setValue(POWERED,false) // Horní díl nikdy nemá power

@@ -1,8 +1,8 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
-import cz.maxtechnik.ntrials.NTrialsModEvents;
-import cz.maxtechnik.ntrials.init.NTrialsModBlocks;
+import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +29,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
 @SuppressWarnings("deprecation")
 public class CopperBulbBlock extends Block implements WeatheringCopper{
-	private final WeatherState level;
+	private final WeatherState weatherState;
+	private final boolean waxed;
 	public static final BooleanProperty LIT=BooleanProperty.create("lit");
 	public static final BooleanProperty POWERED=BooleanProperty.create("powered");
 	@Override
@@ -41,10 +42,11 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 	public boolean skipRendering(@NotNull BlockState state,BlockState adjacentBlockState,@NotNull Direction side){
 		return adjacentBlockState.getBlock()==this||super.skipRendering(state,adjacentBlockState,side);
 	}
-	public CopperBulbBlock(WeatherState level,BlockBehaviour.Properties props){
+	public CopperBulbBlock(WeatherState weatherState,boolean waxed,BlockBehaviour.Properties props){
 		super(props);
 		this.registerDefaultState(this.stateDefinition.any().setValue(LIT,false).setValue(POWERED,false));
-		this.level=level;
+		this.weatherState=weatherState;
+		this.waxed=waxed;
 	}
 	@Override
 	public boolean hasAnalogOutputSignal(@NotNull BlockState state){
@@ -56,22 +58,17 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 	}
 	@Override
 	public @NotNull WeatherState getAge(){
-		return this.level;
+		return this.weatherState;
 	}
 	@Override
 	public int getLightEmission(BlockState state,BlockGetter level,BlockPos pos){
 		if(state.getValue(LIT)){
-			if(this.level.equals(WeatherState.UNAFFECTED)){
-				return 15;
-			}else if(this.level.equals(WeatherState.EXPOSED)){
-				return 12;
-			}else if(this.level.equals(WeatherState.WEATHERED)){
-				return 8;
-			}else if(this.level.equals(WeatherState.OXIDIZED)){
-				return 4;
-			}else{
-				return 0;
-			}
+			return switch(this.weatherState){
+				case UNAFFECTED -> 15;
+				case EXPOSED -> 12;
+				case WEATHERED -> 8;
+				case OXIDIZED -> 4;
+			};
 		}else{
 			return 0;
 		}
@@ -98,45 +95,64 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 	@Override
 	public boolean isRandomlyTicking(@NotNull BlockState state){
 		// Blok môže oxidovať iba ak nie je na najvyššom stupni oxidácie (OXIDIZED)
-		return this.getAge()!=WeatherState.OXIDIZED;
+		return !waxed&&this.getAge()!=WeatherState.OXIDIZED;
 	}
 	@Override
 	public @NotNull InteractionResult use(@NotNull BlockState state,@NotNull Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
 		ItemStack itemInHand=player.getItemInHand(hand);
-		// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
-		if(itemInHand.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsModEvents.WAXING_MAP.get(this);
-			if(waxedBlock!=null){
-				if(!level.isClientSide){
-					BlockState new_state=waxedBlock.defaultBlockState();
-					new_state=new_state.setValue(LIT,state.getValue(LIT));
-					new_state=new_state.setValue(POWERED,state.getValue(POWERED));
-					level.setBlock(pos,new_state,3);
-					CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
-					CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
-					if(!player.isCreative()){
-						itemInHand.shrink(1);
+		if(!waxed){
+			// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
+			if(itemInHand.is(Items.HONEYCOMB)){
+				Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
+				if(waxedBlock!=null){
+					if(!level.isClientSide){
+						BlockState new_state=waxedBlock.defaultBlockState();
+						new_state=new_state.setValue(LIT,state.getValue(LIT));
+						new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+						level.setBlock(pos,new_state,3);
+						CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
+						if(!player.isCreative()){
+							itemInHand.shrink(1);
+						}
 					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
 			}
-		}
-		// Axe interakcia - čistenie (výmena za menej zoxidovanú verziu)
-		if(itemInHand.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsModEvents.SCRAPING_MAP.get(this);
-			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
-				if(!level.isClientSide){
-					BlockState new_state=scrapedBlock.defaultBlockState();
-					if(new_state.getBlock().equals(NTrialsModBlocks.COPPER_BULB.get()))
-						NTrialsMod.adv((ServerPlayer)player,ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"lighten_up"));
-					new_state=new_state.setValue(LIT,state.getValue(LIT));
-					new_state=new_state.setValue(POWERED,state.getValue(POWERED));
-					level.setBlock(pos,new_state,3);
-					CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
-					CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
-					CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+			// Axe interakcia - čistenie (výmena za menej zoxidovanú verziu)
+			if(itemInHand.getItem() instanceof AxeItem){
+				Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
+				if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
+					if(!level.isClientSide){
+						BlockState new_state=scrapedBlock.defaultBlockState();
+						if(new_state.getBlock().equals(NTrialsModBlocks.COPPER_BULB.get()))
+							NTrialsMod.adv((ServerPlayer)player,ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"lighten_up"));
+						new_state=new_state.setValue(LIT,state.getValue(LIT));
+						new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+						level.setBlock(pos,new_state,3);
+						CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
+						CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
+			}
+		}else{
+			// Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)
+			if(itemInHand.getItem() instanceof AxeItem){
+				Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
+				if(unwaxedBlock!=null){
+					if(!level.isClientSide){
+						BlockState new_state=unwaxedBlock.defaultBlockState();
+						new_state=new_state.setValue(LIT,state.getValue(LIT));
+						new_state=new_state.setValue(POWERED,state.getValue(POWERED));
+						level.setBlock(pos,new_state,3);
+						CopperUtil.play(level,pos,SoundEvents.AXE_WAX_OFF);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_OFF);
+						CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
+				}
 			}
 		}
 		return super.use(state,level,pos,player,hand,hit);
@@ -187,7 +203,7 @@ public class CopperBulbBlock extends Block implements WeatheringCopper{
 		// Výpočet šance na oxidáciu na základe okolia (vanilla logika)
 		float oxidationChance=(nearbyOxidizedBlocks+1)/64f;
 		if(random.nextFloat()<oxidationChance){
-			Block nextBlock=NTrialsModEvents.OXIDATION_LEVEL_INCREASES.get(this);
+			Block nextBlock=NTrialsMod_ModModEvents.OXIDATION_LEVEL_INCREASES.get(this);
 			if(nextBlock!=null){
 				BlockState new_state=nextBlock.defaultBlockState();
 				new_state=new_state.setValue(LIT,state.getValue(LIT));

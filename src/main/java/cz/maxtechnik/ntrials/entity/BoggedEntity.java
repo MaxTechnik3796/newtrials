@@ -46,8 +46,8 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import cz.maxtechnik.ntrials.init.NTrialsModEntityTypes;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 

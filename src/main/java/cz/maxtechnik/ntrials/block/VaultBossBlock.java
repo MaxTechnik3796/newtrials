@@ -1,13 +1,15 @@
 package cz.maxtechnik.ntrials.block;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
+import cz.maxtechnik.ntrials.NTrialsModCommonConfig;
 import cz.maxtechnik.ntrials.block.entity.VaultBlockEntity;
+import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import cz.maxtechnik.ntrials.init.NTrialsModItems;
-import cz.maxtechnik.ntrials.init.NTrialsModSounds;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModItems;
+import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -47,9 +49,6 @@ import java.util.Objects;
 @SuppressWarnings("deprecation")
 public class VaultBossBlock extends BaseEntityBlock{
 	private static final String DEFAULT_LOOT_NORMAL="ntrials:chests/reward_boss";
-	private static final int UNLOCKING_DURATION=10;
-	private static final int EJECT_INTERVAL=20;
-	private static final int CLOSE_DELAY=20;
 	public static final DirectionProperty FACING=HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<VaultBlock.VaultState> STATE=EnumProperty.create("vault_state",VaultBlock.VaultState.class);
 	public VaultBossBlock(){
@@ -125,13 +124,13 @@ public class VaultBossBlock extends BaseEntityBlock{
 			}
 		}
 		if(!level.isClientSide())
-			level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(),SoundSource.BLOCKS,1.0f,1.0f);
+			level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 		return InteractionResult.PASS;
 	}
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,@NotNull BlockState state,@NotNull BlockEntityType<T> blockEntityType){
-		return createTickerHelper(blockEntityType,cz.maxtechnik.ntrials.init.NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
+		return createTickerHelper(blockEntityType,NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
 				level.isClientSide?VaultBossBlock::clientTick:VaultBossBlock::serverTick);
 	}
 	// Server tick - zpracovává animaci, částice a hráče
@@ -196,14 +195,14 @@ public class VaultBossBlock extends BaseEntityBlock{
 		vaultEntity.tickAnimation();
 		int tick=vaultEntity.getAnimationTick();
 		VaultBlock.VaultState currentState=state.getValue(STATE);
-		if(tick==UNLOCKING_DURATION&&currentState==VaultBlock.VaultState.UNLOCKING){
+		if(tick==NTrialsModCommonConfig.vaultUnlockingDuration&&currentState==VaultBlock.VaultState.UNLOCKING){
 			if(!level.isClientSide())
 				level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_OPEN_SHUTTER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 			level.setBlock(pos,state.setValue(STATE,VaultBlock.VaultState.EJECTING),Block.UPDATE_ALL);
 			return;
 		}
-		if(currentState==VaultBlock.VaultState.EJECTING&&tick>UNLOCKING_DURATION){
-			int dropPhase=(tick-UNLOCKING_DURATION)/EJECT_INTERVAL;
+		if(currentState==VaultBlock.VaultState.EJECTING&&tick>NTrialsModCommonConfig.vaultUnlockingDuration){
+			int dropPhase=(tick-NTrialsModCommonConfig.vaultUnlockingDuration)/NTrialsModCommonConfig.vaultEjectInterval;
 			List<ItemStack> loot=vaultEntity.getPendingLoot();
 			int currentDropIndex=vaultEntity.getLootDropIndex();
 			if(dropPhase>currentDropIndex&&currentDropIndex<loot.size()){
@@ -216,7 +215,7 @@ public class VaultBossBlock extends BaseEntityBlock{
 				level.addFreshEntity(drop);
 				vaultEntity.incrementLootDropIndex();
 			}
-			if(currentDropIndex>=loot.size()&&tick>=(UNLOCKING_DURATION+loot.size()*EJECT_INTERVAL+CLOSE_DELAY)){
+			if(currentDropIndex>=loot.size()&&tick>=(NTrialsModCommonConfig.vaultUnlockingDuration+loot.size()*NTrialsModCommonConfig.vaultEjectInterval+NTrialsModCommonConfig.vaultCloseDelay)){
 				vaultEntity.stopAnimation();
 				level.setBlock(pos,state.setValue(STATE,VaultBlock.VaultState.INACTIVE),Block.UPDATE_ALL);
 				if(!level.isClientSide())

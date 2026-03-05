@@ -1,4 +1,4 @@
-package cz.maxtechnik.ntrials.init;
+package cz.maxtechnik.ntrials.init.other;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
 import net.minecraft.core.BlockPos;

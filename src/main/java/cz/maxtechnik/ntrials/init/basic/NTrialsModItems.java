@@ -1,6 +1,7 @@
-package cz.maxtechnik.ntrials.init;
+package cz.maxtechnik.ntrials.init.basic;
 
 import cz.maxtechnik.ntrials.NTrialsMod;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.item.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -22,7 +23,6 @@ public class NTrialsModItems{
 
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
     public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
-	public static final RegistryObject<Item>TRIAL_SPAWNER_BOSS=block(NTrialsModBlocks.TRIAL_SPAWNER_BOSS);
     public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
 	public static final RegistryObject<Item>VAULT_BOSS=block(NTrialsModBlocks.VAULT_BOSS);
 

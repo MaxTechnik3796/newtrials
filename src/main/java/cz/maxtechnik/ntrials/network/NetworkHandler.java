@@ -23,7 +23,7 @@ public class NetworkHandler{
 	}
 	private static BiConsumer<TrialSpawnerSyncPacket,Supplier<NetworkEvent.Context>> clientConsumer(){
 		return DistExecutor.unsafeRunForDist(
-				()->()->(packet1,contextSupplier)->ClientPacketHandlers.handleTrialSpawnerSync(contextSupplier),  // CLIENT
+				()->()->(packet1,contextSupplier)->ClientPacketHandlers.handleTrialSpawnerSync(packet1,contextSupplier),  // CLIENT
 				()->()->(packet,ctx)->ctx.get().setPacketHandled(true)  // SERVER
 		);
 	}
