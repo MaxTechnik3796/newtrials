@@ -2,6 +2,7 @@ package cz.maxtechnik.ntrials.init.basic;
 
 import cz.maxtechnik.ntrials.block.*;
 import cz.maxtechnik.ntrials.event.LegacySpawnerConverterBlock;
+import cz.maxtechnik.ntrials.event.LegacyVaultConverterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WeatheringCopper;
@@ -20,8 +21,8 @@ public class NTrialsModBlocks{
 
     public static final RegistryObject<Block>TRIAL_SPAWNER=REGISTRY.register("trial_spawner",TrialSpawnerBlock::new);
     public static final RegistryObject<Block>TRIAL_SPAWNER_BOSS=REGISTRY.register("trial_spawner_boss",LegacySpawnerConverterBlock::new);
-    public static final RegistryObject<Block>VAULT=REGISTRY.register("vault",VaultBlock::new);
-	public static final RegistryObject<Block>VAULT_BOSS=REGISTRY.register("vault_boss",VaultBossBlock::new);
+    public static final RegistryObject<Block>VAULT=REGISTRY.register("vault",TrialVaultBlock::new);
+	public static final RegistryObject<Block>VAULT_BOSS=REGISTRY.register("vault_boss",LegacyVaultConverterBlock::new);
 
 
 
