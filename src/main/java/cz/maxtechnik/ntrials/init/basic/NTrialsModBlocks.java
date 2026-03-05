@@ -1,6 +1,7 @@
 package cz.maxtechnik.ntrials.init.basic;
 
 import cz.maxtechnik.ntrials.block.*;
+import cz.maxtechnik.ntrials.event.LegacySpawnerConverterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WeatheringCopper;
@@ -18,7 +19,7 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>HEAVY_CORE=REGISTRY.register("heavy_core",HeavyCoreBlock::new);
 
     public static final RegistryObject<Block>TRIAL_SPAWNER=REGISTRY.register("trial_spawner",TrialSpawnerBlock::new);
-	public static final RegistryObject<Block>TRIAL_SPAWNER_BOSS=REGISTRY.register("trial_spawner_boss",TrialSpawnerBossBlock::new);
+    public static final RegistryObject<Block>TRIAL_SPAWNER_BOSS=REGISTRY.register("trial_spawner_boss",LegacySpawnerConverterBlock::new);
     public static final RegistryObject<Block>VAULT=REGISTRY.register("vault",VaultBlock::new);
 	public static final RegistryObject<Block>VAULT_BOSS=REGISTRY.register("vault_boss",VaultBossBlock::new);
 
@@ -48,58 +49,58 @@ public class NTrialsModBlocks{
 
 
     // ---- Oxidizing variants ----
-    public static final RegistryObject<Block>CHISELED_COPPER=REGISTRY.register("chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED, chiseled_copper_props()));
-    public static final RegistryObject<Block>EXPOSED_CHISELED_COPPER=REGISTRY.register("exposed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.EXPOSED, chiseled_copper_props()));
-    public static final RegistryObject<Block>WEATHERED_CHISELED_COPPER=REGISTRY.register("weathered_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.WEATHERED, chiseled_copper_props()));
-    public static final RegistryObject<Block>OXIDIZED_CHISELED_COPPER=REGISTRY.register("oxidized_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.OXIDIZED, chiseled_copper_props()));
+    public static final RegistryObject<Block>CHISELED_COPPER=REGISTRY.register("chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED,false,chiseled_copper_props()));
+    public static final RegistryObject<Block>EXPOSED_CHISELED_COPPER=REGISTRY.register("exposed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.EXPOSED,false,chiseled_copper_props()));
+    public static final RegistryObject<Block>WEATHERED_CHISELED_COPPER=REGISTRY.register("weathered_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.WEATHERED,false,chiseled_copper_props()));
+    public static final RegistryObject<Block>OXIDIZED_CHISELED_COPPER=REGISTRY.register("oxidized_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.OXIDIZED,false,chiseled_copper_props()));
 
-    public static final RegistryObject<Block>COPPER_DOOR=REGISTRY.register("copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_door_props()));
-    public static final RegistryObject<Block>EXPOSED_COPPER_DOOR=REGISTRY.register("exposed_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.EXPOSED, copper_door_props()));
-    public static final RegistryObject<Block>WEATHERED_COPPER_DOOR=REGISTRY.register("weathered_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.WEATHERED, copper_door_props()));
-    public static final RegistryObject<Block>OXIDIZED_COPPER_DOOR=REGISTRY.register("oxidized_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_door_props()));
+    public static final RegistryObject<Block>COPPER_DOOR=REGISTRY.register("copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.UNAFFECTED,false,copper_door_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_DOOR=REGISTRY.register("exposed_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.EXPOSED,false,copper_door_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_DOOR=REGISTRY.register("weathered_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.WEATHERED,false,copper_door_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_DOOR=REGISTRY.register("oxidized_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.OXIDIZED,false,copper_door_props()));
 
-    public static final RegistryObject<Block>COPPER_TRAPDOOR=REGISTRY.register("copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_trapdoor_props()));
-    public static final RegistryObject<Block>EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("exposed_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.EXPOSED, copper_trapdoor_props()));
-    public static final RegistryObject<Block>WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("weathered_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.WEATHERED, copper_trapdoor_props()));
-    public static final RegistryObject<Block>OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_trapdoor_props()));
+    public static final RegistryObject<Block>COPPER_TRAPDOOR=REGISTRY.register("copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.UNAFFECTED,false,copper_trapdoor_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("exposed_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.EXPOSED,false,copper_trapdoor_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("weathered_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.WEATHERED,false,copper_trapdoor_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.OXIDIZED,false,copper_trapdoor_props()));
 
-    public static final RegistryObject<Block>COPPER_GRATE=REGISTRY.register("copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_grate_props()));
-    public static final RegistryObject<Block>EXPOSED_COPPER_GRATE=REGISTRY.register("exposed_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.EXPOSED, copper_grate_props()));
-    public static final RegistryObject<Block>WEATHERED_COPPER_GRATE=REGISTRY.register("weathered_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.WEATHERED, copper_grate_props()));
-    public static final RegistryObject<Block>OXIDIZED_COPPER_GRATE=REGISTRY.register("oxidized_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_grate_props()));
+    public static final RegistryObject<Block>COPPER_GRATE=REGISTRY.register("copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.UNAFFECTED,false,copper_grate_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_GRATE=REGISTRY.register("exposed_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.EXPOSED,false,copper_grate_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_GRATE=REGISTRY.register("weathered_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.WEATHERED,false,copper_grate_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_GRATE=REGISTRY.register("oxidized_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.OXIDIZED,false,copper_grate_props()));
 
 
-    public static final RegistryObject<Block>COPPER_BULB=REGISTRY.register("copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_bulb_props()));
-    public static final RegistryObject<Block>EXPOSED_COPPER_BULB=REGISTRY.register("exposed_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.EXPOSED, copper_bulb_props()));
-    public static final RegistryObject<Block>WEATHERED_COPPER_BULB=REGISTRY.register("weathered_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.WEATHERED, copper_bulb_props()));
-    public static final RegistryObject<Block>OXIDIZED_COPPER_BULB=REGISTRY.register("oxidized_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_bulb_props()));
+    public static final RegistryObject<Block>COPPER_BULB=REGISTRY.register("copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED,false,copper_bulb_props()));
+    public static final RegistryObject<Block>EXPOSED_COPPER_BULB=REGISTRY.register("exposed_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.EXPOSED,false,copper_bulb_props()));
+    public static final RegistryObject<Block>WEATHERED_COPPER_BULB=REGISTRY.register("weathered_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.WEATHERED,false,copper_bulb_props()));
+    public static final RegistryObject<Block>OXIDIZED_COPPER_BULB=REGISTRY.register("oxidized_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.OXIDIZED,false,copper_bulb_props()));
 
 
     // ---- Waxed variant ----
-    public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new WaxedCopperBlock(chiseled_copper_props()));
-    public static final RegistryObject<Block>WAXED_EXPOSED_CHISELED_COPPER=REGISTRY.register("waxed_exposed_chiseled_copper",()->new WaxedCopperBlock(chiseled_copper_props()));
-    public static final RegistryObject<Block>WAXED_WEATHERED_CHISELED_COPPER=REGISTRY.register("waxed_weathered_chiseled_copper",()->new WaxedCopperBlock(chiseled_copper_props()));
-    public static final RegistryObject<Block>WAXED_OXIDIZED_CHISELED_COPPER=REGISTRY.register("waxed_oxidized_chiseled_copper",()->new WaxedCopperBlock(chiseled_copper_props()));
+    public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED,true,chiseled_copper_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_CHISELED_COPPER=REGISTRY.register("waxed_exposed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.EXPOSED,true,chiseled_copper_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_CHISELED_COPPER=REGISTRY.register("waxed_weathered_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.WEATHERED,true,chiseled_copper_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_CHISELED_COPPER=REGISTRY.register("waxed_oxidized_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.OXIDIZED,true,chiseled_copper_props()));
 
-    public static final RegistryObject<Block>WAXED_COPPER_DOOR=REGISTRY.register("waxed_copper_door",()->new WaxedCopperDoorBlock(copper_door_props()));
-    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_DOOR=REGISTRY.register("waxed_exposed_copper_door",()->new WaxedCopperDoorBlock(copper_door_props()));
-    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_DOOR=REGISTRY.register("waxed_weathered_copper_door",()->new WaxedCopperDoorBlock(copper_door_props()));
-    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_DOOR=REGISTRY.register("waxed_oxidized_copper_door",()->new WaxedCopperDoorBlock(copper_door_props()));
+    public static final RegistryObject<Block>WAXED_COPPER_DOOR=REGISTRY.register("waxed_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.UNAFFECTED,true,copper_door_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_DOOR=REGISTRY.register("waxed_exposed_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.EXPOSED,true,copper_door_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_DOOR=REGISTRY.register("waxed_weathered_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.WEATHERED,true,copper_door_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_DOOR=REGISTRY.register("waxed_oxidized_copper_door",()->new CopperDoorBlock(WeatheringCopper.WeatherState.OXIDIZED,true,copper_door_props()));
 
-    public static final RegistryObject<Block>WAXED_COPPER_TRAPDOOR=REGISTRY.register("waxed_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
-    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("waxed_exposed_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
-    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("waxed_weathered_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
-    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("waxed_oxidized_copper_trapdoor",()->new WaxedCopperTrapdoorBlock(copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_COPPER_TRAPDOOR=REGISTRY.register("waxed_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.UNAFFECTED,true,copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_TRAPDOOR=REGISTRY.register("waxed_exposed_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.EXPOSED,true,copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_TRAPDOOR=REGISTRY.register("waxed_weathered_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.WEATHERED,true,copper_trapdoor_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_TRAPDOOR=REGISTRY.register("waxed_oxidized_copper_trapdoor",()->new CopperTrapdoorBlock(WeatheringCopper.WeatherState.OXIDIZED,true,copper_trapdoor_props()));
 
-    public static final RegistryObject<Block>WAXED_COPPER_GRATE=REGISTRY.register("waxed_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
-    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_GRATE=REGISTRY.register("waxed_exposed_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
-    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_GRATE=REGISTRY.register("waxed_weathered_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
-    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_GRATE=REGISTRY.register("waxed_oxidized_copper_grate",()->new WaxedCopperGrateBlock(copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_COPPER_GRATE=REGISTRY.register("waxed_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.UNAFFECTED,true,copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_GRATE=REGISTRY.register("waxed_exposed_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.EXPOSED,true,copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_GRATE=REGISTRY.register("waxed_weathered_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.WEATHERED,true,copper_grate_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_GRATE=REGISTRY.register("waxed_oxidized_copper_grate",()->new CopperGrateBlock(WeatheringCopper.WeatherState.OXIDIZED,true,copper_grate_props()));
 
-    public static final RegistryObject<Block>WAXED_COPPER_BULB=REGISTRY.register("waxed_copper_bulb",()->new WaxedCopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED, copper_bulb_props()));
-    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_BULB=REGISTRY.register("waxed_exposed_copper_bulb",()->new WaxedCopperBulbBlock(WeatheringCopper.WeatherState.EXPOSED, copper_bulb_props()));
-    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_BULB=REGISTRY.register("waxed_weathered_copper_bulb",()->new WaxedCopperBulbBlock(WeatheringCopper.WeatherState.WEATHERED, copper_bulb_props()));
-    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_BULB=REGISTRY.register("waxed_oxidized_copper_bulb",()->new WaxedCopperBulbBlock(WeatheringCopper.WeatherState.OXIDIZED, copper_bulb_props()));
+    public static final RegistryObject<Block>WAXED_COPPER_BULB=REGISTRY.register("waxed_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.UNAFFECTED,true,copper_bulb_props()));
+    public static final RegistryObject<Block>WAXED_EXPOSED_COPPER_BULB=REGISTRY.register("waxed_exposed_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.EXPOSED,true,copper_bulb_props()));
+    public static final RegistryObject<Block>WAXED_WEATHERED_COPPER_BULB=REGISTRY.register("waxed_weathered_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.WEATHERED,true,copper_bulb_props()));
+    public static final RegistryObject<Block>WAXED_OXIDIZED_COPPER_BULB=REGISTRY.register("waxed_oxidized_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.OXIDIZED,true,copper_bulb_props()));
 
 
     private static BlockBehaviour.Properties chiseled_copper_props(){

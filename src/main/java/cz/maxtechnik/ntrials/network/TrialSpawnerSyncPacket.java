@@ -31,4 +31,7 @@ public class TrialSpawnerSyncPacket{
 	public BlockPos getPos(){
 		return pos;
 	}
+	public String getEntityTypeId(){
+		return entityTypeId;
+	}
 }

@@ -135,7 +135,7 @@ public class VaultBlock extends BaseEntityBlock{
 			}
 		}
 		if(!level.isClientSide())
-			level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_INSERT_ITEM_FAIL.get(),SoundSource.BLOCKS,1.0f,1.0f);
+			level.playSound(null,pos,NTrialsModSounds.BLOCK_VAULT_REJECT_REWARDED_PLAYER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 		return InteractionResult.PASS;
 	}
 	@Nullable

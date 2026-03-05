@@ -26,10 +26,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopper{
-	private final WeatherState level;
-	public CopperTrapdoorBlock(WeatherState level,BlockBehaviour.Properties props){
+	private final WeatherState weatherState;
+	private final boolean waxed;
+	public CopperTrapdoorBlock(WeatherState weatherState,boolean waxed,BlockBehaviour.Properties props){
 		super(props,new BlockSetType("copper",true,SoundType.COPPER,NTrialsModSounds.BLOCK_COPPER_DOOR_CLOSE.get(),NTrialsModSounds.BLOCK_COPPER_DOOR_OPEN.get(),NTrialsModSounds.BLOCK_COPPER_TRAPDOOR_CLOSE.get(),NTrialsModSounds.BLOCK_COPPER_TRAPDOOR_OPEN.get(),SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF,SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON,SoundEvents.STONE_BUTTON_CLICK_OFF,SoundEvents.STONE_BUTTON_CLICK_ON));
-		this.level=level;
+		this.weatherState=weatherState;
+		this.waxed=waxed;
 	}
 	@Override
 	public int getLightBlock(@NotNull BlockState state,@NotNull BlockGetter worldIn,@NotNull BlockPos pos){
@@ -37,58 +39,69 @@ public class CopperTrapdoorBlock extends TrapDoorBlock implements WeatheringCopp
 	}
 	@Override
 	public @NotNull WeatherState getAge(){
-		return this.level;
+		return this.weatherState;
 	}
 	@Override
 	public boolean isRandomlyTicking(@NotNull BlockState state){
 		// Blok môže oxidovať iba ak nie je na najvyššom stupni oxidácie (OXIDIZED)
-		return this.getAge()!=WeatherState.OXIDIZED;
+		return !waxed&&this.getAge()!=WeatherState.OXIDIZED;
+	}
+	private void applyTrapdoorState(BlockState source,Block targetBlock,Level level,BlockPos pos){
+		BlockState stateAtPos=level.getBlockState(pos);
+		// Zachováváme orientáciu a stav trapdoor
+		BlockState nextState=targetBlock.defaultBlockState()
+				.setValue(FACING,stateAtPos.getValue(FACING))
+				.setValue(OPEN,stateAtPos.getValue(OPEN))
+				.setValue(HALF,stateAtPos.getValue(HALF))
+				.setValue(POWERED,stateAtPos.getValue(POWERED))
+				.setValue(WATERLOGGED,stateAtPos.getValue(WATERLOGGED));
+		level.setBlock(pos,nextState,3);
 	}
 	@Override
 	public @NotNull InteractionResult use(@NotNull BlockState state,@NotNull Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
 		ItemStack itemInHand=player.getItemInHand(hand);
-		// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
-		if(itemInHand.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
-			if(waxedBlock!=null){
-				if(!level.isClientSide){
-					BlockState stateAtPos=level.getBlockState(pos);
-					// Zachováváme orientáciu a stav trapdoor
-					BlockState nextState=waxedBlock.defaultBlockState()
-							.setValue(FACING,stateAtPos.getValue(FACING))
-							.setValue(OPEN,stateAtPos.getValue(OPEN))
-							.setValue(HALF,stateAtPos.getValue(HALF))
-							.setValue(POWERED,stateAtPos.getValue(POWERED))
-							.setValue(WATERLOGGED,stateAtPos.getValue(WATERLOGGED));
-					level.setBlock(pos,nextState,3);
-					CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
-					CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
-					if(!player.isCreative()){
-						itemInHand.shrink(1);
+		if(!waxed){
+			// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
+			if(itemInHand.is(Items.HONEYCOMB)){
+				Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
+				if(waxedBlock!=null){
+					if(!level.isClientSide){
+						applyTrapdoorState(state,waxedBlock,level,pos);
+						CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
+						if(!player.isCreative()){
+							itemInHand.shrink(1);
+						}
 					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
 			}
-		}
-		//axe scraping
-		if(itemInHand.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
-			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
-				if(!level.isClientSide){
-					BlockState stateAtPos=level.getBlockState(pos);
-					// Zachováváme orientáciu a stav trapdoor
-					BlockState nextState=scrapedBlock.defaultBlockState()
-							.setValue(FACING,stateAtPos.getValue(FACING))
-							.setValue(OPEN,stateAtPos.getValue(OPEN))
-							.setValue(HALF,stateAtPos.getValue(HALF))
-							.setValue(POWERED,stateAtPos.getValue(POWERED))
-							.setValue(WATERLOGGED,stateAtPos.getValue(WATERLOGGED));
-					level.setBlock(pos,nextState,3);
-					CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
-					CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
-					CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+			//axe scraping
+			if(itemInHand.getItem() instanceof AxeItem){
+				Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
+				if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
+					if(!level.isClientSide){
+						applyTrapdoorState(state,scrapedBlock,level,pos);
+						CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
+						CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
+			}
+		}else{
+			// Axe unwaxing
+			if(itemInHand.getItem() instanceof AxeItem){
+				Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
+				if(unwaxedBlock!=null){
+					if(!level.isClientSide){
+						applyTrapdoorState(state,unwaxedBlock,level,pos);
+						CopperUtil.play(level,pos,SoundEvents.AXE_WAX_OFF);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_OFF);
+						CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
+				}
 			}
 		}
 		return super.use(state,level,pos,player,hand,hit);

@@ -2,7 +2,9 @@ package cz.maxtechnik.ntrials.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import cz.maxtechnik.ntrials.block.TrialSpawnerBlock;
 import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
+import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -10,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -25,58 +28,51 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
 
     @Override
     public void render(@NotNull TrialSpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        if (!blockEntity.hasSpawnEntity()) {
-            return;
-        }
-
-        EntityType<?> entityType = blockEntity.getSpawnEntity();
-        if (entityType == null) {
-            return;
-        }
-
         Level level = blockEntity.getLevel();
-        if (level == null) {
-            return;
+        if (level == null) return;
+
+        BlockState state = level.getBlockState(blockEntity.getBlockPos());
+        if (!(state.getBlock() instanceof TrialSpawnerBlock)) return;
+
+        TrialSpawnerBlock.SpawnerType spawnerType = state.getValue(TrialSpawnerBlock.TYPE);
+        EntityType<?> entityType;
+
+        if (spawnerType == TrialSpawnerBlock.SpawnerType.BOSS) {
+            // Boss mode: show boss mob type (swap BREEZE_BOSS for BREEZE visual)
+            entityType = blockEntity.getBossMobType();
+            if (entityType == NTrialsModEntityTypes.BREEZE_BOSS.get()) {
+                entityType = NTrialsModEntityTypes.BREEZE.get();
+            }
+        } else {
+            // Normal mode: show spawn entity
+            if (!blockEntity.hasSpawnEntity()) return;
+            entityType = blockEntity.getSpawnEntity();
         }
 
+        if (entityType == null) return;
 
-
-        // Get or create cached entity for this type
         Entity entity = getOrCreateEntity(entityType, level);
-        if (entity == null) {
-            return;
-        }
+        if (entity == null) return;
 
         poseStack.pushPose();
-
-        // Position the entity higher and more centered
         poseStack.translate(0.5, 0.25, 0.5);
 
-        // Much faster and more visible rotation
         float time = (float) blockEntity.getClientTickCount() + partialTick;
-        float rotation = time * 16.0F; // Faster rotation
+        float rotation = time * 16.0F;
         poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
-
-
-
 
         float scale = 0.3F;
         poseStack.scale(scale, scale, scale);
 
-        // Set entity properties for proper rendering
         entity.setYRot(0.0F);
         entity.yRotO = 0.0F;
         entity.setXRot(0.0F);
         entity.xRotO = 0.0F;
-
-        // Make sure entity is visible
         entity.setInvisible(false);
 
-        // Render the entity with full brightness
         try {
-            this.entityRenderer.render(entity, 0.0, 0.0, 0.0, 0.0F, partialTick, poseStack, bufferSource, 15728880); // Full brightness
+            this.entityRenderer.render(entity, 0.0, 0.0, 0.0, 0.0F, partialTick, poseStack, bufferSource, 15728880);
         } catch (Exception e) {
-            // If rendering fails, remove from cache and skip
             CACHED_ENTITIES.remove(entityType);
         }
 
@@ -84,17 +80,14 @@ public class TrialSpawnerBlockEntityRenderer implements BlockEntityRenderer<Tria
     }
 
     private Entity getOrCreateEntity(EntityType<?> entityType, Level level) {
-        // Use cached entity if available
         Entity entity = CACHED_ENTITIES.get(entityType);
         if (entity != null && entity.level() == level) {
             return entity;
         }
 
-        // Create new entity and cache it
         try {
             entity = entityType.create(level);
             if (entity != null) {
-                // Initialize entity for rendering
                 entity.tickCount = 0;
                 CACHED_ENTITIES.put(entityType, entity);
             }

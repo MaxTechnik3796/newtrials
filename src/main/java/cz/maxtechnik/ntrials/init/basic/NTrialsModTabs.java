@@ -22,8 +22,6 @@ public class NTrialsModTabs{
 
 		tabData.accept(NTrialsModItems.TRIAL_SPAWNER.get());
 		tabData.accept(NTrialsModItems.VAULT.get());
-
-		tabData.accept(NTrialsModItems.TRIAL_SPAWNER_BOSS.get());
 		tabData.accept(NTrialsModItems.VAULT_BOSS.get());
 
 		tabData.accept(NTrialsModItems.BOGGED_SPAWN_EGG.get());

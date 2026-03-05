@@ -67,7 +67,7 @@ public class NTrialsModCommonConfig{
 		BOSS_SPAWNER_LOOT_DROP_INTERVAL=BUILDER.comment("Boss Spawner loot drop interval.\nNTrials-reload required!\nDefault value: 10").defineInRange("boss_spawner_loot_drop_interval",10,1,Integer.MAX_VALUE);
 		BOSS_SPAWNER_COMPLETE_TRIAL_DELAY=BUILDER.comment("Boss Spawner complete_trial_delay.\nNTrials-reload required!\nDefault value: 20").defineInRange("boss_spawner_complete_trial_delay",20,1,Integer.MAX_VALUE);
 		BOSS_SPAWNER_BASE_BOSS_HP=BUILDER.comment("Boss Spawner base boss hp.\nNTrials-reload required!\nDefault value: 200").defineInRange("boss_spawner_base_boss_hp",200,1,Integer.MAX_VALUE);
-		BOSS_SPAWNER_HP_MULTIPLIER_PER_PLAYER=BUILDER.comment("Boss Spawner hp multiplier per player.\nNTrials-reload required!\nDefault value: 1.5").defineInRange("boss_spawner_hs_multiplier_per_player",1.5,1.0,Integer.MAX_VALUE);
+		BOSS_SPAWNER_HP_MULTIPLIER_PER_PLAYER=BUILDER.comment("Boss Spawner hp multiplier per player.\nNTrials-reload required!\nDefault value: 1.5").defineInRange("boss_spawner_hp_multiplier_per_player",1.5,1.0,Integer.MAX_VALUE);
 		BOSS_SPAWNER_MAX_COOLDOWN_TICKS=BUILDER.comment("Boss Spawner max cooldown ticks.\nNTrials-reload required!\nDefault value: 36000").defineInRange("boss_spawner_max_cooldown_ticks",36000,1,Integer.MAX_VALUE);
 
 

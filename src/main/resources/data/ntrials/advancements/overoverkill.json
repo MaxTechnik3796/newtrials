@@ -1,20 +1,13 @@
 {
 	"parent":"ntrials:trial_enter",
 	"criteria":{
-		"kill":{
-			"trigger":"player_killed_entity",
-			"conditions":{
-				"killing_blow":{
-					"source_entity":{
-						"nbt":"{SelectedItem:{id:\"ntrials:mace\"}}"
-					}
-				}
-			}
+		"overoverkill":{
+			"trigger":"minecraft:impossible"
 		}
 	},
 	"display":{
 		"announce_to_chat":true,
-		"frame":"task",
+		"frame":"challenge",
 		"hidden":false,
 		"show_toast":true,
 		"title":{
@@ -29,7 +22,7 @@
 	},
 	"requirements":[
 		[
-			"kill"
+			"overoverkill"
 		]
 	]
 }
