@@ -24,7 +24,6 @@ public class NTrialsModItems{
     public static final RegistryObject<Item>HEAVY_CORE=block(NTrialsModBlocks.HEAVY_CORE);
     public static final RegistryObject<Item>TRIAL_SPAWNER=block(NTrialsModBlocks.TRIAL_SPAWNER);
     public static final RegistryObject<Item>VAULT=block(NTrialsModBlocks.VAULT);
-	public static final RegistryObject<Item>VAULT_BOSS=block(NTrialsModBlocks.VAULT_BOSS);
 
     public static final RegistryObject<Item>TRIAL_KEY=REGISTRY.register("trial_key",BasicItem::new);
     public static final RegistryObject<Item>OMINOUS_TRIAL_KEY=REGISTRY.register("ominous_trial_key",BasicItem::new);

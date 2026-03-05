@@ -128,7 +128,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		if(this.cooldownTime>0){
 			this.cooldownTime--;
 			if(this.cooldownTime==NTrialsModCommonConfig.spawnerCooldownOminous&&this.shouldResetOminousOnCooldownEnd){
-				assert level!=null;
+				if(level==null) return;
 				BlockState currentState=level.getBlockState(getBlockPos());
 				if(currentState.getValue(TrialSpawnerBlock.OMINOUS)){
 					level.setBlock(getBlockPos(),currentState.setValue(TrialSpawnerBlock.OMINOUS,false),3);
@@ -149,7 +149,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		}
 		if(isLootAnimating) tickLootAnimation();
 		if(this.tickCount%100==0){
-			assert level!=null;
+			if(level==null) return;
 			if(!level.isClientSide()&&hasSpawnEntity()&&!trialActive&&cooldownTime==0){
 				boolean isOminousBlock=level.getBlockState(getBlockPos()).getValue(TrialSpawnerBlock.OMINOUS);
 				level.playSound(null,getBlockPos(),isOminousBlock?NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS.get():NTrialsModSounds.BLOCK_TRIAL_SPAWNER_AMBIENT.get(),
@@ -161,8 +161,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 			syncToClients();
 			hasBeenSynced=true;
 		}
-		assert level!=null;
-		if(!level.isClientSide()&&isOminous()&&trialActive&&this.tickCount%600==0) spawnRandomOminousEffect();
+		if(level!=null&&!level.isClientSide()&&isOminous()&&trialActive&&this.tickCount%600==0) spawnRandomOminousEffect();
 	}
 	private void clientTickNormal(){
 		this.clientTickCount++;
@@ -398,8 +397,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 
 	// ====== SHARED METHODS ======
 	private BlockPos findSpawnPosition(){
+		if(level==null) return getBlockPos();
 		for(int attempts=0;attempts<10;attempts++){
-			assert level!=null;
 			int x=getBlockPos().getX()+(level.random.nextInt(7)-3);
 			int z=getBlockPos().getZ()+(level.random.nextInt(7)-3);
 			int y=getBlockPos().getY();
@@ -421,7 +420,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.currentLootDropIndex=0;
 		this.pendingLootItems=new ArrayList<>(lootItems);
 		setChanged();
-		assert level!=null;
+		if(level==null) return;
 		level.playSound(null,getBlockPos(),NTrialsModSounds.BLOCK_TRIAL_SPAWNER_OPEN_SHUTTER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 		level.playSound(null,getBlockPos(),NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN_ITEM_BEGIN.get(),SoundSource.BLOCKS,0.8f,1.0f);
 		if(level!=null&&!level.isClientSide()) level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),3);
@@ -454,7 +453,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.currentLootDropIndex=0;
 		this.pendingLootItems.clear();
 		setChanged();
-		assert level!=null;
+		if(level==null) return;
 		level.playSound(null,getBlockPos(),NTrialsModSounds.BLOCK_TRIAL_SPAWNER_CLOSE_SHUTTER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 		if(level!=null&&!level.isClientSide()){
 			level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),3);
@@ -602,7 +601,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	}
 	private void checkWaveCompletion(){
 		spawnedEntities.removeIf(uuid->{
-			assert level!=null;
+			if(level==null) return true;
 			net.minecraft.world.entity.Entity entity=((ServerLevel)level).getEntity(uuid);
 			return entity==null||!entity.isAlive();
 		});
@@ -612,9 +611,9 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 			return;
 		}
 		int needed=mobsPerWave-alive;
-		if(needed>0&&remainingMobs>0){
+		if(needed>0&&remainingMobs>0&&spawnEntity!=null){
 			int spawnCount=Math.min(needed,remainingMobs);
-			assert level!=null;
+			if(level==null) return;
 			level.playSound(null,getBlockPos(),NTrialsModSounds.BLOCK_TRIAL_SPAWNER_SPAWN.get(),SoundSource.BLOCKS,1.0f,1.0f);
 			BlockState currentState=level.getBlockState(getBlockPos());
 			boolean isOminousBlock=currentState.getValue(TrialSpawnerBlock.OMINOUS);
@@ -755,9 +754,9 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		level.addFreshEntity(cloud);
 	}
 	private BlockPos findEffectPosition(){
+		if(level==null) return getBlockPos();
 		double radius=10.0;
 		for(int attempts=0;attempts<20;attempts++){
-			assert level!=null;
 			double dx=(level.random.nextDouble()-0.5)*2*radius;
 			double dz=(level.random.nextDouble()-0.5)*2*radius;
 			if(Math.sqrt(dx*dx+dz*dz)>radius) continue;
@@ -794,6 +793,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.remainingMobs=tag.contains("RemainingMobs")?tag.getInt("RemainingMobs"):this.totalMobs;
 		this.currentWave=tag.contains("CurrentWave")?tag.getInt("CurrentWave"):0;
 		this.trialActive=tag.getBoolean("TrialActive");
+		this.startTrialTimer=tag.contains("StartTrialTimer")?tag.getInt("StartTrialTimer"):-1;
 		if(tag.contains("NormalLootTable")) this.normalLootTable=tag.getString("NormalLootTable");
 		if(tag.contains("OminousLootTable")) this.ominousLootTable=tag.getString("OminousLootTable");
 		this.isLootAnimating=tag.getBoolean("IsLootAnimating");
@@ -873,6 +873,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		tag.putInt("RemainingMobs",this.remainingMobs);
 		tag.putInt("CurrentWave",this.currentWave);
 		tag.putBoolean("TrialActive",this.trialActive);
+		tag.putInt("StartTrialTimer",this.startTrialTimer);
 		tag.putString("NormalLootTable",this.normalLootTable);
 		tag.putString("OminousLootTable",this.ominousLootTable);
 		tag.putBoolean("IsLootAnimating",this.isLootAnimating);

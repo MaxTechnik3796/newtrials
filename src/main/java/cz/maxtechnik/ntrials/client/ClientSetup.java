@@ -2,7 +2,7 @@ package cz.maxtechnik.ntrials.client;
 
 import cz.maxtechnik.ntrials.client.particle.GustParticle;
 import cz.maxtechnik.ntrials.client.particle.SmallGustParticle;
-import cz.maxtechnik.ntrials.client.renderer.blockentity.VaultBlockEntityRenderer;
+import cz.maxtechnik.ntrials.client.renderer.blockentity.TrialVaultBlockEntityRenderer;
 import cz.maxtechnik.ntrials.client.renderer.blockentity.TrialSpawnerBlockEntityRenderer;
 import cz.maxtechnik.ntrials.client.renderer.entity.WindChargeProjectileRenderer;
 import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
@@ -22,7 +22,7 @@ public class ClientSetup {
         public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(
                 NTrialsModBlockEntities.VAULT_BLOCK_ENTITY.get(),
-                    context1 -> new VaultBlockEntityRenderer()
+                    context1 -> new TrialVaultBlockEntityRenderer()
             );
             event.registerBlockEntityRenderer(
                 NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(),

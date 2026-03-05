@@ -1,9 +1,10 @@
 package cz.maxtechnik.ntrials.event;
 
-import cz.maxtechnik.ntrials.block.TrialSpawnerBlock;
-import cz.maxtechnik.ntrials.block.entity.TrialSpawnerBlockEntity;
+import cz.maxtechnik.ntrials.block.TrialVaultBlock;
+import cz.maxtechnik.ntrials.block.entity.TrialVaultBlockEntity;
 import cz.maxtechnik.ntrials.init.basic.NTrialsModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -29,16 +31,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Legacy converter for old "trial_spawner_boss" blocks.
+ * Legacy converter for old "vault_boss" blocks.
  * When placed by jigsaw structures or loaded from old worlds, this block
- * immediately converts itself to the unified TrialSpawnerBlock with TYPE=BOSS.
+ * immediately converts itself to the unified TrialVaultBlock with TYPE=BOSS.
  */
 @SuppressWarnings("deprecation")
-public class LegacySpawnerConverterBlock extends BaseEntityBlock{
-	public static final BooleanProperty OMINOUS=BooleanProperty.create("ominous");
-	public static final EnumProperty<TrialSpawnerBlock.TrialSpawnerState> STATE=EnumProperty.create("trial_spawner_state",TrialSpawnerBlock.TrialSpawnerState.class);
+public class LegacyVaultConverterBlock extends BaseEntityBlock{
+	public static final DirectionProperty FACING=HorizontalDirectionalBlock.FACING;
+	public static final EnumProperty<TrialVaultBlock.VaultState> STATE=EnumProperty.create("vault_state",TrialVaultBlock.VaultState.class);
 
-	public LegacySpawnerConverterBlock(){
+	public LegacyVaultConverterBlock(){
 		super(Properties.of()
 				.sound(SoundType.METAL)
 				.strength(20F,999999999F)
@@ -47,19 +49,19 @@ public class LegacySpawnerConverterBlock extends BaseEntityBlock{
 				.noLootTable()
 				.pushReaction(PushReaction.BLOCK));
 		this.registerDefaultState(this.stateDefinition.any()
-				.setValue(OMINOUS,false)
-				.setValue(STATE,TrialSpawnerBlock.TrialSpawnerState.INACTIVE));
+				.setValue(FACING,Direction.NORTH)
+				.setValue(STATE,TrialVaultBlock.VaultState.INACTIVE));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){
-		builder.add(OMINOUS,STATE);
+		builder.add(FACING,STATE);
 	}
 
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(@NotNull BlockPos pos,@NotNull BlockState state){
-		return new TrialSpawnerBlockEntity(pos,state);
+		return new TrialVaultBlockEntity(pos,state);
 	}
 
 	@Nullable
@@ -76,10 +78,9 @@ public class LegacySpawnerConverterBlock extends BaseEntityBlock{
 
 	@Override
 	public void tick(@NotNull BlockState state,@NotNull ServerLevel level,@NotNull BlockPos pos,@NotNull RandomSource random){
-		// 1. Zalohuj NBT ze stareho block entity
 		CompoundTag memory=new CompoundTag();
 		BlockEntity be=level.getBlockEntity(pos);
-		if(be instanceof TrialSpawnerBlockEntity oldBe){
+		if(be instanceof TrialVaultBlockEntity oldBe){
 			memory=oldBe.saveWithFullMetadata();
 			memory.remove("id");
 			memory.remove("x");
@@ -87,22 +88,18 @@ public class LegacySpawnerConverterBlock extends BaseEntityBlock{
 			memory.remove("z");
 		}
 
-		// 2. Zachovej ominous stav z old blockstate
-		boolean ominous=state.hasProperty(OMINOUS)&&state.getValue(OMINOUS);
+		Direction facing=state.hasProperty(FACING)?state.getValue(FACING):Direction.NORTH;
 
-		// 3. Postav novy blok se spravnym stavem
-		BlockState newState=NTrialsModBlocks.TRIAL_SPAWNER.get().defaultBlockState()
-				.setValue(TrialSpawnerBlock.TYPE,TrialSpawnerBlock.SpawnerType.BOSS)
-				.setValue(TrialSpawnerBlock.OMINOUS,ominous)
-				.setValue(TrialSpawnerBlock.POWERED,false)
-				.setValue(TrialSpawnerBlock.STATE,TrialSpawnerBlock.TrialSpawnerState.INACTIVE);
+		BlockState newState=NTrialsModBlocks.VAULT.get().defaultBlockState()
+				.setValue(TrialVaultBlock.TYPE,TrialVaultBlock.VaultType.BOSS)
+				.setValue(TrialVaultBlock.FACING,facing)
+				.setValue(TrialVaultBlock.STATE,TrialVaultBlock.VaultState.INACTIVE);
 
 		level.setBlock(pos,newState,Block.UPDATE_ALL);
 
-		// 4. Obnov NBT data do noveho block entity
 		BlockEntity newBe=level.getBlockEntity(pos);
 		if(newBe==null) return;
-		if(newBe instanceof TrialSpawnerBlockEntity trialBe){
+		if(newBe instanceof TrialVaultBlockEntity trialBe){
 			if(!memory.isEmpty()){
 				trialBe.load(memory);
 			}
@@ -111,7 +108,6 @@ public class LegacySpawnerConverterBlock extends BaseEntityBlock{
 		}
 	}
 
-	// Pojistka - klik okamzite spusti konverzi
 	@Override
 	public @NotNull InteractionResult use(@NotNull BlockState state,Level level,@NotNull BlockPos pos,
 										  Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
