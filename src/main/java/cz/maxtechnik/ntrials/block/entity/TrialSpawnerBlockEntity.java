@@ -1,6 +1,6 @@
 package cz.maxtechnik.ntrials.block.entity;
 
-import cz.maxtechnik.ntrials.NTrialsModCommonConfig;
+import cz.maxtechnik.ntrials.NTrialsServerConfig;
 import cz.maxtechnik.ntrials.block.TrialSpawnerBlock;
 import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
 import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
@@ -91,7 +91,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	private UUID spawnedBossUUID=null;
 	private final Set<UUID> nearbyPlayers=new HashSet<>();
 	private final Set<UUID> participatingPlayers=new HashSet<>();
-	private int bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
+	private int bossHP=NTrialsServerConfig.CONFIG.bossSpawner.baseBossHp.get();
 	private final Set<UUID> playersWhoReceivedReward=new HashSet<>();
 	private int cooldownTimer=0;
 	private String keyTag="";
@@ -127,7 +127,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.tickCount++;
 		if(this.cooldownTime>0){
 			this.cooldownTime--;
-			if(this.cooldownTime==NTrialsModCommonConfig.spawnerCooldownOminous&&this.shouldResetOminousOnCooldownEnd){
+			if(this.cooldownTime==NTrialsServerConfig.CONFIG.spawner.cooldownOminous.get()&&this.shouldResetOminousOnCooldownEnd){
 				if(level==null) return;
 				BlockState currentState=level.getBlockState(getBlockPos());
 				if(currentState.getValue(TrialSpawnerBlock.OMINOUS)){
@@ -283,7 +283,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 			isBossKeyActivated=true;
 			this.participatingPlayers.clear();
 			this.participatingPlayers.addAll(this.nearbyPlayers);
-			bossSpawnTimer=NTrialsModCommonConfig.bossSpawnerSpawnDelay;
+			bossSpawnTimer=NTrialsServerConfig.CONFIG.bossSpawner.spawnDelay.get();
 			setChanged();
 			BlockState currentState=level.getBlockState(getBlockPos());
 			if(currentState.getBlock() instanceof TrialSpawnerBlock){
@@ -308,8 +308,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	private void spawnBreezeBoss(){
 		if(level==null||level.isClientSide) return;
 		int playerCount=participatingPlayers.size();
-		bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
-		for(int i=1;i<playerCount;i++) bossHP=(int)(bossHP*NTrialsModCommonConfig.bossSpawnerHpMultiplierPerPlayer);
+		bossHP=NTrialsServerConfig.CONFIG.bossSpawner.baseBossHp.get();
+		for(int i=1;i<playerCount;i++) bossHP=(int)(bossHP*NTrialsServerConfig.CONFIG.bossSpawner.hpMultiplierPerPlayer.get());
 		BlockPos spawnPos=findSpawnPosition();
 		if(spawnPos!=null&&bossMobType!=null){
 			net.minecraft.world.entity.Mob boss;
@@ -340,7 +340,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	}
 	private void handleBossKilled(){
 		if(level==null||level.isClientSide) return;
-		completeTrialTimer=NTrialsModCommonConfig.bossSpawnerCompleteTrialDelay;
+		completeTrialTimer=20;
 		spawnedBossUUID=null;
 		setChanged();
 	}
@@ -430,7 +430,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 			return;
 		}
 		lootAnimationTick++;
-		if(lootAnimationTick%NTrialsModCommonConfig.spawnerLootDropInterval==0&&currentLootDropIndex<pendingLootItems.size()) dropNextLootItem();
+		if(lootAnimationTick%NTrialsServerConfig.CONFIG.spawner.lootDropInterval.get()==0&&currentLootDropIndex<pendingLootItems.size()) dropNextLootItem();
 		if(currentLootDropIndex>=pendingLootItems.size()) stopLootAnimation();
 	}
 	private void dropNextLootItem(){
@@ -462,8 +462,8 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 				this.bossSpawnTimer=-1;
 				this.spawnedBossUUID=null;
 				this.participatingPlayers.clear();
-				this.bossHP=NTrialsModCommonConfig.bossSpawnerBaseBossHp;
-				this.cooldownTimer=NTrialsModCommonConfig.bossSpawnerMaxCooldownTicks;
+				this.bossHP=NTrialsServerConfig.CONFIG.bossSpawner.baseBossHp.get();
+				this.cooldownTimer=NTrialsServerConfig.CONFIG.bossSpawner.maxCooldownTicks.get();
 				setChanged();
 			}else{
 				updateBlockStateNormal();
@@ -521,7 +521,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		TrialSpawnerBlock.TrialSpawnerState newState;
 		if(this.completeTrialTimer>0||this.isLootAnimating||(this.pendingLootItems!=null&&!this.pendingLootItems.isEmpty())){
 			newState=TrialSpawnerBlock.TrialSpawnerState.EJECTING_REWARD;
-		}else if(this.cooldownTime>NTrialsModCommonConfig.spawnerCooldownOminous&&this.isOminous){
+		}else if(this.cooldownTime>NTrialsServerConfig.CONFIG.spawner.cooldownOminous.get()&&this.isOminous){
 			newState=TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
 		}else if(this.cooldownTime>0){
 			newState=TrialSpawnerBlock.TrialSpawnerState.COOLDOWN;
@@ -556,11 +556,11 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		boolean isBreeze=spawnEntity!=null&&spawnEntity==NTrialsModEntityTypes.BREEZE.get();
 		int extraPlayers=Math.max(0,playerCount-1);
 		if(isBreeze){
-			this.mobsPerWave=NTrialsModCommonConfig.spawnerBreezeBaseMobsPerWave+(extraPlayers*NTrialsModCommonConfig.spawnerBreezeMobsAddedPerPlayer);
-			this.totalMobs=NTrialsModCommonConfig.spawnerBreezeBaseTotalMobs+(extraPlayers*NTrialsModCommonConfig.spawnerBreezeTotalAddedPerPlayer);
+			this.mobsPerWave=NTrialsServerConfig.CONFIG.spawner.breezeBaseMobsPerWave.get()+(extraPlayers*NTrialsServerConfig.CONFIG.spawner.breezeMobsAddedPerPlayer.get());
+			this.totalMobs=NTrialsServerConfig.CONFIG.spawner.breezeBaseTotalMobs.get()+(extraPlayers*NTrialsServerConfig.CONFIG.spawner.breezeTotalAddedPerPlayer.get());
 		}else{
-			this.mobsPerWave=NTrialsModCommonConfig.spawnerDefaultBaseMobsPerWave+extraPlayers;
-			this.totalMobs=NTrialsModCommonConfig.spawnerDefaultBaseTotalMobs+(extraPlayers*2);
+			this.mobsPerWave=NTrialsServerConfig.CONFIG.spawner.defaultBaseMobsPerWave.get()+(extraPlayers*NTrialsServerConfig.CONFIG.spawner.MobsAddedPerPlayer.get());
+			this.totalMobs=NTrialsServerConfig.CONFIG.spawner.defaultBaseTotalMobs.get()+(extraPlayers*NTrialsServerConfig.CONFIG.spawner.TotalAddedPerPlayer.get());
 		}
 		if(this.trialActive){
 			int alive=this.spawnedEntities.size();
@@ -779,14 +779,14 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		this.tickCount=tag.getInt("TickCount");
 		this.shouldResetOminousOnCooldownEnd=tag.getBoolean("ShouldResetOminousOnCooldownEnd");
 		this.mobsPerWave=tag.contains("MobsPerWave")?tag.getInt("MobsPerWave"):this.mobsPerWave;
-		if(this.mobsPerWave<=0) this.mobsPerWave=NTrialsModCommonConfig.spawnerDefaultBaseMobsPerWave;
+		if(this.mobsPerWave<=0) this.mobsPerWave=NTrialsServerConfig.CONFIG.spawner.defaultBaseMobsPerWave.get();
 		if(tag.contains("TotalMobs")) this.totalMobs=tag.getInt("TotalMobs");
 		else if(tag.contains("MaxWaves")){
 			int oldMaxWaves=tag.getInt("MaxWaves");
 			if(oldMaxWaves<=0) oldMaxWaves=5;
 			this.totalMobs=oldMaxWaves*this.mobsPerWave;
 		}
-		if(this.totalMobs<=0) this.totalMobs=NTrialsModCommonConfig.spawnerDefaultBaseTotalMobs;
+		if(this.totalMobs<=0) this.totalMobs=NTrialsServerConfig.CONFIG.spawner.defaultBaseTotalMobs.get();
 		this.remainingMobs=tag.contains("RemainingMobs")?tag.getInt("RemainingMobs"):this.totalMobs;
 		this.currentWave=tag.contains("CurrentWave")?tag.getInt("CurrentWave"):0;
 		this.trialActive=tag.getBoolean("TrialActive");

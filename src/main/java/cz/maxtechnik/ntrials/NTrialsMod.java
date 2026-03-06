@@ -51,7 +51,7 @@ public class NTrialsMod{
 		NTrialsModBlockEntities.register(modEventBus);
 		NTrialsModSounds.REGISTER.register(modEventBus);
 		NTrialsModEnchantments.REGISTER.register(modEventBus);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,NTrialsModCommonConfig.SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,NTrialsServerConfig.SPEC);
 	}
 	private void commonSetup(final FMLCommonSetupEvent event){
 		LOGGER.info("NewTrials Common loading...");
