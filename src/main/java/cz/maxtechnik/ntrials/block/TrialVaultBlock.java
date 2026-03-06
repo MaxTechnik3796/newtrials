@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
@@ -48,6 +49,9 @@ public class TrialVaultBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<VaultType> TYPE = EnumProperty.create("vault_type", VaultType.class);
     public static final EnumProperty<VaultState> STATE = EnumProperty.create("vault_state", VaultState.class);
+    // Legacy backward-compat property: old vault blocks stored ominous as boolean.
+    // On first tick, ominous=true is converted to vault_type=ominous and ominous is reset to false.
+    public static final BooleanProperty OMINOUS = BooleanProperty.create("ominous");
 
     public TrialVaultBlock() {
         super(Properties.of().sound(SoundType.METAL).strength(20F, 999999999F).noOcclusion()
@@ -56,7 +60,8 @@ public class TrialVaultBlock extends BaseEntityBlock {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(TYPE, VaultType.NORMAL)
-                .setValue(STATE, VaultState.INACTIVE));
+                .setValue(STATE, VaultState.INACTIVE)
+                .setValue(OMINOUS, false));
     }
 
     public enum VaultType implements net.minecraft.util.StringRepresentable {
@@ -73,7 +78,7 @@ public class TrialVaultBlock extends BaseEntityBlock {
         @Override public @NotNull String getSerializedName() { return this.name; }
     }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(TYPE, STATE, FACING); }
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(TYPE, STATE, FACING, OMINOUS); }
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()); }
     public @NotNull BlockState rotate(BlockState state, Rotation rot) { return state.setValue(FACING, rot.rotate(state.getValue(FACING))); }
     @Override public @NotNull BlockState mirror(BlockState state, Mirror mirror) { return state.rotate(mirror.getRotation(state.getValue(FACING))); }

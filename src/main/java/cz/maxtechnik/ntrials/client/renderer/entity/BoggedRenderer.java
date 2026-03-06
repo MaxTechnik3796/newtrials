@@ -20,7 +20,6 @@ public class BoggedRenderer extends HumanoidMobRenderer<BoggedEntity,HumanoidMod
 
 	}
 
-
 	@Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull BoggedEntity entity){
         return ResourceLocation.fromNamespaceAndPath("ntrials","textures/entities/bogged.png");

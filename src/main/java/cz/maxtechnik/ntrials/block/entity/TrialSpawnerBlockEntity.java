@@ -42,9 +42,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 
 import java.util.*;
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation","unused"})
 public class TrialSpawnerBlockEntity extends BlockEntity{
-	// ---- Normal spawner constants ----
+	// Normal spawner constants
 	private static final List<MobEffect> OMNIOUS_EFFECTS=List.of(
 			MobEffects.REGENERATION,MobEffects.BLINDNESS,MobEffects.POISON,MobEffects.MOVEMENT_SLOWDOWN,
 			MobEffects.CONFUSION,MobEffects.WEAKNESS,MobEffects.MOVEMENT_SPEED,MobEffects.DAMAGE_BOOST
@@ -56,7 +56,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	private static final String[] WEAPONS={"minecraft:stone_sword","minecraft:iron_sword","minecraft:diamond_sword","minecraft:iron_axe","minecraft:diamond_axe"};
 	private static final String DEFAULT_BOSS_LOOT="ntrials:chests/spawner_boss";
 
-	// ---- Normal spawner fields ----
+	// Normal spawner fields
 	private final Set<UUID> spawnedEntities=new HashSet<>();
 	private int cooldownTime=0;
 	private boolean isOminous=false;
@@ -84,7 +84,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 	private int completeTrialTimer=-1;
 	private int startTrialTimer=-1;
 
-	// ---- Boss spawner fields ----
+	// Boss spawner fields
 	private boolean isBossActivated=false;
 	private boolean isBossKeyActivated=false;
 	private int bossSpawnTimer=-1;
@@ -103,7 +103,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		super(NTrialsModBlockEntities.TRIAL_SPAWNER_BLOCK_ENTITY.get(),pos,blockState);
 	}
 
-	// ---- Type helper ----
+	// Type helper
 	public TrialSpawnerBlock.SpawnerType getSpawnerType(){
 		BlockState state=getBlockState();
 		if(state.getBlock() instanceof TrialSpawnerBlock){
@@ -112,7 +112,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		return TrialSpawnerBlock.SpawnerType.NORMAL;
 	}
 
-	// ====== TICK DISPATCH ======
+	// Tick Dispatch
 	public void tick(){
 		if(getSpawnerType()==TrialSpawnerBlock.SpawnerType.BOSS) tickBoss();
 		else tickNormal();
@@ -122,7 +122,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		else clientTickNormal();
 	}
 
-	// ====== NORMAL TICK ======
+	// Normal Tick
 	private void tickNormal(){
 		this.tickCount++;
 		if(this.cooldownTime>0){
@@ -206,7 +206,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		}
 	}
 
-	// ====== BOSS TICK ======
+	// Boss Tick
 	private void tickBoss(){
 		if(level==null||level.isClientSide) return;
 		// Cooldown logic
@@ -247,7 +247,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		}
 	}
 
-	// ====== BOSS METHODS ======
+	// Boss Methods
 	private void updatePlayersInRange(){
 		if(level==null) return;
 		double range=20.0;
@@ -329,7 +329,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 				boss.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,999999,0,false,false));
 				boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,999999,0,false,false));
 				if(level instanceof ServerLevel serverLevel){
-					@SuppressWarnings({"deprecation","unused"})
 					var ignored=boss.finalizeSpawn(serverLevel,level.getCurrentDifficultyAt(spawnPos),net.minecraft.world.entity.MobSpawnType.SPAWNER,null,null);
 				}
 				level.addFreshEntity(boss);
@@ -395,7 +394,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		}
 	}
 
-	// ====== SHARED METHODS ======
+	// Shared Methods
 	private BlockPos findSpawnPosition(){
 		if(level==null) return getBlockPos();
 		for(int attempts=0;attempts<10;attempts++){
@@ -457,7 +456,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		level.playSound(null,getBlockPos(),NTrialsModSounds.BLOCK_TRIAL_SPAWNER_CLOSE_SHUTTER.get(),SoundSource.BLOCKS,1.0f,1.0f);
 		if(level!=null&&!level.isClientSide()){
 			level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),3);
-			// Boss-specific reset after loot animation
+			//Boss-specific reset after loot animation
 			if(getSpawnerType()==TrialSpawnerBlock.SpawnerType.BOSS){
 				this.isBossKeyActivated=false;
 				this.bossSpawnTimer=-1;
@@ -472,7 +471,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		}
 	}
 
-	// ====== NORMAL SPAWNER METHODS ======
+	// Normal Spawner Methods
 	private void checkAndManageTrial(){
 		if(level==null||level.isClientSide()||!hasSpawnEntity()) return;
 		double range=14.0;
@@ -589,7 +588,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 				entity.setPos(spawnPos.getX()+0.5,spawnPos.getY(),spawnPos.getZ()+0.5);
 				if(entity instanceof net.minecraft.world.entity.Mob mob){
 					if(isOminousBlock) equipOminousMob(mob);
-					@SuppressWarnings({"deprecation","unused"})
 					var ignored=mob.finalizeSpawn((ServerLevel)level,level.getCurrentDifficultyAt(spawnPos),net.minecraft.world.entity.MobSpawnType.SPAWNER,null,null);
 				}
 				level.addFreshEntity(entity);
@@ -624,7 +622,6 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 					entity.setPos(spawnPos.getX()+0.5,spawnPos.getY(),spawnPos.getZ()+0.5);
 					if(entity instanceof net.minecraft.world.entity.Mob mob){
 						if(isOminousBlock) equipOminousMob(mob);
-						@SuppressWarnings({"deprecation","unused"})
 						var ignored=mob.finalizeSpawn((ServerLevel)level,level.getCurrentDifficultyAt(spawnPos),net.minecraft.world.entity.MobSpawnType.SPAWNER,null,null);
 					}
 					level.addFreshEntity(entity);
@@ -772,7 +769,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		return null;
 	}
 
-	// ====== NBT ======
+	// NBT
 	@Override
 	public void load(@NotNull CompoundTag tag){
 		super.load(tag);
@@ -914,7 +911,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		tag.put("PlayersWhoReceivedReward",playersRewardTag);
 	}
 
-	// ====== GETTERS/SETTERS ======
+	// Getters/Setters
 	// Normal
 	public void setCooldownTime(int cooldownTime){
 		this.cooldownTime=cooldownTime;
@@ -1011,7 +1008,7 @@ public class TrialSpawnerBlockEntity extends BlockEntity{
 		return isBossKeyActivated;
 	}
 
-	// ====== SYNC ======
+	// Sync
 	private void syncToClients(){
 		if(level!=null&&!level.isClientSide()&&level instanceof ServerLevel serverLevel){
 			NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(()->serverLevel.getChunkAt(getBlockPos())),new TrialSpawnerSyncPacket(getBlockPos(),this.spawnEntity));
