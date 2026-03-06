@@ -40,7 +40,6 @@ public class WindChargeDispenserBehavior extends DefaultDispenseItemBehavior{
 		}
 		// Play sound
 		level.playSound(null,pos,SoundEvents.SNOWBALL_THROW,SoundSource.BLOCKS,1.0F,1.0F);
-		// Consume one item
 		itemStack.shrink(1);
 		return itemStack;
 	}

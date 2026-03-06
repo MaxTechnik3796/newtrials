@@ -77,6 +77,13 @@ public class TrialVaultBlockEntity extends BlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TrialVaultBlockEntity entity) {
         if (level.isClientSide) return;
+        // Legacy conversion: old vault blocks had ominous=true boolean, convert to vault_type=ominous
+        if (state.getValue(TrialVaultBlock.OMINOUS)) {
+            BlockState converted = state.setValue(TrialVaultBlock.OMINOUS, false)
+                    .setValue(TrialVaultBlock.TYPE, TrialVaultBlock.VaultType.OMINOUS);
+            level.setBlock(pos, converted, Block.UPDATE_ALL);
+            return;
+        }
         ServerLevel serverLevel = (ServerLevel) level;
         long time = level.getGameTime();
         TrialVaultBlock.VaultState vaultState = state.getValue(TrialVaultBlock.STATE);

@@ -1,8 +1,7 @@
 package cz.maxtechnik.ntrials.init.basic;
 
 import cz.maxtechnik.ntrials.block.*;
-import cz.maxtechnik.ntrials.event.LegacySpawnerConverterBlock;
-import cz.maxtechnik.ntrials.event.LegacyVaultConverterBlock;
+import cz.maxtechnik.ntrials.event.TrialConvertor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WeatheringCopper;
@@ -20,13 +19,13 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>HEAVY_CORE=REGISTRY.register("heavy_core",HeavyCoreBlock::new);
 
     public static final RegistryObject<Block>TRIAL_SPAWNER=REGISTRY.register("trial_spawner",TrialSpawnerBlock::new);
-    public static final RegistryObject<Block>TRIAL_SPAWNER_BOSS=REGISTRY.register("trial_spawner_boss",LegacySpawnerConverterBlock::new);
+    public static final RegistryObject<Block>TRIAL_SPAWNER_BOSS=REGISTRY.register("trial_spawner_boss",TrialConvertor::spawner);
     public static final RegistryObject<Block>VAULT=REGISTRY.register("vault",TrialVaultBlock::new);
-	public static final RegistryObject<Block>VAULT_BOSS=REGISTRY.register("vault_boss",LegacyVaultConverterBlock::new);
+	public static final RegistryObject<Block>VAULT_BOSS=REGISTRY.register("vault_boss",TrialConvertor::vault);
 
 
 
-    // ---- Tuff stuff ----
+    // Tuff stuff
     public static final RegistryObject<Block>TUFF_BRICKS=REGISTRY.register("tuff_bricks",TuffBlock::new);
     public static final RegistryObject<Block>CHISELED_TUFF=REGISTRY.register("chiseled_tuff",TuffBlock::new);
     public static final RegistryObject<Block>CHISELED_TUFF_BRICKS=REGISTRY.register("chiseled_tuff_bricks",TuffBlock::new);
@@ -49,7 +48,7 @@ public class NTrialsModBlocks{
 
 
 
-    // ---- Oxidizing variants ----
+    // Oxidizing variants
     public static final RegistryObject<Block>CHISELED_COPPER=REGISTRY.register("chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED,false,chiseled_copper_props()));
     public static final RegistryObject<Block>EXPOSED_CHISELED_COPPER=REGISTRY.register("exposed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.EXPOSED,false,chiseled_copper_props()));
     public static final RegistryObject<Block>WEATHERED_CHISELED_COPPER=REGISTRY.register("weathered_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.WEATHERED,false,chiseled_copper_props()));
@@ -77,7 +76,7 @@ public class NTrialsModBlocks{
     public static final RegistryObject<Block>OXIDIZED_COPPER_BULB=REGISTRY.register("oxidized_copper_bulb",()->new CopperBulbBlock(WeatheringCopper.WeatherState.OXIDIZED,false,copper_bulb_props()));
 
 
-    // ---- Waxed variant ----
+    // Waxed variant
     public static final RegistryObject<Block>WAXED_CHISELED_COPPER=REGISTRY.register("waxed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.UNAFFECTED,true,chiseled_copper_props()));
     public static final RegistryObject<Block>WAXED_EXPOSED_CHISELED_COPPER=REGISTRY.register("waxed_exposed_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.EXPOSED,true,chiseled_copper_props()));
     public static final RegistryObject<Block>WAXED_WEATHERED_CHISELED_COPPER=REGISTRY.register("waxed_weathered_chiseled_copper",()->new ChiseledCopperBlock(WeatheringCopper.WeatherState.WEATHERED,true,chiseled_copper_props()));

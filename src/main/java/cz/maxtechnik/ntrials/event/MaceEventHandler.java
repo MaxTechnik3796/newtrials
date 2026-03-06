@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 @Mod.EventBusSubscriber(modid = NTrialsMod.MODID)
 public class MaceEventHandler{
 
@@ -29,7 +30,7 @@ public class MaceEventHandler{
 		}else if(fallDistance<=8.0f){
 			return 3.0f*4.0f+(fallDistance-3.0f)*2.0f;
 		}else{
-			return 3.0f*4.0f+5.0f*2.0f+(fallDistance-8.0f)*1.0f;
+			return 3.0f*4.0f+5.0f*2.0f+(fallDistance - 8.0f);
 		}
 	}
 
@@ -46,23 +47,19 @@ public class MaceEventHandler{
 				if(fallDistance>1.5f){
 					// Vanilla tiered smash damage (no cap)
 					float bonusDamage=calculateSmashDamage(fallDistance);
-
-					@SuppressWarnings("deprecation")
 					int densityLevel=EnchantmentHelper.getItemEnchantmentLevel(
 							NTrialsModEnchantments.DENSITY.get(),heldItem);
-					@SuppressWarnings("deprecation")
 					int breachLevel=EnchantmentHelper.getItemEnchantmentLevel(
 							NTrialsModEnchantments.BREACH.get(),heldItem);
-					@SuppressWarnings("deprecation")
 					int windBurstLevel=EnchantmentHelper.getItemEnchantmentLevel(
 							NTrialsModEnchantments.WIND_BURST.get(),heldItem);
 
-					// Density: +0.5 HP per level per block fallen
+					// Density
 					if(densityLevel>0){
 						bonusDamage+=(0.5f*densityLevel)*fallDistance;
 					}
 
-					// Breach: ignore portion of armor
+					// Breach
 					if(breachLevel>0){
 						LivingEntity target=event.getEntity();
 						float armorValue=target.getArmorValue();
@@ -78,7 +75,7 @@ public class MaceEventHandler{
 						bonusDamage+=breachBonus;
 					}
 
-					// Wind Burst: knockback explosion + player launch
+					// Wind Burst
 					if(windBurstLevel>0&&player.level() instanceof ServerLevel serverLevel){
 						Vec3 center=player.position();
 						Vec3 explosion_center=new Vec3(center.x,center.y,center.z);
@@ -117,13 +114,11 @@ public class MaceEventHandler{
 									1,velocityX,velocityY,velocityZ,0.0D);
 						}
 
-						// Find and knockback entities
 						List<Entity> entities=player.level().getEntities(player,player.getBoundingBox().inflate(radius));
 						for(Entity entity:entities){
 							if(entity instanceof LivingEntity){
 								double distance=entity.distanceTo(player);
 								if(distance<=radius){
-									// Calculate knockback direction
 									Vec3 direction=entity.position().subtract(explosion_center).normalize();
 
 									double baseKnockback=3.5D*windBurstLevel; // Vanilla používá 3.5 * level
@@ -149,7 +144,7 @@ public class MaceEventHandler{
 					float totalDamage=event.getAmount()+bonusDamage;
 					event.setAmount(totalDamage);
 
-					// Over-Overkill advancement: deal 100+ HP (50 hearts) in a single hit
+					// Over-Overkill advancement
 					if(totalDamage>=100.0f&&player instanceof ServerPlayer sp){
 						NTrialsMod.adv(sp,ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"overoverkill"));
 					}
