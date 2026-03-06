@@ -1,6 +1,6 @@
 package cz.maxtechnik.ntrials.block.entity;
 
-import cz.maxtechnik.ntrials.NTrialsModCommonConfig;
+import cz.maxtechnik.ntrials.NTrialsServerConfig;
 import cz.maxtechnik.ntrials.block.TrialVaultBlock;
 import cz.maxtechnik.ntrials.init.basic.NTrialsModSounds;
 import cz.maxtechnik.ntrials.init.other.NTrialsModBlockEntities;
@@ -117,8 +117,8 @@ public class TrialVaultBlockEntity extends BlockEntity {
 
     private void tickDisplayItem(Level level, BlockPos pos, BlockState state) {
         if (displayItems.isEmpty()) return;
-        itemRotation = (itemRotation + NTrialsModCommonConfig.vaultItemRotationSpeed) % 360.0f;
-        if (++displayItemSwitchTick >= NTrialsModCommonConfig.vaultDisplayItemSwitchInterval) {
+        itemRotation = (float) ((itemRotation + NTrialsServerConfig.CONFIG.vault.itemRotationSpeed.get()) % 360.0f);
+        if (++displayItemSwitchTick >= NTrialsServerConfig.CONFIG.vault.displayItemSwitchInterval.get()) {
             displayItemSwitchTick = 0;
             currentDisplayItemIndex = (currentDisplayItemIndex + 1) % displayItems.size();
             if (level != null && !level.isClientSide)
@@ -150,15 +150,14 @@ public class TrialVaultBlockEntity extends BlockEntity {
         animationTick++;
         TrialVaultBlock.VaultState currentState = state.getValue(TrialVaultBlock.STATE);
 
-        if (animationTick == NTrialsModCommonConfig.vaultUnlockingDuration
+        if (animationTick == NTrialsServerConfig.CONFIG.vault.unlockingDuration.get()
                 && currentState == TrialVaultBlock.VaultState.UNLOCKING) {
             level.playSound(null, pos, NTrialsModSounds.BLOCK_VAULT_OPEN_SHUTTER.get(),
                     SoundSource.BLOCKS, 1.0f, 1.0f);
             level.setBlock(pos, state.setValue(TrialVaultBlock.STATE, TrialVaultBlock.VaultState.EJECTING),
                     Block.UPDATE_ALL);
         } else if (currentState == TrialVaultBlock.VaultState.EJECTING) {
-            if ((animationTick - NTrialsModCommonConfig.vaultUnlockingDuration)
-                    / NTrialsModCommonConfig.vaultEjectInterval > lootDropIndex
+            if ((animationTick - NTrialsServerConfig.CONFIG.vault.unlockingDuration.get()) / NTrialsServerConfig.CONFIG.vault.ejectInterval.get() > lootDropIndex
                     && lootDropIndex < pendingLoot.size()) {
                 ItemEntity drop = new ItemEntity(level,
                         pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
@@ -170,8 +169,7 @@ public class TrialVaultBlockEntity extends BlockEntity {
                 lootDropIndex++;
             }
             if (lootDropIndex >= pendingLoot.size()
-                    && animationTick >= (NTrialsModCommonConfig.vaultUnlockingDuration
-                    + pendingLoot.size() * NTrialsModCommonConfig.vaultEjectInterval + NTrialsModCommonConfig.vaultCloseDelay)) {
+                    && animationTick >= (NTrialsServerConfig.CONFIG.vault.unlockingDuration.get() + pendingLoot.size() * NTrialsServerConfig.CONFIG.vault.ejectInterval.get() + NTrialsServerConfig.CONFIG.vault.closeDelay.get())) {
                 this.isAnimating = false;
                 level.setBlock(pos, state.setValue(TrialVaultBlock.STATE, TrialVaultBlock.VaultState.INACTIVE),
                         Block.UPDATE_ALL);
