@@ -1,6 +1,7 @@
 package cz.maxtechnik.ntrials.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -17,53 +18,70 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import cz.maxtechnik.ntrials.init.events.NTrialsMod_ModModEvents;
-import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
 public class ChiseledCopperBlock extends Block implements WeatheringCopper{
-	private final WeatherState level;
-	public ChiseledCopperBlock(WeatherState level,BlockBehaviour.Properties props){
+	private final WeatherState weatherState;
+	private final boolean waxed;
+	public ChiseledCopperBlock(WeatherState weatherState,boolean waxed,BlockBehaviour.Properties props){
 		super(props);
-		this.level=level;
+		this.weatherState=weatherState;
+		this.waxed=waxed;
 	}
 	@Override
 	public @NotNull WeatherState getAge(){
-		return this.level;
+		return this.weatherState;
 	}
 	@Override
 	public boolean isRandomlyTicking(@NotNull BlockState state){
 		// Blok môže oxidovať iba ak nie je na najvyššom stupni oxidácie (OXIDIZED)
-		return this.getAge()!=WeatherState.OXIDIZED;
+		return !waxed&&this.getAge()!=WeatherState.OXIDIZED;
 	}
 	@Override
 	public @NotNull InteractionResult use(@NotNull BlockState state,@NotNull Level level,@NotNull BlockPos pos,Player player,@NotNull InteractionHand hand,@NotNull BlockHitResult hit){
 		ItemStack itemInHand=player.getItemInHand(hand);
-		// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
-		if(itemInHand.is(Items.HONEYCOMB)){
-			Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
-			if(waxedBlock!=null){
-				if(!level.isClientSide){
-					level.setBlock(pos,waxedBlock.defaultBlockState(),3);
-					CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
-					CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
-					if(!player.isCreative()){
-						itemInHand.shrink(1);
+		if(!waxed){
+			// Honeycomb interakcia - waxovanie (výmena za waxed verziu)
+			if(itemInHand.is(Items.HONEYCOMB)){
+				Block waxedBlock=NTrialsMod_ModModEvents.WAXING_MAP.get(this);
+				if(waxedBlock!=null){
+					if(!level.isClientSide){
+						level.setBlock(pos,waxedBlock.defaultBlockState(),3);
+						CopperUtil.play(level,pos,SoundEvents.HONEYCOMB_WAX_ON);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_ON);
+						if(!player.isCreative()){
+							itemInHand.shrink(1);
+						}
 					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
 			}
-		}
-		// Sekera interakcia - scraping (čištění oxidace o jeden stupeň zpět)
-		if(itemInHand.getItem() instanceof AxeItem){
-			Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
-			if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
-				if(!level.isClientSide){
-					level.setBlock(pos,scrapedBlock.defaultBlockState(),3);
-					CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
-					CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
-					CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+			// Sekera interakcia - scraping (čištění oxidace o jeden stupeň zpět)
+			if(itemInHand.getItem() instanceof AxeItem){
+				Block scrapedBlock=NTrialsMod_ModModEvents.SCRAPING_MAP.get(this);
+				if(scrapedBlock!=null){ // Null znamená že je to první fáze (nelze čistit dál)
+					if(!level.isClientSide){
+						level.setBlock(pos,scrapedBlock.defaultBlockState(),3);
+						CopperUtil.play(level,pos,SoundEvents.AXE_SCRAPE);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.SCRAPE);
+						CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
+			}
+		}else{
+			// Sekera interakcia - unwaxovanie (výmena za non-waxed verziu)
+			if(itemInHand.getItem() instanceof AxeItem){
+				Block unwaxedBlock=NTrialsMod_ModModEvents.UNWAXING_MAP.get(this);
+				if(unwaxedBlock!=null){
+					if(!level.isClientSide){
+						level.setBlock(pos,unwaxedBlock.defaultBlockState(),3);
+						CopperUtil.play(level,pos,SoundEvents.AXE_WAX_OFF);
+						CopperUtil.spawnParticles(level,pos,ParticleTypes.WAX_OFF);
+						CopperUtil.damageToolIfNotCreative(itemInHand,player,hand);
+					}
+					return InteractionResult.sidedSuccess(level.isClientSide);
+				}
 			}
 		}
 		return super.use(state,level,pos,player,hand,hit);
