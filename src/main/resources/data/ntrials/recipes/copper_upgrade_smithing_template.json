@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "C": {
+      "item": "minecraft:copper_block"
+    },
+    "S": {
+      "item": "ntrials:copper_upgrade_smithing_template"
+    }
+  },
+  "pattern": [
+    "#S#",
+    "#C#",
+    "###"
+  ],
+  "result": {
+    "count": 2,
+    "item": "ntrials:copper_upgrade_smithing_template"
+  },
+  "show_notification": true
+}
