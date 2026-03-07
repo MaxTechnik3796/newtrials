@@ -31,22 +31,15 @@
 			"entries":[
 				{
 					"type":"minecraft:item",
-					"name":"minecraft:golden_apple"
+					"name":"minecraft:trident"
 				},
 				{
 					"type":"minecraft:item",
-					"name":"minecraft:trident",
-					"weight":2
+					"name":"ntrials:copper_upgrade_smithing_template"
 				},
 				{
 					"type":"minecraft:item",
-					"name":"ntrials:copper_upgrade_smithing_template",
-					"weight":2
-				},
-				{
-					"type":"minecraft:item",
-					"name":"ntrials:heavy_core",
-					"weight":2
+					"name":"ntrials:heavy_core"
 				}
 			],
 			"rolls":1.0

@@ -1,0 +1,32 @@
+{
+	"type":"minecraft:chest",
+	"pools":[
+		{
+			"bonus_rolls":0.0,
+			"entries":[
+				{
+					"type":"minecraft:item",
+					"name":"minecraft:enchanted_golden_apple",
+					"weight":3
+				},
+				{
+					"type":"minecraft:item",
+					"name":"ntrials:flow_armor_trim_smithing_template",
+					"weight":3
+				},
+                {
+					"type":"minecraft:item",
+					"name":"ntrials:flow_banner_pattern",
+					"weight":3
+				},
+				{
+					"type":"minecraft:item",
+					"name":"ntrials:heavy_core",
+					"weight":1
+				}
+			],
+			"rolls":1.0
+		}
+	],
+	"random_sequence":"ntrials:chests/reward_ominous_unique"
+}

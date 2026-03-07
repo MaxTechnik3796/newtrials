@@ -41,23 +41,8 @@
 			],
 			"entries":[
 				{
-					"type":"minecraft:item",
-					"name":"minecraft:golden_apple",
-					"weight":5
-				},
-				{
-					"type":"minecraft:item",
-					"name":"ntrials:copper_upgrade_smithing_template",
-					"weight":3
-				},
-				{
-					"type":"minecraft:item",
-					"name":"ntrials:bolt_armor_trim_smithing_template",
-					"weight":3
-				},
-				{
-					"type":"minecraft:item",
-					"name":"minecraft:trident"
+					"type":"minecraft:loot_table",
+					"name":"ntrials:chests/reward_unique"
 				}
 			],
 			"rolls":1.0

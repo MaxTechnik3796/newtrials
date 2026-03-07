@@ -41,19 +41,8 @@
 			],
 			"entries":[
 				{
-					"type":"minecraft:item",
-					"name":"minecraft:enchanted_golden_apple",
-					"weight":5
-				},
-				{
-					"type":"minecraft:item",
-					"name":"ntrials:flow_armor_trim_smithing_template",
-					"weight":5
-				},
-				{
-					"type":"minecraft:item",
-					"name":"ntrials:heavy_core",
-					"weight":3
+					"type":"minecraft:loot_table",
+					"name":"ntrials:chests/reward_ominous_unique"
 				}
 			],
 			"rolls":1.0
