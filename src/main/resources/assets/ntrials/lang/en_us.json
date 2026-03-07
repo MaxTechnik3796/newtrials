@@ -137,7 +137,15 @@
 
 	"item.ntrials.breeze_boss_spawn_egg": "Boss Breeze Spawn Egg",
 
-	"item.ntrials.trials_explorer_map": "Trials Explorer Map"
+	"item.ntrials.trials_explorer_map": "Trials Explorer Map",
 
+	"item.ntrials.flow_banner_pattern":"Banner Pattern",
+	"item.ntrials.guster_banner_pattern":"Banner Pattern",
 
+	"desc.ntrials.flow_banner_pattern":"Flow",
+	"desc.ntrials.guster_banner_pattern":"Guster",
+
+	"item.ntrials.guster_pottery_sherd":"Guster Pottery Sherd",
+	"item.ntrials.scrape_pottery_sherd":"Scrape Pottery Sherd",
+	"item.ntrials.flow_pottery_sherd":"Flow Pottery Sherd"
 }
