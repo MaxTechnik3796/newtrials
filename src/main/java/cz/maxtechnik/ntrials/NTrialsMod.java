@@ -42,7 +42,6 @@ public class NTrialsMod{
 		MinecraftForge.EVENT_BUS.register(this);
 		NTrialsModBlocks.REGISTRY.register(modEventBus);
 		NTrialsModItems.REGISTRY.register(modEventBus);
-		NTrialsModPatterns.BANNER_PATTERNS.register(modEventBus);
 		NTrialsModEntityTypes.REGISTRY.register(modEventBus);
 		NTrialsModParticles.REGISTRY.register(modEventBus);
 		NTrialsModTabs.REGISTER.register(modEventBus);
@@ -50,6 +49,7 @@ public class NTrialsMod{
 		NTrialsModBlockEntities.register(modEventBus);
 		NTrialsModSounds.REGISTER.register(modEventBus);
 		NTrialsModEnchantments.REGISTER.register(modEventBus);
+		NTrialsModPatterns.REGISTRY.register(modEventBus);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,NTrialsServerConfig.SPEC);
 	}
 	private void commonSetup(final FMLCommonSetupEvent event){

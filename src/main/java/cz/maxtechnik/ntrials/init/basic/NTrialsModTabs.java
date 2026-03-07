@@ -33,6 +33,9 @@ public class NTrialsModTabs{
 		tabData.accept(NTrialsModItems.MACE.get());
 		tabData.accept(NTrialsModItems.MACE_HANDLE.get());
 
+		tabData.accept(NTrialsModItems.FLOW_BANNER_PATTERN.get());
+		tabData.accept(NTrialsModItems.GUSTER_BANNER_PATTERN.get());
+
 		tabData.accept(NTrialsModItems.TUFF_BRICKS.get());
 		tabData.accept(NTrialsModItems.CHISELED_TUFF.get());
 		tabData.accept(NTrialsModItems.CHISELED_TUFF_BRICKS.get());
