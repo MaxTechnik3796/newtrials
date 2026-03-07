@@ -43,7 +43,6 @@ public class NTrialsMod{
 		NTrialsModBlocks.REGISTRY.register(modEventBus);
 		NTrialsModItems.REGISTRY.register(modEventBus);
 		NTrialsModPatterns.BANNER_PATTERNS.register(modEventBus);
-		NTrialsModPatterns.POT_PATTERNS.register(modEventBus);
 		NTrialsModEntityTypes.REGISTRY.register(modEventBus);
 		NTrialsModParticles.REGISTRY.register(modEventBus);
 		NTrialsModTabs.REGISTER.register(modEventBus);
@@ -58,23 +57,6 @@ public class NTrialsMod{
 		event.enqueueWork(NTrialsMod_ModModEvents::setupOxidation);
 		event.enqueueWork(NTrialsMod_ModModEvents::setupDispenserBehaviors);
 		event.enqueueWork(NetworkHandler::registerPackets);
-
-		// Mapování pro Pottery Sherds
-		event.enqueueWork(() -> {
-			try {
-				java.lang.reflect.Field field = net.minecraft.world.level.block.entity.DecoratedPotPatterns.class.getDeclaredField("ITEM_TO_POT_TEXTURE");
-				field.setAccessible(true);
-
-				@SuppressWarnings("unchecked")
-				java.util.Map<net.minecraft.world.item.Item, net.minecraft.resources.ResourceKey<String>> map =
-						(java.util.Map<net.minecraft.world.item.Item, net.minecraft.resources.ResourceKey<String>>) field.get(null);
-				map.put(NTrialsModItems.GUSTER_POTTERY_SHERD.get(), net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DECORATED_POT_PATTERNS, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID, "guster_pottery_sherd")));
-				map.put(NTrialsModItems.SCRAPE_POTTERY_SHERD.get(), net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DECORATED_POT_PATTERNS, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID, "scrape_pottery_sherd")));
-				map.put(NTrialsModItems.FLOW_POTTERY_SHERD.get(), net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DECORATED_POT_PATTERNS, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID, "flow_pottery_sherd")));
-			} catch (Exception e) {
-				LOGGER.error("Nepodařilo se přidat Pottery Sherd patterny!", e);
-			}
-		});
 	}
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event){
