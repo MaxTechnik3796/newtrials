@@ -142,8 +142,8 @@
 	"item.ntrials.flow_banner_pattern":"Banner Pattern",
 	"item.ntrials.guster_banner_pattern":"Banner Pattern",
 
-	"desc.ntrials.flow_banner_pattern":"Flow",
-	"desc.ntrials.guster_banner_pattern":"Guster",
+	"item.ntrials.flow_banner_pattern.desc":"Flow",
+	"item.ntrials.guster_banner_pattern.desc":"Guster",
 
 	"item.ntrials.guster_pottery_sherd":"Guster Pottery Sherd",
 	"item.ntrials.scrape_pottery_sherd":"Scrape Pottery Sherd",
