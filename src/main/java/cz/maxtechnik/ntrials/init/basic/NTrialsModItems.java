@@ -3,7 +3,10 @@ package cz.maxtechnik.ntrials.init.basic;
 import cz.maxtechnik.ntrials.NTrialsMod;
 import cz.maxtechnik.ntrials.init.other.NTrialsModEntityTypes;
 import cz.maxtechnik.ntrials.item.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SmithingTemplateItem;
@@ -38,6 +41,14 @@ public class NTrialsModItems{
 
 	public static final RegistryObject<Item>BOLT_ARMOR_TRIM_SMITHING_TEMPLATE=REGISTRY.register("bolt_armor_trim_smithing_template",()->SmithingTemplateItem.createArmorTrimTemplate(ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"bolt")));
 	public static final RegistryObject<Item>FLOW_ARMOR_TRIM_SMITHING_TEMPLATE=REGISTRY.register("flow_armor_trim_smithing_template",()->SmithingTemplateItem.createArmorTrimTemplate(ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID,"flow")));
+
+    // Registrace Banner Pattern Itemu
+    public static final RegistryObject<Item> FLOW_BANNER_PATTERN = REGISTRY.register("flow_banner_pattern", () -> new BannerPatternItem(TagKey.create(Registries.BANNER_PATTERN, ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID, "pattern/flow")), new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> GUSTER_BANNER_PATTERN = REGISTRY.register("guster_banner_pattern", () -> new BannerPatternItem(TagKey.create(Registries.BANNER_PATTERN, ResourceLocation.fromNamespaceAndPath(NTrialsMod.MODID, "pattern/guster")), new Item.Properties().stacksTo(1)));
+    // Registrace Pottery Sherd Itemů
+    public static final RegistryObject<Item> GUSTER_POTTERY_SHERD = REGISTRY.register("guster_pottery_sherd", BasicItem::new);
+    public static final RegistryObject<Item> SCRAPE_POTTERY_SHERD = REGISTRY.register("scrape_pottery_sherd", BasicItem::new);
+    public static final RegistryObject<Item> FLOW_POTTERY_SHERD = REGISTRY.register("flow_pottery_sherd", BasicItem::new);
 
 	public static final RegistryObject<Item>TUFF_BRICKS=block(NTrialsModBlocks.TUFF_BRICKS);
     public static final RegistryObject<Item>CHISELED_TUFF=block(NTrialsModBlocks.CHISELED_TUFF);

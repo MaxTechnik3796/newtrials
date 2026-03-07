@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "ntrials:guster_pottery_sherd",
+    "ntrials:scrape_pottery_sherd",
+    "ntrials:flow_pottery_sherd"
+  ]
+}
