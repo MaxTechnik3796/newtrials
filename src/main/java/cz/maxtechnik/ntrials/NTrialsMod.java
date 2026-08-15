@@ -53,20 +53,20 @@ public class NTrialsMod{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,NTrialsServerConfig.SPEC);
 	}
 	private void commonSetup(final FMLCommonSetupEvent event){
-		LOGGER.info("NewTrials Common loading...");
+		LOGGER.info("NewTrials: Common Setup");
 		event.enqueueWork(NTrialsMod_ModModEvents::setupOxidation);
 		event.enqueueWork(NTrialsMod_ModModEvents::setupDispenserBehaviors);
 		event.enqueueWork(NetworkHandler::registerPackets);
 	}
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event){
-		LOGGER.info("NewTrials Server loading...");
+		LOGGER.info("NewTrials: Server Starting");
 	}
 	@Mod.EventBusSubscriber(modid=MODID,bus=Mod.EventBusSubscriber.Bus.MOD,value=Dist.CLIENT)
 	public static class ClientModEvents{
 		@SubscribeEvent
 		public static void onClientSetup(FMLClientSetupEvent event){
-			LOGGER.info("NewTrials Client loading...");
+			LOGGER.info("NewTrials: Client Setup");
 		}
 	}
 	public static void adv(ServerPlayer player,ResourceLocation adv_path){
